@@ -1,12 +1,17 @@
 site_name: GRC Engineering
 site_url: https://grc.engineering
+extra_css:
+  - stylesheets/extra.css
 plugins:
   - privacy
+  - search
 theme: 
   name: material
   font: 
     text: Manrope
     code: Consolas
+  features:
+    - search.suggest
   palette:
       # Palette toggle for automatic mode
     - media: "(prefers-color-scheme)"
