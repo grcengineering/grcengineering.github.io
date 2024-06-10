@@ -2,6 +2,10 @@ site_name: GRC Engineering
 site_url: https://grc.engineering
 extra_css:
   - stylesheets/extra.css
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
 plugins:
   - privacy
   - search
