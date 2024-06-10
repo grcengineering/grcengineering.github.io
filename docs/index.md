@@ -1,8 +1,10 @@
 # Manifesto
 
-GRC Engineering is a step-change evolution in security governance, risk, and compliance (GRC), including tightly related disciplines such as trust and assurance. It’s more than just “GRC + writing code”: it’s a fundamental shift in how GRC is done, harnessing modern engineering tools and approaches, systems thinking and design thinking, and a healthy dose of skepticism to Legacy GRC practices and assumptions.
+GRC Engineering is a step-change evolution in security governance, risk, and compliance (GRC), including tightly related disciplines such as trust and assurance. 
 
-As a community-led movement, we seek to propel GRC into the modern era so it can
+GRC Engineering is more than just “GRC + writing code.” It’s a fundamental shift in GRC that harnesses modern engineering tools and approaches, systems thinking and design thinking, and a healthy dose of skepticism of Legacy GRC practices and assumptions.
+
+As a community-led movement, we seek to propel GRC into the modern era so it can:
 
 * keep pace with the rapid acceleration in software engineering and security engineering spurred by [Agile](https://agilemanifesto.org/), [DevOps](https://en.m.wikipedia.org/wiki/DevOps), [DevSecOps](https://www.devsecops.org/), [continuous integration](https://en.m.wikipedia.org/wiki/Continuous_integration), [continuous delivery](https://en.m.wikipedia.org/wiki/Continuous_delivery), [continuous deployment](https://en.m.wikipedia.org/wiki/Continuous_deployment), [security guardrails](https://youtu.be/geumLjxtc54?si=MBILJ_qgFDqDqIGD), and [paved roads](https://www.slideshare.net/slideshow/the-paved-road-at-netflix/75867013).
 * adapt to an ever-changing landscape of security threats, defensive security practices, and business and technology innovation
@@ -36,7 +38,9 @@ This manifesto defines what we see as the foundational problems with Legacy GRC,
 
 ??? failure "Commoditization of compliance"
     
-    While the advent of compliance automation products and low cost audits have boosted GRC’s efficiency, the same cannot be said about the impact they’ve had on GRC’s effectiveness. In other words: automating and streamlining low-value Legacy GRC practices simply results in producing more low-value outcomes, faster. In this context, GRC is largely, if not entirely, valued as a sales enabler or a “cover your ass” necessity rather than as foundational for quickly maturing and sustaining strong security and privacy practices that significantly improve organizational outcomes and customer value.
+    While the advent of compliance automation products and low cost audits have boosted GRC’s efficiency, the same cannot be said about the impact they’ve had on GRC’s effectiveness. 
+    
+    In other words: automating and streamlining low-value Legacy GRC practices simply results in producing more low-value outcomes, faster. In this context, GRC is largely, if not entirely, valued as a sales enabler or a “cover your ass” necessity rather than as foundational for quickly maturing and sustaining strong security and privacy practices that significantly improve organizational outcomes and customer value.
 
 ## GRC Engineering Values
 
@@ -49,22 +53,22 @@ This manifesto defines what we see as the foundational problems with Legacy GRC,
 
 ## GRC Engineering Principles
 
-!!! success inline "Practitioner-led GRC solutions"
+??? success "Practitioner-led GRC solutions"
 
     When working together in an open, collaborative, and welcoming community, GRC practitioners, more so than vendors and standards bodies, are in the best position to define and build highly effective solutions to GRC problems. 
 
-!!! success inline "GRC as a product"
+??? success "GRC as a product"
 
     When treated as a product as opposed to a service, GRC provides demonstrably beneficial business, mission, security, and assurance outcomes. (Original text: Instead, we propose the development of GRC products that demonstrably provide clearly defined business and security value outcomes.)
 
-!!! success inline "Threat-informed GRC"
+??? success "Threat-informed GRC"
 
     A clear and current evidence-based understanding of relevant threats is necessary for effective control design and testing as well as risk assessment and management.
 
-!!! success inline "Systems thinking + design thinking"
+??? success "Systems thinking + design thinking"
 
     [...]
 
-!!! success inline "Build vs. buy pragmatism"
+??? success "Build vs. buy pragmatism"
 
     Original text: Realistic and balanced approach to the build vs. buy debate
