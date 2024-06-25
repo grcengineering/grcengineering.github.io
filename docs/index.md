@@ -43,23 +43,31 @@ This manifesto defines what we see as the foundational problems with Legacy GRC,
     In other words: automating and streamlining low-value Legacy GRC practices simply results in producing more low-value outcomes, faster. In this context, GRC is largely, if not entirely, valued as a sales enabler or a “cover your ass” necessity rather than as foundational for quickly maturing and sustaining strong security and privacy practices that significantly improve organizational outcomes and customer value.
 
 ## GRC Engineering Values
+A value is something that has relative worth, merit, or importance. That is, while there is value in the items on the right, we value the items on the left more.
 
 1. **Automate early on and often** over settling for manual processes and workflows
-2. **Measurable and meaningful risk outcomes** over commodotized compliance outputs
-3. **Evidence, logic, math, and reason** over fear, uncertainty, and doubt
-4. **In-depth continuous assurance** over shallow periodic monitoring
-5. **Stakeholder-focused solutions** over doing what works best for GRC teams
-6. **Shared fate partnerships** over transactional relationships
+2. **GRC-as-Code** over tool-specific constructs and paradigms
+3. **Measurable and meaningful risk outcomes** over commodotized compliance outputs
+4. **Evidence, logic, math, and reason** over fear, uncertainty, and doubt
+5. **In-depth continuous assurance** over shallow periodic monitoring
+6. **Stakeholder-centric UX** over building what works best for GRC teams
+7. **Shared fate partnerships** over transactional relationships
+8. **Open source community-developed solutions** over closed source vendor and industry organization solutions
+
 
 ## GRC Engineering Principles
 
-??? success "Practitioner-led GRC solutions"
+??? success Shift GRC Left
 
-    When working together in an open, collaborative, and welcoming community, GRC practitioners, more so than vendors and standards bodies, are in the best position to define and build highly effective solutions to GRC problems. 
+    By embedding GRC practices during the initial stages of development, all stakeholders (including GRC, Eng, Infra) can proactively address potential risks, ensure compliance, and maintain governance standards from the outset.
+
+??? success "Practitioners Build Better Solutions"
+
+    When working together in an open, collaborative, and welcoming community, GRC practitioners, more so than vendors, government agencies, and industry organizations, are in the best position to define and build highly effective solutions to the problems they face on a regular basis. We have seen this be the case with best-in-class open source security solutions that have been developed by practitioners across other security domains over the years: Metasploit for offensive security, osquery for endpoint security, Trufflehog for credential security, etc. 
 
 ??? success "GRC as a product"
 
-    When treated as a product as opposed to a service, GRC provides demonstrably beneficial business, mission, security, and assurance outcomes. (Original text: Instead, we propose the development of GRC products that demonstrably provide clearly defined business and security value outcomes.)
+    When treated as a product as opposed to a service, GRC provides demonstrably beneficial business, mission, security, and assurance outcomes - beyond GRC’s primary use cases. For example: data collected through continuous control monitoring could be used by partner teams to solve other tangentially-related problems; user access review data helping system owners proactively maintain better security hygiene beyond what is expected from a compliance programs. (Original text: Instead, we propose the development of GRC products that demonstrably provide clearly defined business and security value outcomes.)
 
 ??? success "Threat-informed GRC"
 
@@ -67,8 +75,8 @@ This manifesto defines what we see as the foundational problems with Legacy GRC,
 
 ??? success "Systems thinking + design thinking"
 
-    [...]
+    When diagnosing problems and formulating solutions, it's crucial to identify underlying root causes, understand how they manifest, and what people’s experiences are like when dealing with them. Systems thinking allows us to make sense of the world around us by 
 
 ??? success "Build vs. buy pragmatism"
 
-    Original text: Realistic and balanced approach to the build vs. buy debate
+    Is the ROI of in-house developed GRC monitoring or automation solutions worth it? GRC teams should ask themselves questions around the long term feasibility of maintaining custom code, if there is a trained support team to carry on the product, and what tribal knowledge is at risk at any given point in time with regards to employee turnover.
