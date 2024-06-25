@@ -2,36 +2,46 @@ site_name: GRC Engineering
 site_url: https://grc.engineering
 extra_css:
   - stylesheets/extra.css
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
 plugins:
   - privacy
   - search
 theme: 
   name: material
   font: 
-    text: Manrope
+    text: Roboto Mono
     code: Consolas
   features:
     - search.suggest
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
+    - navigation.top
+    - toc.integrate
   palette:
       # Palette toggle for automatic mode
     - media: "(prefers-color-scheme)"
-      primary: green
+      scheme: grcengineering-light
+      # primary: youtube
       toggle:
         icon: material/brightness-auto
         name: Switch to light mode
 
     # Palette toggle for light mode
     - media: "(prefers-color-scheme: light)"
-      scheme: default
-      primary: green 
+      scheme: grcengineering-light
+      # primary: youtube 
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
 
     # Palette toggle for dark mode
     - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      primary: lime
+      scheme: grcengineering-dark
+      # primary: lime
       toggle:
         icon: material/brightness-4
         name: Switch to system preference
