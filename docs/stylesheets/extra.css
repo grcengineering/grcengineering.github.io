@@ -2,6 +2,15 @@
     font-size: 1em;
 }
 
+a {
+  transition: color 500ms !important;
+  transition-behavior: normal !important;
+  transition-duration: 500ms !important;
+  transition-timing-function: ease !important;
+  transition-delay: 0s !important;
+  transition-property: color !important; 
+}
+
 .md-typeset h1 {
   font-weight: bolder;
   font-size: 2em;
@@ -28,7 +37,9 @@
     --md-primary-fg-color:        #ffa84fff;
     --md-primary-fg-color--dark:  rgb(188, 102, 16);
     --md-default-bg-color: #ffffff;
-    --md-primary-bg-color: #000000;
+    --md-primary-bg-color: #ffffff;
+    --md-typeset-a-color: #1b95c1ff;
+    --md-accent-fg-color: #ffa84fff;
 }
 
 [data-md-color-scheme="grcengineering-dark"] {
@@ -38,4 +49,47 @@
     --md-typeset-color: #ffffff;
     --md-default-fg-color--light: #ffffffcb;
     --md-primary-bg-color: #000000;
+    --md-typeset-a-color: #ffa84fff;
+    --md-accent-fg-color: #1b95c1ff;
+    --md-admonition-bg-color:  #000000;
+    --md-admonition-fg-color:  #ffffff;
+    --md-shadow-z2: 0 0.15rem 0.5rem rgb(255 255 255 / 25%), 0 0 0.2rem #1b95c1ff;
+}
+
+.md-typeset .warning>.admonition-title, .md-typeset .warning>summary {
+  background-color: rgba(255, 167, 79, 0.25);
+}
+
+.md-typeset .admonition.warning, .md-typeset details.warning {
+  border-color: #db7d00;
+}
+
+.md-typeset .warning>.admonition-title:before, .md-typeset .warning>summary:before {
+  background-color: #ffa84fff;
+}
+
+.md-typeset .warning>.admonition-title:after, .md-typeset .warning>summary:after {
+  color: #ffa84fff;
+}
+
+.md-typeset .success>.admonition-title, .md-typeset .success>summary {
+  background-color: rgba(27, 149, 193, 0.25);
+}
+
+.md-typeset .admonition.warning, .md-typeset details.success {
+  border-color: #1b95c1ff;
+}
+
+.md-typeset .warning>.admonition-title:before, .md-typeset .success>summary:before {
+  background-color: #1b95c1ff;
+}
+
+.md-typeset .warning>.admonition-title:after, .md-typeset .success>summary:after {
+  color: #1b95c1ff;
+}
+
+.md-typeset .admonition, .md-typeset details {
+  box-shadow: var(--md-shadow-z1);
+  color: var(--md-admonition-fg-color);
+  transition: box-shadow 500ms;
 }
