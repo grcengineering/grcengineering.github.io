@@ -2,7 +2,7 @@
 
 GRC Engineering is a step-change evolution in security governance, risk, and compliance (GRC), and related disciplines such as trust and assurance. It’s more than just “GRC + writing code.”  It’s a fundamental shift in how GRC is done, one that fully embraces an engineering mindset (broadly speaking), [systems thinking](https://en.m.wikipedia.org/wiki/Systems_thinking) and [design thinking](https://en.m.wikipedia.org/wiki/Design_thinking), and a customer-centric focus around how best to deliver GRC outcomes.
 
-We see the organic interest and momentum that is growing around GRC Engineering as an opportunity to bring our community together with a shared definition of what GRC Engineering is as well as a shared focus on advancing it together before it’s co-opted and constrained by commercial interests.
+We see the [organic interest](https://www.reddit.com/r/cybersecurity/comments/18efir2/grc_engineering/) and momentum that is growing around GRC Engineering as an opportunity to bring our community together with a shared definition of what GRC Engineering is as well as a shared focus on advancing it together before it’s co-opted and constrained by commercial interests.
 
 As a group of impassioned GRC practitioners, we seek to propel GRC into the modern era so it can: 
 
@@ -91,3 +91,8 @@ _A principle describes a fundamental truth of GRC Engineering that enables effic
 - [Justin Pagano](https://www.linkedin.com/in/justinpagano/)
 - [Terra Cooke](https://www.linkedin.com/in/terra-cooke-24552918/)
 - [Varun Gurnaney](https://www.linkedin.com/in/varungurnaney/)
+
+## GRC Engineering Resources
+- [GRC Engineering Podcast](https://open.spotify.com/show/3SkXwuXewy0qXXhICy5e6W)
+- [Awesome Security GRC List](https://github.com/Arudjreis/awesome-security-GRC)
+- [Varun Gurnaney’s Medium](https://medium.com/@varungurnaney)
