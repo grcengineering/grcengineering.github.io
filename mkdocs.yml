@@ -9,7 +9,10 @@ markdown_extensions:
 plugins:
   - privacy
   - search
-  - social
+  - social:
+      cards_layout_options:
+        font_family: IBM Plex Mono
+        background_color: "#1b95c1ff"
 extra:
   social:
     - icon: fontawesome/brands/linkedin
@@ -35,7 +38,6 @@ theme:
       # Palette toggle for automatic mode
     - media: "(prefers-color-scheme)"
       scheme: grcengineering-light
-      # primary: youtube
       toggle:
         icon: material/brightness-auto
         name: Switch to light mode
@@ -43,7 +45,6 @@ theme:
     # Palette toggle for light mode
     - media: "(prefers-color-scheme: light)"
       scheme: grcengineering-light
-      # primary: youtube 
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
@@ -51,7 +52,6 @@ theme:
     # Palette toggle for dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: grcengineering-dark
-      # primary: lime
       toggle:
         icon: material/brightness-4
         name: Switch to system preference
