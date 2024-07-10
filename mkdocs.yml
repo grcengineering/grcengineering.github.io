@@ -1,4 +1,4 @@
-site_name: "GRC Engineering Manifesto"
+site_name: ""
 site_url: https://grc.engineering
 extra_css:
   - stylesheets/extra.css

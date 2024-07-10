@@ -1,3 +1,5 @@
+# GRC Engineering Manifesto
+
 GRC Engineering is a step-change evolution in security governance, risk, and compliance (GRC), and related disciplines such as trust and assurance. It’s more than just “GRC + writing code.”  It’s a fundamental shift in how GRC is done, one that fully embraces an engineering mindset (broadly speaking), [systems thinking](https://en.m.wikipedia.org/wiki/Systems_thinking) and [design thinking](https://en.m.wikipedia.org/wiki/Design_thinking), and a customer-centric focus around how best to deliver GRC outcomes.
 
 We see the organic interest and momentum that is growing around GRC Engineering as an opportunity to bring our community together with a shared definition of what GRC Engineering is as well as a shared focus on advancing it together before it’s co-opted and constrained by commercial interests.
@@ -10,7 +12,7 @@ As a group of impassioned GRC practitioners, we seek to propel GRC into the mode
 
 This manifesto defines what we see as the foundational problems with Legacy GRC, what makes GRC Engineering fundamentally different, and how GRC Engineering can lead to far better outcomes that deliver on the promise that GRC was always meant to provide.
 
-# Fundamental problems with Legacy GRC
+## Fundamental problems with Legacy GRC
 
 ??? warning "Complacency with manual toil and trivial outputs"
 
@@ -44,7 +46,7 @@ This manifesto defines what we see as the foundational problems with Legacy GRC,
     
     While the advent of compliance automation products and low-cost audits have boosted GRC’s efficiency, the same cannot be said about the impact they’ve had on GRC’s effectiveness. In other words: automating and streamlining Legacy GRC practices simply results in producing low-value outcomes faster. In this context, GRC is largely, if not entirely, valued as a sales enabler or a “cover-your-ass” necessity rather than as foundational for having strong security and privacy practices that sustainably improve organizational outcomes and customer value.
 
-# Values
+## Values
 _A value is something that has relative worth, merit, or importance. That is, while there is value in the items on the right, we value the items on the left more._
 
 1. **Automate early on and often** over settling for manual processes and workflows
@@ -57,7 +59,7 @@ _A value is something that has relative worth, merit, or importance. That is, wh
 8. **Open source practitioner-developed solutions** over closed source vendor and industry organization paradigms
 
 
-# Principles
+## Principles
 _A principle describes a fundamental truth of GRC Engineering that enables efficient, effective, and delightful GRC outcomes and experiences._
 
 ??? success "Shift, and start, GRC left"
