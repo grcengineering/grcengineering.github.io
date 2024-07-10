@@ -9,6 +9,15 @@ markdown_extensions:
 plugins:
   - privacy
   - search
+  - social
+extra:
+  social:
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/company/grcengineering
+    - icon: fontawesome/brands/github
+      link: https://github.com/grcengineering
+    - icon: fontawesome/brands/slack
+      link: https://grcengineering.slack.com
 theme: 
   name: material
   font: 
@@ -20,6 +29,7 @@ theme:
     - navigation.instant.prefetch
     - navigation.instant.progress
     - navigation.top
+    - navigation.footer
     - toc.integrate
   palette:
       # Palette toggle for automatic mode
