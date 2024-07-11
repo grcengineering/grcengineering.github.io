@@ -16,7 +16,7 @@ plugins:
 extra:
   social:
     - icon: fontawesome/brands/linkedin
-      link: https://www.linkedin.com/company/grcengineering
+      link: https://www.linkedin.com/groups/12997229/
     - icon: fontawesome/brands/github
       link: https://github.com/grcengineering
     - icon: fontawesome/brands/slack
