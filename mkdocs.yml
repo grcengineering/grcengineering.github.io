@@ -1,5 +1,8 @@
 site_name: "GRC Engineering"
 site_url: https://grc.engineering
+repo_url: https://github.com/grcengineering/grcengineering.github.io
+repo_name: grcengineering
+edit_uri: edit/main/docs/
 extra_css:
   - stylesheets/extra.css
 markdown_extensions:
@@ -13,6 +16,11 @@ plugins:
       cards_layout_options:
         font_family: IBM Plex Mono
         background_color: "#1b95c1ff"
+  - git-revision-date-localized:
+      enable_creation_date: true
+  - git-committers:
+      repository: grcengineering/grcengineering.github.io
+      branch: main
 extra:
   social:
     - icon: fontawesome/brands/linkedin
@@ -21,7 +29,7 @@ extra:
       link: https://github.com/grcengineering
     - icon: fontawesome/brands/slack
       link: https://grcengineering.slack.com
-theme: 
+theme:
   name: material
   font: 
     text: Roboto Mono
@@ -34,6 +42,9 @@ theme:
     - navigation.top
     - navigation.footer
     - toc.integrate
+    - content.action.edit
+  icon:
+    repo: fontawesome/brands/github
   palette:
       # Palette toggle for automatic mode
     - media: "(prefers-color-scheme)"
