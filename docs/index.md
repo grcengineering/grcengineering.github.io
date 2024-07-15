@@ -106,3 +106,8 @@ _A principle describes a fundamental truth of GRC Engineering that enables effic
 - [GRC Engineering Podcast](https://open.spotify.com/show/3SkXwuXewy0qXXhICy5e6W)
 - [Awesome Security GRC List](https://github.com/Arudjreis/awesome-security-GRC)
 - [Varun Gurnaney’s Medium](https://medium.com/@varungurnaney)
+
+## Get Involved!
+[Join our LinkedIn Group :fontawesome-brands-linkedin:](https://www.linkedin.com/groups/12997229/){ .md-button .md-button--primary }
+
+[Contribute in GitHub :fontawesome-brands-square-github:](https://github.com/grcengineering/grcengineering.github.io){ .md-button }
