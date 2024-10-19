@@ -2,7 +2,11 @@ site_name: "GRC Engineering"
 site_url: https://grc.engineering
 repo_url: https://github.com/grcengineering/grcengineering.github.io
 repo_name: grcengineering
-edit_uri: edit/main/docs/
+edit_uri: edit/main/docs/index.md
+nav:
+  - index.md
+  - Blog: "https://blog.grc.engineering"
+  - projects.md
 extra_css:
   - stylesheets/extra.css
 markdown_extensions:
