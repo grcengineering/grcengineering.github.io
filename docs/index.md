@@ -111,3 +111,10 @@ _A principle describes a fundamental truth of GRC Engineering that enables effic
 [Join our LinkedIn Group :fontawesome-brands-linkedin:](https://www.linkedin.com/groups/12997229/){ .md-button .md-button--primary }
 
 [Contribute in GitHub :fontawesome-brands-square-github:](https://github.com/grcengineering/grcengineering.github.io){ .md-button }
+
+## Get Involved!
+[Join our LinkedIn Group :fontawesome-brands-linkedin:](https://www.linkedin.com/groups/12997229/){ .md-button .md-button--primary }
+
+[Contribute in GitHub :fontawesome-brands-square-github:](https://github.com/grcengineering/grcengineering.github.io){ .md-button }
+
+[Join our Discord :fontawesome-brands-discord:](https://discord.gg/YDrcFK7t){ .md-button }
