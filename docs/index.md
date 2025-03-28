@@ -101,13 +101,15 @@ _A principle describes a fundamental truth of GRC Engineering that enables effic
 - [Justin Pagano](https://www.linkedin.com/in/justinpagano/)
 - [Terra Cooke](https://www.linkedin.com/in/terra-cooke-24552918/)
 - [Varun Gurnaney](https://www.linkedin.com/in/varungurnaney/)
+- [Yash Devadiga](https://www.linkedin.com/in/yash-devadiga-2b2992241/)
 
 ## GRC Engineering Resources
 - [GRC Engineering Podcast](https://open.spotify.com/show/3SkXwuXewy0qXXhICy5e6W)
+- [The GRC Engineer Newsletter](https://grcengineer.com)
 - [Awesome Security GRC List](https://github.com/Arudjreis/awesome-security-GRC)
 - [Varun Gurnaney’s Medium](https://medium.com/@varungurnaney)
 
 ## Get Involved!
-[Join our LinkedIn Group :fontawesome-brands-linkedin:](https://www.linkedin.com/groups/12997229/){ .md-button .md-button--primary }
-
-[Contribute in GitHub :fontawesome-brands-square-github:](https://github.com/grcengineering/grcengineering.github.io){ .md-button }
+[Join our Discord :fontawesome-brands-discord:](https://discord.gg/YDrcFK7t){ .md-button .md-button--primary }
+[Join our LinkedIn Group :fontawesome-brands-linkedin:](https://www.linkedin.com/groups/12997229/){ .md-button }
+[Contribute on GitHub :fontawesome-brands-square-github:](https://github.com/grcengineering){ .md-button }
