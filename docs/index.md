@@ -110,6 +110,6 @@ _A principle describes a fundamental truth of GRC Engineering that enables effic
 - [Varun Gurnaney’s Medium](https://medium.com/@varungurnaney)
 
 ## Get Involved!
-[Join our Discord :fontawesome-brands-discord:](https://discord.gg/YDrcFK7t){ .md-button .md-button--primary }
+[Join our Discord :fontawesome-brands-discord:](https://discord.gg/CG6EDDbG4B){ .md-button .md-button--primary }
 [Join our LinkedIn Group :fontawesome-brands-linkedin:](https://www.linkedin.com/groups/12997229/){ .md-button }
 [Contribute on GitHub :fontawesome-brands-square-github:](https://github.com/grcengineering){ .md-button }
