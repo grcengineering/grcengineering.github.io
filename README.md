@@ -4,4 +4,4 @@
 
 This is GitHub Pages repository that is backing https://grc.engineering. It currently contains the source content for:
 * [The GRC Engineering Manifesto](https://grc.engineering) (`docs/index.md`)
-* [The GRC Engineering Learning Hub](https://grc.engineering/learning/) (`docs/learning.md`)
+* [The GRC Engineering Learning Hub](https://grc.engineering/learning-hub/) (`docs/learning-hub.md`)

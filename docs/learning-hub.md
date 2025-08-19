@@ -1,10 +1,11 @@
 ??? note "Want to contribute?"
 
-    You can contribute in a few different ways:`<ul>`
-    `<li>`Create a feature branch for [learning.md](https://github.com/grcengineering/grcengineering.github.io/blob/main/docs/learning-hub.md) -> submit a pull request `</li>`
-    `<li>`Open an [Issue](https://github.com/grcengineering/grcengineering.github.io/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22Learning%20Hub%22) with a feature request (use the `Learning Hub` label)`</li>`
-    `<li>`Start a [Discussion](https://github.com/grcengineering/grcengineering.github.io/discussions?discussions_q=is%3Aopen+label%3A%22Learning+Hub%22) to brainstorm ideas with the community (use the `Learning Hub` label)`</li>`
-    `</ul>`
+    You can contribute in a few different ways:
+    <ul>
+    <li>Create a feature branch for [learning.md](https://github.com/grcengineering/grcengineering.github.io/blob/main/docs/learning-hub.md) -> submit a pull request </li>
+    <li>Open an [Issue](https://github.com/grcengineering/grcengineering.github.io/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22Learning%20Hub%22) with a feature request (use the `Learning Hub` label)</li>
+    <li>Start a [Discussion](https://github.com/grcengineering/grcengineering.github.io/discussions?discussions_q=is%3Aopen+label%3A%22Learning+Hub%22) to brainstorm ideas with the community (use the `Learning Hub` label)</li>
+    </ul>
 
 The GRC Engineering Learning Hub is intended to be a community-developed knowledge base of learning and career development resources for practitioners interested in advancing their GRC engineering skills and competencies.
 
