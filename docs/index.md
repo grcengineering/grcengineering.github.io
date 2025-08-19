@@ -103,12 +103,6 @@ _A principle describes a fundamental truth of GRC Engineering that enables effic
 - [Varun Gurnaney](https://www.linkedin.com/in/varungurnaney/)
 - [Yash Devadiga](https://www.linkedin.com/in/yash-devadiga-2b2992241/)
 
-## GRC Engineering Resources
-- [GRC Engineering Podcast](https://open.spotify.com/show/3SkXwuXewy0qXXhICy5e6W)
-- [The GRC Engineer Newsletter](https://grcengineer.com)
-- [Awesome Security GRC List](https://github.com/Arudjreis/awesome-security-GRC)
-- [Varun Gurnaney’s Medium](https://medium.com/@varungurnaney)
-
 ## Get Involved!
 [Join our Discord :fontawesome-brands-discord:](https://discord.gg/CG6EDDbG4B){ .md-button .md-button--primary }
 [Join our LinkedIn Group :fontawesome-brands-linkedin:](https://www.linkedin.com/groups/12997229/){ .md-button }
