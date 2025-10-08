@@ -1,0 +1,25 @@
+# Python virtual environment
+venv/
+env/
+ENV/
+
+# Claude Code settings
+.claude/
+
+# MkDocs build output
+site/
+
+# Cache files
+.cache/
+.DS_Store
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE settings
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

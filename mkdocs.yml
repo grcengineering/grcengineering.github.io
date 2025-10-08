@@ -7,7 +7,7 @@ nav:
   - index.md
   - Learning Hub: learning-hub.md
   - Blog: "https://blog.grc.engineering"
-  - projects.md
+  - Projects: projects.md
 extra_css:
   - stylesheets/extra.css
 extra_javascript:
