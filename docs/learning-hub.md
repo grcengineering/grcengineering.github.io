@@ -90,6 +90,7 @@ Below are blogs and newsletters that are either wholly dedicated to discussing G
 | [From Heatmaps to Histograms](https://newsletter.heatmapstohistograms.com/)                                                                                                   | [Tony Martin-Vegue](https://www.linkedin.com/in/tonymartinvegue/)                                                                            |
 | [Varun Gurnaney’s Medium](https://medium.com/@varungurnaney)                                                                                                                 | [Varun Gurnaney](https://www.linkedin.com/in/varungurnaney/)                                                                                 |
 | [[Netflix TechBlog] Open-Sourcing riskquant, a library for quantifying risk](https://netflixtechblog.com/open-sourcing-riskquant-a-library-for-quantifying-risk-6720cc1e4968) | [Markus De Shon](https://www.linkedin.com/in/markus-de-shon-096889/), [Shannon Morrison](https://www.linkedin.com/in/shannon-morrison-0b71b544) |
+| [[Secure Controls Framework] The Secure Controls Framework (SCF) is a free “framework of frameworks” that unifies over 100 cybersecurity and privacy standards into about 1,200 controls across 33 domains, providing a common, comprehensive control set for building secure and compliant programs.](https://securecontrolsframework.com/scf-download/)) | [Tom Cornelius](https://www.linkedin.com/in/tcornelius/) |
 
 ## Social
 
