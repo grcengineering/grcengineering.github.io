@@ -24,11 +24,11 @@
 
 ## GRC Engineering Lab Builder
 
-<div style="background: linear-gradient(135deg, #7B2CBF 0%, #06A77D 100%); color: white; padding: 30px; border-radius: 12px; margin: 20px 0;">
+<div style="background: linear-gradient(135deg, #FF6B35 0%, #2A9D8F 100%); color: white; padding: 30px; border-radius: 12px; margin: 20px 0;">
   <h3 style="color: white; margin-top: 0;">Free, AI-Powered GRC Learning Platform</h3>
   <p style="font-size: 16px; margin-bottom: 20px;">Generate hyper-personalized GRC Engineering learning labs in 5 minutes using Claude or ChatGPT. Build automation projects, master prompt engineering, and level up your career - completely free and open source.</p>
   <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-    <a href="https://grc.engineering/grc_engineering_lab_builder/generator.html" target="_blank" rel="noopener noreferrer" style="background: white; color: #7B2CBF; padding: 12px 32px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 16px; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(123,44,191,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';">Generate My Prompts 🚀</a>
+    <a href="https://grc.engineering/grc_engineering_lab_builder/generator.html" target="_blank" rel="noopener noreferrer" style="background: white; color: #FF6B35; padding: 12px 32px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 16px; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(255,107,53,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';">Generate My Prompts 🚀</a>
   </div>
 </div>
 
