@@ -44,3 +44,26 @@
 **Developer:** [Ayoub Fandi](https://www.linkedin.com/in/ayoubfandi/)
 
 **Contribute:** This project is open source! [View on GitHub](https://github.com/grcengineering/grc_engineering_lab_builder) to contribute improvements, report issues, or fork for your organization.
+
+## How to Harden
+
+<div style="background: linear-gradient(135deg, #0F2027 0%, #203A43 50%, #2C5364 100%); color: white; padding: 30px; border-radius: 12px; margin: 20px 0;">
+  <h3 style="color: white; margin-top: 0;">SaaS Security Hardening Guides</h3>
+  <p style="font-size: 16px; margin-bottom: 20px;">Community-driven, open-source security hardening guidance for cloud services. Focus on integration security and supply chain attack prevention through first-party controls you can implement independently.</p>
+  <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+    <a href="https://howtoharden.com" target="_blank" rel="noopener noreferrer" style="background: white; color: #0F2027; padding: 12px 32px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 16px; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(15,32,39,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';">View Guides 🔒</a>
+  </div>
+</div>
+
+**Features:**
+
+- **Platform-Specific Guides**: Hardening documentation for Salesforce, Microsoft 365, GitHub, Google Workspace, Slack, and Okta
+- **GUI & Infrastructure-as-Code**: Each guide available in both UI-based and IaC formats
+- **Integration Security Focus**: Restrict third-party integrations with IP allowlisting and vendor access controls
+- **Real-World Attack Mapping**: Documents supply chain incidents and maps them to specific preventive controls
+- **Beyond CIS Benchmarks**: Fills the gap in SaaS-specific integration controls and vendor risk mitigation
+- **Alpha Stage**: Actively seeking contributors across security, development, and research domains
+
+**Developer:** [GRC Engineering](https://grc.engineering)
+
+**Contribute:** This project is open source! [View on GitHub](https://github.com/grcengineering/how-to-harden) to contribute improvements, report issues, or fork for your organization.
