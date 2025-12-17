@@ -64,6 +64,6 @@
 - **Beyond CIS Benchmarks**: Fills the gap in SaaS-specific integration controls and vendor risk mitigation
 - **Alpha Stage**: Actively seeking contributors across security, development, and research domains
 
-**Developer:** [GRC Engineering](https://grc.engineering)
+**Developer:** [Justin Pagano](https://linkedin.com/in/justinpagano)
 
 **Contribute:** This project is open source! [View on GitHub](https://github.com/grcengineering/how-to-harden) to contribute improvements, report issues, or fork for your organization.
