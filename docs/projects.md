@@ -67,3 +67,24 @@
 **Developer:** [Justin Pagano](https://linkedin.com/in/justinpagano)
 
 **Contribute:** This project is open source! [View on GitHub](https://github.com/grcengineering/how-to-harden) to contribute improvements, report issues, or fork for your organization.
+
+## GigaChad GRC
+
+<div style="background: linear-gradient(135deg, #C41E3A 0%, #9C27B0 100%); color: white; padding: 30px; border-radius: 12px; margin: 20px 0;">
+  <h3 style="color: white; margin-top: 0;">GRC Engineering Automation Framework</h3>
+  <p style="font-size: 16px; margin-bottom: 20px;">A powerful framework for automating governance, risk, and compliance workflows - completely free and open source.</p>
+  <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+    <a href="https://github.com/grcengineering/gigachad-grc" target="_blank" rel="noopener noreferrer" style="background: white; color: #C41E3A; padding: 12px 32px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 16px; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(196,30,58,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';">View Project 🚀</a>
+  </div>
+</div>
+
+**Features:**
+
+- **Automation-First**: Streamline repetitive GRC tasks and workflows
+- **Open Source**: Fully transparent and customizable to your needs
+- **Modern Architecture**: Built with best practices for reliability and scalability
+- **Community-Driven**: Collaborate with GRC professionals to build better tools
+
+**Developer:** [Chad Fryer](https://www.linkedin.com/in/c-fryer/)
+
+**Contribute:** This project is open source! [View on GitHub](https://github.com/grcengineering/gigachad-grc) to contribute improvements, report issues, or fork for your organization.
