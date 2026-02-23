@@ -88,3 +88,28 @@
 **Developer:** [Chad Fryer](https://www.linkedin.com/in/c-fryer/)
 
 **Contribute:** This project is open source! [View on GitHub](https://github.com/grcengineering/gigachad-grc) to contribute improvements, report issues, or fork for your organization.
+
+## Corsair
+
+<div style="background: linear-gradient(135deg, #0A0E17 0%, #0B0B0B 55%, #CFA24A 100%); color: white; padding: 30px; border-radius: 12px; margin: 20px 0;">
+  <h3 style="color: white; margin-top: 0;">Cryptographic Compliance Proof Infrastructure</h3>
+  <p style="font-size: 16px; margin-bottom: 20px;">Open-source protocol that turns security tool output into verifiable compliance proofs (CPOEs). Sign once, verify anywhere — no trust
+center account required.</p>
+  <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+    <a href="https://grcorsair.com" target="_blank" rel="noopener noreferrer" style="background: white; color: #0A0E17; padding: 12px 32px; border-radius: 6px; text-decoration: none;
+font-weight: 600; font-size: 16px; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px
+12px rgba(207,162,74,0.35)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';">Launch Corsair 🏴‍☠️</a>
+  </div>
+</div>
+
+**Features:**
+
+- **CPOE Proof Format**: Ed25519-signed JWT‑VCs that any verifier can check
+- **trust.txt Discovery**: Machine-readable compliance proof discovery endpoint
+- **SCITT Transparency Log**: Opt‑in timestamped proof registration
+- **Diffable Posture**: `corsair diff` shows regressions and improvements over time
+- **Agent‑Native**: OIDC keyless signing + `/onboard` for machine setup
+
+**Developer:** [Ayoub Fandi](https://www.linkedin.com/in/ayoubfandi/)
+
+**Contribute:** This project is open source! [View on GitHub](https://github.com/grcorsair/corsair) to contribute improvements, report issues, or fork for your organization.
