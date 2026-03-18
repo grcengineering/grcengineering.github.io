@@ -5,6 +5,7 @@ ENV/
 
 # Claude Code settings
 .claude/
+.superpowers/
 
 # MkDocs build output
 site/

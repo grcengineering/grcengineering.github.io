@@ -7,7 +7,13 @@ nav:
   - index.md
   - Learning Hub: learning-hub.md
   - Blog: "https://blog.grc.engineering"
-  - Projects: projects.md
+  - Projects:
+    - projects.md
+    - Nth Party Finder:
+      - projects/nthpartyfinder/index.md
+      - "Option A — Neon Night Club": projects/nthpartyfinder/option-a.md
+      - "Option B — Party Invitation": projects/nthpartyfinder/option-b.md
+      - "Option C — Developer Party": projects/nthpartyfinder/option-c.md
 extra_css:
   - stylesheets/extra.css
 extra_javascript:
