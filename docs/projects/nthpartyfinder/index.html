@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nth Party Finder — Choose Your Vibe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a12;
+  --card-bg: #12121e;
+  --border: rgba(255,255,255,.06);
+  --text: #a0a0b8;
+  --text-bright: #e8e8f0;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Sora',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:40px 24px;
+  -webkit-font-smoothing:antialiased;
+}
+.page{max-width:960px;width:100%;text-align:center;}
+.title{
+  font-size:clamp(1.8rem,4vw,2.6rem);
+  font-weight:700;
+  color:var(--text-bright);
+  margin-bottom:8px;
+}
+.sub{
+  font-size:1rem;
+  color:var(--text);
+  margin-bottom:48px;
+}
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:20px;
+}
+.card{
+  display:block;
+  text-decoration:none;
+  color:inherit;
+  border-radius:12px;
+  overflow:hidden;
+  border:1px solid var(--border);
+  transition:all .3s ease;
+}
+.card:hover{
+  transform:translateY(-6px);
+  border-color:rgba(255,255,255,.15);
+}
+.card-preview{
+  height:180px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:8px;
+}
+.card-preview .emoji{font-size:3rem;}
+.card-preview .label{
+  font-size:.7rem;
+  font-weight:600;
+  letter-spacing:3px;
+  text-transform:uppercase;
+}
+.card-body{
+  padding:24px;
+  background:var(--card-bg);
+}
+.card-body h3{
+  font-size:1.05rem;
+  font-weight:700;
+  color:var(--text-bright);
+  margin-bottom:4px;
+}
+.card-body .font-stack{
+  font-size:.72rem;
+  letter-spacing:.5px;
+  margin-bottom:8px;
+  opacity:.5;
+}
+.card-body p{
+  font-size:.88rem;
+  line-height:1.5;
+  color:var(--text);
+}
+
+/* card A */
+.card-a .card-preview{
+  background:linear-gradient(135deg,#06060f,#0b0b1a,#1a1a3e);
+}
+.card-a .label{color:#e94560;text-shadow:0 0 12px rgba(233,69,96,.5);}
+.card-a:hover{box-shadow:0 12px 40px rgba(233,69,96,.15);}
+
+/* card B */
+.card-b .card-preview{
+  background:linear-gradient(135deg,#fdf8ef,#efe3c8,#fdf8ef);
+}
+.card-b .label{color:#722f37;}
+.card-b:hover{box-shadow:0 12px 40px rgba(201,149,43,.2);}
+
+/* card C */
+.card-c .card-preview{
+  background:linear-gradient(135deg,#0c1017,#111820,#1c2530);
+}
+.card-c .label{color:#4a9eff;}
+.card-c:hover{box-shadow:0 12px 40px rgba(74,158,255,.15);}
+
+.back{
+  margin-top:40px;
+  font-size:.85rem;
+}
+.back a{
+  color:var(--text);
+  text-decoration:none;
+  transition:color .2s;
+}
+.back a:hover{color:var(--text-bright);}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1 class="title">Nth Party Finder</h1>
+  <p class="sub">Three vibes. Same great party-finding power. Pick one.</p>
+
+  <div class="cards">
+    <a href="neon/" class="card card-a">
+      <div class="card-preview">
+        <span class="emoji">🎉🔮🎊</span>
+        <span class="label">Neon Night Club</span>
+      </div>
+      <div class="card-body">
+        <h3>Option A</h3>
+        <div class="font-stack">Syncopate · Space Grotesk · Space Mono</div>
+        <p>Dark cyberpunk. Neon glows. Confetti raining down. The party that never sleeps.</p>
+      </div>
+    </a>
+
+    <a href="invitation/" class="card card-b">
+      <div class="card-preview">
+        <span class="emoji">🎈🎂🎈</span>
+        <span class="label">Party Invitation</span>
+      </div>
+      <div class="card-body">
+        <h3>Option B</h3>
+        <div class="font-stack">Playfair Display · Crimson Pro · Dancing Script</div>
+        <p>Warm parchment. Elegant serifs. Floating balloons. The party you'd RSVP to.</p>
+      </div>
+    </a>
+
+    <a href="developer/" class="card card-c">
+      <div class="card-preview">
+        <span class="emoji">🥳🦀💻</span>
+        <span class="label">Developer Party</span>
+      </div>
+      <div class="card-body">
+        <h3>Option C</h3>
+        <div class="font-stack">Sora · IBM Plex Sans · JetBrains Mono</div>
+        <p>GitHub-dark aesthetic. Party easter eggs in the details. Professional with surprises.</p>
+      </div>
+    </a>
+  </div>
+
+  <p class="back"><a href="https://grc.engineering/projects/">← Back to Projects</a></p>
+</div>
+</body>
+</html>
