@@ -53,6 +53,14 @@ a:hover { color: var(--gold-dark); }
 
 .container { max-width: var(--container); margin: 0 auto; padding: 0 var(--gutter); }
 
+/* ── ICON SYSTEM ── */
+.icon { display: inline-flex; align-items: center; justify-content: center; }
+.icon svg { width: 1em; height: 1em; }
+.icon-lg svg { width: 2.2rem; height: 2.2rem; }
+.icon-xl svg { width: 3.5rem; height: 3.5rem; }
+.icon-feature svg { width: 2.2rem; height: 2.2rem; }
+.icon-balloon svg { width: 2.8rem; height: 2.8rem; }
+
 /* ── ORNAMENTAL DIVIDERS ── */
 .ornament {
   text-align: center;
@@ -61,7 +69,12 @@ a:hover { color: var(--gold-dark); }
   margin: 48px 0;
   opacity: 0.5;
   letter-spacing: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
 }
+.ornament svg { width: 1.4rem; height: 1.4rem; opacity: 0.7; }
 
 /* ── NAV ── */
 .nav {
@@ -99,22 +112,19 @@ a:hover { color: var(--gold-dark); }
     radial-gradient(ellipse 50% 70% at 50% 40%, rgba(201, 149, 43, .06) 0%, transparent 100%);
 }
 /* Corner flourishes */
-.hero::before, .hero::after {
-  font-family: var(--font-display);
-  font-size: 5rem;
-  color: var(--gold);
-  opacity: 0.08;
+.hero-flourish {
   position: absolute;
+  opacity: 0.08;
 }
-.hero::before { content: '❧'; top: 30px; left: 40px; }
-.hero::after { content: '❧'; bottom: 30px; right: 40px; transform: rotate(180deg); }
+.hero-flourish svg { width: 5rem; height: 5rem; }
+.hero-flourish-tl { top: 30px; left: 40px; }
+.hero-flourish-br { bottom: 30px; right: 40px; transform: rotate(180deg); }
 
 @keyframes balloon-drift {
   0%, 100% { transform: translateY(0) rotate(-2deg); }
   50% { transform: translateY(-12px) rotate(2deg); }
 }
 .hero-balloons {
-  font-size: 2.8rem;
   margin-bottom: 20px;
   position: relative; z-index: 1;
 }
@@ -262,7 +272,7 @@ section { padding: 72px 0; }
   box-shadow: 0 8px 32px rgba(201, 149, 43, .1);
   transform: translateY(-3px);
 }
-.feature-icon { font-size: 2.2rem; margin-bottom: 16px; }
+.feature-icon { margin-bottom: 16px; }
 .feature-card h3 {
   font-family: var(--font-display);
   font-size: 1.15rem;
@@ -309,7 +319,11 @@ section { padding: 72px 0; }
   font-weight: 700;
   color: var(--burgundy);
   margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
+.tl-event h3 .icon svg { width: 1.2rem; height: 1.2rem; }
 .tl-event p {
   color: var(--brown-light);
   font-size: 0.95rem;
@@ -397,7 +411,11 @@ section { padding: 72px 0; }
   font-weight: 700;
   color: var(--burgundy);
   margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
+.install-card h3 .icon svg { width: 1.3rem; height: 1.3rem; }
 .install-card .rec {
   font-family: var(--font-script);
   font-size: 0.9rem;
@@ -498,9 +516,17 @@ section { padding: 72px 0; }
 
 <!-- HERO -->
 <header class="hero">
+  <!-- Corner flourishes (replacing ❧) -->
+  <div class="hero-flourish hero-flourish-tl">
+    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 56C8 56 12 28 32 16C52 4 56 8 56 8C56 8 48 12 36 24C24 36 20 48 20 48C20 48 32 36 44 32C56 28 60 32 60 32C60 32 52 30 40 36C28 42 20 56 20 56L8 56Z" fill="#c9952b"/><path d="M4 60C4 60 8 52 8 56L20 56C20 56 12 58 8 58C4 58 4 60 4 60Z" fill="#c9952b"/></svg>
+  </div>
+  <div class="hero-flourish hero-flourish-br">
+    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 56C8 56 12 28 32 16C52 4 56 8 56 8C56 8 48 12 36 24C24 36 20 48 20 48C20 48 32 36 44 32C56 28 60 32 60 32C60 32 52 30 40 36C28 42 20 56 20 56L8 56Z" fill="#c9952b"/><path d="M4 60C4 60 8 52 8 56L20 56C20 56 12 58 8 58C4 58 4 60 4 60Z" fill="#c9952b"/></svg>
+  </div>
+
   <div class="container">
     <div class="hero-balloons">
-      <span>🎈</span><span>🎈</span><span>🎈</span><span>🎈</span><span>🎈</span>
+      <span class="icon icon-balloon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="12" cy="9" rx="6" ry="8" fill="#722f37"/><ellipse cx="12" cy="9" rx="6" ry="8" fill="url(#b1)"/><path d="M12 17L10.5 19.5H13.5L12 17Z" fill="#9c4a53"/><path d="M12 19.5C12 19.5 11 21 11 22.5C11.5 22 12.5 22 13 22.5C13 21 12 19.5 12 19.5Z" stroke="#c9952b" stroke-width="0.7" fill="none"/><ellipse cx="9.5" cy="6.5" rx="1.5" ry="2" fill="rgba(255,255,255,0.15)" transform="rotate(-15 9.5 6.5)"/><defs><linearGradient id="b1" x1="12" y1="1" x2="12" y2="17" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="white" stop-opacity="0.2"/><stop offset="1" stop-color="white" stop-opacity="0"/></linearGradient></defs></svg></span><span class="icon icon-balloon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="12" cy="9" rx="6" ry="8" fill="#c9952b"/><ellipse cx="12" cy="9" rx="6" ry="8" fill="url(#b2)"/><path d="M12 17L10.5 19.5H13.5L12 17Z" fill="#8b6914"/><path d="M12 19.5C12 19.5 11 21 11 22.5C11.5 22 12.5 22 13 22.5C13 21 12 19.5 12 19.5Z" stroke="#722f37" stroke-width="0.7" fill="none"/><ellipse cx="9.5" cy="6.5" rx="1.5" ry="2" fill="rgba(255,255,255,0.2)" transform="rotate(-15 9.5 6.5)"/><defs><linearGradient id="b2" x1="12" y1="1" x2="12" y2="17" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="white" stop-opacity="0.25"/><stop offset="1" stop-color="white" stop-opacity="0"/></linearGradient></defs></svg></span><span class="icon icon-balloon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="12" cy="9" rx="6" ry="8" fill="#722f37"/><ellipse cx="12" cy="9" rx="6" ry="8" fill="url(#b3)"/><path d="M12 17L10.5 19.5H13.5L12 17Z" fill="#9c4a53"/><path d="M12 19.5C12 19.5 11 21 11 22.5C11.5 22 12.5 22 13 22.5C13 21 12 19.5 12 19.5Z" stroke="#c9952b" stroke-width="0.7" fill="none"/><ellipse cx="9.5" cy="6.5" rx="1.5" ry="2" fill="rgba(255,255,255,0.15)" transform="rotate(-15 9.5 6.5)"/><defs><linearGradient id="b3" x1="12" y1="1" x2="12" y2="17" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="white" stop-opacity="0.2"/><stop offset="1" stop-color="white" stop-opacity="0"/></linearGradient></defs></svg></span><span class="icon icon-balloon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="12" cy="9" rx="6" ry="8" fill="#e8c872"/><ellipse cx="12" cy="9" rx="6" ry="8" fill="url(#b4)"/><path d="M12 17L10.5 19.5H13.5L12 17Z" fill="#c9952b"/><path d="M12 19.5C12 19.5 11 21 11 22.5C11.5 22 12.5 22 13 22.5C13 21 12 19.5 12 19.5Z" stroke="#722f37" stroke-width="0.7" fill="none"/><ellipse cx="9.5" cy="6.5" rx="1.5" ry="2" fill="rgba(255,255,255,0.25)" transform="rotate(-15 9.5 6.5)"/><defs><linearGradient id="b4" x1="12" y1="1" x2="12" y2="17" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="white" stop-opacity="0.3"/><stop offset="1" stop-color="white" stop-opacity="0"/></linearGradient></defs></svg></span><span class="icon icon-balloon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="12" cy="9" rx="6" ry="8" fill="#9c4a53"/><ellipse cx="12" cy="9" rx="6" ry="8" fill="url(#b5)"/><path d="M12 17L10.5 19.5H13.5L12 17Z" fill="#722f37"/><path d="M12 19.5C12 19.5 11 21 11 22.5C11.5 22 12.5 22 13 22.5C13 21 12 19.5 12 19.5Z" stroke="#c9952b" stroke-width="0.7" fill="none"/><ellipse cx="9.5" cy="6.5" rx="1.5" ry="2" fill="rgba(255,255,255,0.15)" transform="rotate(-15 9.5 6.5)"/><defs><linearGradient id="b5" x1="12" y1="1" x2="12" y2="17" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="white" stop-opacity="0.2"/><stop offset="1" stop-color="white" stop-opacity="0"/></linearGradient></defs></svg></span>
     </div>
     <p class="hero-youre-invited">You're Cordially Invited to Discover</p>
     <h1 class="hero-title">Nth Party Finder</h1>
@@ -513,15 +539,15 @@ section { padding: 72px 0; }
       <a href="https://github.com/grcengineering/nthpartyfinder/releases" class="btn-invite btn-invite-ghost" target="_blank" rel="noopener">Download</a>
     </div>
     <div class="hero-badges">
-      <span class="badge">🦀 Rust</span>
-      <span class="badge">⚡ Async</span>
-      <span class="badge">🧠 Embedded NER</span>
-      <span class="badge">📜 MIT License</span>
+      <span class="badge">Rust</span>
+      <span class="badge">Async</span>
+      <span class="badge">Embedded NER</span>
+      <span class="badge">MIT License</span>
     </div>
   </div>
 </header>
 
-<div class="ornament">✦ ✦ ✦</div>
+<div class="ornament"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L14 8L12 10L10 8L12 2Z" fill="#c9952b"/><path d="M12 14L14 8L20 6L14 8L12 14Z" fill="#c9952b"/><path d="M12 14L10 8L4 6L10 8L12 14Z" fill="#c9952b"/><path d="M12 2L14 8L20 6L14 8L12 2Z" fill="#e8c872" opacity="0.5"/><path d="M12 22L14 16L12 14L10 16L12 22Z" fill="#c9952b"/><path d="M2 12L8 10L12 14L8 14L2 12Z" fill="#c9952b"/><path d="M22 12L16 10L12 14L16 14L22 12Z" fill="#c9952b"/></svg><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L14 8L12 10L10 8L12 2Z" fill="#c9952b"/><path d="M12 14L14 8L20 6L14 8L12 14Z" fill="#c9952b"/><path d="M12 14L10 8L4 6L10 8L12 14Z" fill="#c9952b"/><path d="M12 2L14 8L20 6L14 8L12 2Z" fill="#e8c872" opacity="0.5"/><path d="M12 22L14 16L12 14L10 16L12 22Z" fill="#c9952b"/><path d="M2 12L8 10L12 14L8 14L2 12Z" fill="#c9952b"/><path d="M22 12L16 10L12 14L16 14L22 12Z" fill="#c9952b"/></svg><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L14 8L12 10L10 8L12 2Z" fill="#c9952b"/><path d="M12 14L14 8L20 6L14 8L12 14Z" fill="#c9952b"/><path d="M12 14L10 8L4 6L10 8L12 14Z" fill="#c9952b"/><path d="M12 2L14 8L20 6L14 8L12 2Z" fill="#e8c872" opacity="0.5"/><path d="M12 22L14 16L12 14L10 16L12 22Z" fill="#c9952b"/><path d="M2 12L8 10L12 14L8 14L2 12Z" fill="#c9952b"/><path d="M22 12L16 10L12 14L16 14L22 12Z" fill="#c9952b"/></svg></div>
 
 <!-- FEATURES -->
 <section id="features">
@@ -531,17 +557,17 @@ section { padding: 72px 0; }
     <p class="section-sub">Your vendors have vendors who have vendors. Here's what this party planner brings to the table.</p>
 
     <div class="features-grid">
-      <div class="feature-card"><span class="feature-icon">🔍</span><h3>Comprehensive DNS Analysis</h3><p>Analyzes DNS TXT records — SPF entries, domain verification strings, and more — to uncover vendor relationships hiding in plain sight.</p></div>
-      <div class="feature-card"><span class="feature-icon">🔄</span><h3>Recursive Discovery</h3><p>The party doesn't stop at the 3rd. Configurable depth analysis or automatic discovery until it hits common denominators.</p></div>
-      <div class="feature-card"><span class="feature-icon">🧠</span><h3>Embedded NER</h3><p>Optional GLiNER model for intelligent organization name extraction. Works completely offline — no API keys, no external services.</p></div>
-      <div class="feature-card"><span class="feature-icon">🌐</span><h3>Cross-Platform</h3><p>Runs on Windows, macOS (Intel + Apple Silicon), and Linux. Docker image available for containerized workflows.</p></div>
-      <div class="feature-card"><span class="feature-icon">📊</span><h3>Multiple Export Formats</h3><p>CSV, JSON, Markdown, and HTML output with detailed relationship mapping. Your data, your format.</p></div>
-      <div class="feature-card"><span class="feature-icon">⚡</span><h3>High Performance</h3><p>Built in Rust with async processing, intelligent caching, and configurable parallelism. Finds parties fast.</p></div>
+      <div class="feature-card"><span class="feature-icon icon icon-feature"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="10" cy="10" r="6.5" stroke="#722f37" stroke-width="2" fill="none"/><path d="M15 15L21 21" stroke="#722f37" stroke-width="2.5" stroke-linecap="round"/><circle cx="10" cy="10" r="3" stroke="#c9952b" stroke-width="1" fill="none" opacity="0.4"/></svg></span><h3>Comprehensive DNS Analysis</h3><p>Analyzes DNS TXT records — SPF entries, domain verification strings, and more — to uncover vendor relationships hiding in plain sight.</p></div>
+      <div class="feature-card"><span class="feature-icon icon icon-feature"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17 8C17 8 19 5 16 3C13 1 11 4 11 4" stroke="#722f37" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M7 16C7 16 5 19 8 21C11 23 13 20 13 20" stroke="#722f37" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M11 4C11 4 8 3 6 6C4 9 7 11 7 11" stroke="#c9952b" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M13 20C13 20 16 21 18 18C20 15 17 13 17 13" stroke="#c9952b" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M7 11L9 12" stroke="#722f37" stroke-width="2" stroke-linecap="round"/><path d="M15 12L17 13" stroke="#722f37" stroke-width="2" stroke-linecap="round"/></svg></span><h3>Recursive Discovery</h3><p>The party doesn't stop at the 3rd. Configurable depth analysis or automatic discovery until it hits common denominators.</p></div>
+      <div class="feature-card"><span class="feature-icon icon icon-feature"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3C12 3 8 5 8 9C8 11 9 12 10 13C9 14 8 15 8 17C8 20 12 21 12 21C12 21 16 20 16 17C16 15 15 14 14 13C15 12 16 11 16 9C16 5 12 3 12 3Z" fill="#722f37" opacity="0.15"/><circle cx="12" cy="8" r="2.5" stroke="#722f37" stroke-width="1.5" fill="none"/><circle cx="9" cy="14" r="1.5" stroke="#c9952b" stroke-width="1.2" fill="none"/><circle cx="15" cy="14" r="1.5" stroke="#c9952b" stroke-width="1.2" fill="none"/><circle cx="12" cy="18" r="1.5" stroke="#722f37" stroke-width="1.2" fill="none"/><path d="M12 10.5V12.5" stroke="#4a3520" stroke-width="1"/><path d="M10.5 13L11 12.5" stroke="#4a3520" stroke-width="1"/><path d="M13.5 13L13 12.5" stroke="#4a3520" stroke-width="1"/><path d="M10 15.5L11 17" stroke="#4a3520" stroke-width="1"/><path d="M14 15.5L13 17" stroke="#4a3520" stroke-width="1"/></svg></span><h3>Embedded NER</h3><p>Optional GLiNER model for intelligent organization name extraction. Works completely offline — no API keys, no external services.</p></div>
+      <div class="feature-card"><span class="feature-icon icon icon-feature"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" stroke="#722f37" stroke-width="1.8" fill="none"/><ellipse cx="12" cy="12" rx="4" ry="9" stroke="#c9952b" stroke-width="1.2" fill="none"/><path d="M3.5 9H20.5" stroke="#c9952b" stroke-width="1" opacity="0.6"/><path d="M3.5 15H20.5" stroke="#c9952b" stroke-width="1" opacity="0.6"/><path d="M12 3V21" stroke="#722f37" stroke-width="1" opacity="0.4"/></svg></span><h3>Cross-Platform</h3><p>Runs on Windows, macOS (Intel + Apple Silicon), and Linux. Docker image available for containerized workflows.</p></div>
+      <div class="feature-card"><span class="feature-icon icon icon-feature"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="14" width="4" height="7" rx="1" fill="#c9952b"/><rect x="10" y="9" width="4" height="12" rx="1" fill="#722f37"/><rect x="17" y="5" width="4" height="16" rx="1" fill="#c9952b"/><path d="M3 4L8 6L14 3L21 5" stroke="#722f37" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/></svg></span><h3>Multiple Export Formats</h3><p>CSV, JSON, Markdown, and HTML output with detailed relationship mapping. Your data, your format.</p></div>
+      <div class="feature-card"><span class="feature-icon icon icon-feature"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13 2L4 14H11L10 22L20 10H13L13 2Z" fill="#c9952b"/><path d="M13 2L4 14H11L10 22L20 10H13L13 2Z" stroke="#722f37" stroke-width="1.2" fill="none"/></svg></span><h3>High Performance</h3><p>Built in Rust with async processing, intelligent caching, and configurable parallelism. Finds parties fast.</p></div>
     </div>
   </div>
 </section>
 
-<div class="ornament">✦ ✦ ✦</div>
+<div class="ornament"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L14 8L12 10L10 8L12 2Z" fill="#c9952b"/><path d="M12 14L14 8L20 6L14 8L12 14Z" fill="#c9952b"/><path d="M12 14L10 8L4 6L10 8L12 14Z" fill="#c9952b"/><path d="M12 2L14 8L20 6L14 8L12 2Z" fill="#e8c872" opacity="0.5"/><path d="M12 22L14 16L12 14L10 16L12 22Z" fill="#c9952b"/><path d="M2 12L8 10L12 14L8 14L2 12Z" fill="#c9952b"/><path d="M22 12L16 10L12 14L16 14L22 12Z" fill="#c9952b"/></svg><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L14 8L12 10L10 8L12 2Z" fill="#c9952b"/><path d="M12 14L14 8L20 6L14 8L12 14Z" fill="#c9952b"/><path d="M12 14L10 8L4 6L10 8L12 14Z" fill="#c9952b"/><path d="M12 2L14 8L20 6L14 8L12 2Z" fill="#e8c872" opacity="0.5"/><path d="M12 22L14 16L12 14L10 16L12 22Z" fill="#c9952b"/><path d="M2 12L8 10L12 14L8 14L2 12Z" fill="#c9952b"/><path d="M22 12L16 10L12 14L16 14L22 12Z" fill="#c9952b"/></svg><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L14 8L12 10L10 8L12 2Z" fill="#c9952b"/><path d="M12 14L14 8L20 6L14 8L12 14Z" fill="#c9952b"/><path d="M12 14L10 8L4 6L10 8L12 14Z" fill="#c9952b"/><path d="M12 2L14 8L20 6L14 8L12 2Z" fill="#e8c872" opacity="0.5"/><path d="M12 22L14 16L12 14L10 16L12 22Z" fill="#c9952b"/><path d="M2 12L8 10L12 14L8 14L2 12Z" fill="#c9952b"/><path d="M22 12L16 10L12 14L16 14L22 12Z" fill="#c9952b"/></svg></div>
 
 <!-- HOW IT WORKS -->
 <section id="how-it-works" class="bg-parchment">
@@ -551,11 +577,11 @@ section { padding: 72px 0; }
     <p class="section-sub">From domain to full vendor map, step by elegant step</p>
 
     <div class="timeline">
-      <div class="tl-event"><h3>📨 Send the Invites</h3><p>Point it at a domain. DNS TXT records get queried for SPF includes, domain verification tokens, and other vendor fingerprints.</p></div>
-      <div class="tl-event"><h3>📋 Check the Guest List</h3><p>Parses discovered records to identify vendor domains. WHOIS lookups resolve organizations. The NER model catches names that regex would miss.</p></div>
-      <div class="tl-event"><h3>👯 Follow the Plus-Ones</h3><p>Each discovered vendor gets the same treatment. Their DNS records reveal their vendors — mapping the full party tree to the Nth degree.</p></div>
-      <div class="tl-event"><h3>🚫 Spot the Uninvited Guests</h3><p>Common infrastructure providers (AWS, Azure, Cloudflare) are flagged — everyone uses them, so recursion stops to keep results meaningful.</p></div>
-      <div class="tl-event"><h3>🎁 Wrap the Party Favors</h3><p>Generates a comprehensive relationship map in CSV, JSON, Markdown, or HTML.</p></div>
+      <div class="tl-event"><h3><span class="icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="5" width="20" height="14" rx="2" stroke="#722f37" stroke-width="1.8" fill="none"/><path d="M2 7L12 13L22 7" stroke="#c9952b" stroke-width="1.5" fill="none"/><circle cx="12" cy="15" r="1.5" fill="#c9952b" opacity="0.4"/></svg></span> Send the Invites</h3><p>Point it at a domain. DNS TXT records get queried for SPF includes, domain verification tokens, and other vendor fingerprints.</p></div>
+      <div class="tl-event"><h3><span class="icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="2" width="14" height="20" rx="2" stroke="#722f37" stroke-width="1.8" fill="none"/><path d="M9 7H15" stroke="#c9952b" stroke-width="1.2" stroke-linecap="round"/><path d="M9 11H15" stroke="#c9952b" stroke-width="1.2" stroke-linecap="round"/><path d="M9 15H13" stroke="#c9952b" stroke-width="1.2" stroke-linecap="round"/><path d="M7 7L8 8L9 6" stroke="#722f37" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 11L8 12L9 10" stroke="#722f37" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Check the Guest List</h3><p>Parses discovered records to identify vendor domains. WHOIS lookups resolve organizations. The NER model catches names that regex would miss.</p></div>
+      <div class="tl-event"><h3><span class="icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="8" cy="9" rx="3" ry="4" stroke="#722f37" stroke-width="1.5" fill="none"/><ellipse cx="16" cy="9" rx="3" ry="4" stroke="#722f37" stroke-width="1.5" fill="none"/><path d="M11 9H13" stroke="#c9952b" stroke-width="2" stroke-linecap="round"/><path d="M8 13C8 13 6 16 6 18" stroke="#722f37" stroke-width="1.2" stroke-linecap="round"/><path d="M16 13C16 13 18 16 18 18" stroke="#722f37" stroke-width="1.2" stroke-linecap="round"/></svg></span> Follow the Plus-Ones</h3><p>Each discovered vendor gets the same treatment. Their DNS records reveal their vendors — mapping the full party tree to the Nth degree.</p></div>
+      <div class="tl-event"><h3><span class="icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" stroke="#722f37" stroke-width="1.8" fill="none"/><path d="M8 8L16 16" stroke="#9c4a53" stroke-width="2" stroke-linecap="round"/><path d="M16 8L8 16" stroke="#9c4a53" stroke-width="2" stroke-linecap="round"/></svg></span> Spot the Uninvited Guests</h3><p>Common infrastructure providers (AWS, Azure, Cloudflare) are flagged — everyone uses them, so recursion stops to keep results meaningful.</p></div>
+      <div class="tl-event"><h3><span class="icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="8" width="14" height="13" rx="1.5" stroke="#722f37" stroke-width="1.8" fill="none"/><path d="M5 12H19" stroke="#c9952b" stroke-width="1"/><path d="M12 8V2" stroke="#c9952b" stroke-width="1.5" stroke-linecap="round"/><path d="M12 2C12 2 8 4 8 6" stroke="#722f37" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M12 2C12 2 16 4 16 6" stroke="#722f37" stroke-width="1.2" fill="none" stroke-linecap="round"/><rect x="9" y="14" width="6" height="4" rx="0.5" fill="#c9952b" opacity="0.2" stroke="#c9952b" stroke-width="0.8"/></svg></span> Wrap the Party Favors</h3><p>Generates a comprehensive relationship map in CSV, JSON, Markdown, or HTML.</p></div>
     </div>
 
     <div class="terminal">
@@ -568,7 +594,7 @@ section { padding: 72px 0; }
       <div class="terminal-body">
 <span class="t-prompt">$</span> <span class="t-cmd">nthpartyfinder</span> <span class="t-flag">--domain</span> <span class="t-val">acme.com</span> <span class="t-flag">--depth</span> <span class="t-val">3</span> <span class="t-flag">-f</span> <span class="t-val">json</span>
 <br><br>
-<span class="t-accent">🎉 === Party Analysis Summary === 🎉</span><br>
+<span class="t-accent">=== Party Analysis Summary ===</span><br>
 <span class="t-out">Total vendor relationships found:</span> <span class="t-num">12</span><br>
 <span class="t-out">Maximum depth reached:</span> <span class="t-num">3 layers</span><br>
 <span class="t-out">Unique vendor domains:</span> <span class="t-num">8</span><br>
@@ -590,17 +616,17 @@ section { padding: 72px 0; }
     <h2 class="section-title">Party Crashers</h2>
     <p class="section-sub">These common infrastructure vendors show up at everyone's party — recursion stops here.</p>
     <div class="crasher-tags">
-      <span class="crasher-tag">☁️ AWS</span>
-      <span class="crasher-tag">🔷 Azure</span>
-      <span class="crasher-tag">🌐 Google Cloud</span>
-      <span class="crasher-tag">🛡️ Cloudflare</span>
-      <span class="crasher-tag">⚡ Fastly</span>
-      <span class="crasher-tag">🌊 Akamai</span>
+      <span class="crasher-tag">AWS</span>
+      <span class="crasher-tag">Azure</span>
+      <span class="crasher-tag">Google Cloud</span>
+      <span class="crasher-tag">Cloudflare</span>
+      <span class="crasher-tag">Fastly</span>
+      <span class="crasher-tag">Akamai</span>
     </div>
   </div>
 </section>
 
-<div class="ornament">✦ ✦ ✦</div>
+<div class="ornament"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L14 8L12 10L10 8L12 2Z" fill="#c9952b"/><path d="M12 14L14 8L20 6L14 8L12 14Z" fill="#c9952b"/><path d="M12 14L10 8L4 6L10 8L12 14Z" fill="#c9952b"/><path d="M12 2L14 8L20 6L14 8L12 2Z" fill="#e8c872" opacity="0.5"/><path d="M12 22L14 16L12 14L10 16L12 22Z" fill="#c9952b"/><path d="M2 12L8 10L12 14L8 14L2 12Z" fill="#c9952b"/><path d="M22 12L16 10L12 14L16 14L22 12Z" fill="#c9952b"/></svg><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L14 8L12 10L10 8L12 2Z" fill="#c9952b"/><path d="M12 14L14 8L20 6L14 8L12 14Z" fill="#c9952b"/><path d="M12 14L10 8L4 6L10 8L12 14Z" fill="#c9952b"/><path d="M12 2L14 8L20 6L14 8L12 2Z" fill="#e8c872" opacity="0.5"/><path d="M12 22L14 16L12 14L10 16L12 22Z" fill="#c9952b"/><path d="M2 12L8 10L12 14L8 14L2 12Z" fill="#c9952b"/><path d="M22 12L16 10L12 14L16 14L22 12Z" fill="#c9952b"/></svg><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L14 8L12 10L10 8L12 2Z" fill="#c9952b"/><path d="M12 14L14 8L20 6L14 8L12 14Z" fill="#c9952b"/><path d="M12 14L10 8L4 6L10 8L12 14Z" fill="#c9952b"/><path d="M12 2L14 8L20 6L14 8L12 2Z" fill="#e8c872" opacity="0.5"/><path d="M12 22L14 16L12 14L10 16L12 22Z" fill="#c9952b"/><path d="M2 12L8 10L12 14L8 14L2 12Z" fill="#c9952b"/><path d="M22 12L16 10L12 14L16 14L22 12Z" fill="#c9952b"/></svg></div>
 
 <!-- INSTALL -->
 <section id="install" class="bg-parchment">
@@ -611,7 +637,7 @@ section { padding: 72px 0; }
 
     <div class="install-grid">
       <div class="install-card">
-        <h3>🐳 Docker</h3>
+        <h3><span class="icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 16C4 16 5 15 8 15C11 15 13 17 16 17C19 17 20 16 20 16V4C20 4 19 5 16 5C13 5 11 3 8 3C5 3 4 4 4 4V16Z" fill="#722f37" opacity="0.15" stroke="#722f37" stroke-width="1.5"/><path d="M8 8C8 8 9 7 10 7.5C11 8 11 9 10.5 9.5" stroke="#c9952b" stroke-width="1" stroke-linecap="round"/><path d="M14 6C14 6 15 5.5 16 6C17 6.5 17 7.5 16 8" stroke="#c9952b" stroke-width="1" stroke-linecap="round"/><path d="M6 11H18" stroke="#c9952b" stroke-width="0.8" opacity="0.4"/><path d="M4 16V22" stroke="#722f37" stroke-width="1.5" stroke-linecap="round"/></svg></span> Docker</h3>
         <span class="rec">Recommended</span>
         <p>Pre-built image with embedded NER. Start scanning immediately.</p>
         <pre><code>docker pull ghcr.io/grcengineering/nthpartyfinder:latest
@@ -620,12 +646,12 @@ docker run -v $(pwd)/output:/output \
   nthpartyfinder -d example.com -r 2</code></pre>
       </div>
       <div class="install-card">
-        <h3>📦 Pre-built Binaries</h3>
+        <h3><span class="icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 7L12 3L4 7V17L12 21L20 17V7Z" stroke="#722f37" stroke-width="1.8" fill="none"/><path d="M12 11L4 7" stroke="#c9952b" stroke-width="1.2"/><path d="M12 11L20 7" stroke="#c9952b" stroke-width="1.2"/><path d="M12 11V21" stroke="#c9952b" stroke-width="1.2"/><path d="M8 5L16 9" stroke="#722f37" stroke-width="0.8" opacity="0.3"/></svg></span> Pre-built Binaries</h3>
         <p>Download from <a href="https://github.com/grcengineering/nthpartyfinder/releases" target="_blank" rel="noopener">GitHub Releases</a>. Available as <code>full</code> (~150MB w/ NER) or <code>slim</code> (~15MB).</p>
         <p style="font-size:.88rem;">Windows x86_64 · macOS Intel & Apple Silicon · Linux x86_64</p>
       </div>
       <div class="install-card">
-        <h3>🦀 Build from Source</h3>
+        <h3><span class="icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="11" r="5" fill="#722f37" opacity="0.12"/><path d="M8 8C6 6 4 7 4 7L6 9" stroke="#9c4a53" stroke-width="1.3" stroke-linecap="round"/><path d="M16 8C18 6 20 7 20 7L18 9" stroke="#9c4a53" stroke-width="1.3" stroke-linecap="round"/><ellipse cx="12" cy="12" rx="5" ry="4" stroke="#722f37" stroke-width="1.8" fill="none"/><circle cx="10" cy="11" r="0.8" fill="#c9952b"/><circle cx="14" cy="11" r="0.8" fill="#c9952b"/><path d="M9 14.5C9 14.5 10 16 12 16C14 16 15 14.5 15 14.5" stroke="#c9952b" stroke-width="1" stroke-linecap="round" fill="none"/><path d="M7 16L5 19" stroke="#722f37" stroke-width="1.2" stroke-linecap="round"/><path d="M9 16.5L8 20" stroke="#722f37" stroke-width="1.2" stroke-linecap="round"/><path d="M15 16.5L16 20" stroke="#722f37" stroke-width="1.2" stroke-linecap="round"/><path d="M17 16L19 19" stroke="#722f37" stroke-width="1.2" stroke-linecap="round"/></svg></span> Build from Source</h3>
         <p>Clone, build, and customize. Requires Rust toolchain.</p>
         <pre><code>git clone https://github.com/grcengineering/nthpartyfinder.git
 cd nthpartyfinder
@@ -638,7 +664,7 @@ cargo build --release</code></pre>
 <!-- BOTTOM CTA -->
 <section class="bottom-cta">
   <div class="container">
-    <div style="font-size:3rem;margin-bottom:16px;">🎂</div>
+    <div style="margin-bottom:16px;" class="icon icon-xl"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L14.5 7L12 9L9.5 7L12 2Z" fill="#c9952b"/><path d="M12 2L16 5.5L20 4L16 7L12 9L8 7L4 4L8 5.5L12 2Z" fill="#e8c872" opacity="0.4"/><path d="M5 8L3 6" stroke="#c9952b" stroke-width="1.5" stroke-linecap="round"/><path d="M19 8L21 6" stroke="#c9952b" stroke-width="1.5" stroke-linecap="round"/><path d="M2 12H5" stroke="#722f37" stroke-width="1.2" stroke-linecap="round"/><path d="M19 12H22" stroke="#722f37" stroke-width="1.2" stroke-linecap="round"/><path d="M6 16L4 18" stroke="#c9952b" stroke-width="1.2" stroke-linecap="round"/><path d="M18 16L20 18" stroke="#c9952b" stroke-width="1.2" stroke-linecap="round"/><circle cx="12" cy="12" r="3" fill="#722f37" opacity="0.15" stroke="#722f37" stroke-width="1.5"/><circle cx="12" cy="12" r="1" fill="#c9952b"/><path d="M12 15L10 20H14L12 15Z" fill="#c9952b" opacity="0.3"/><path d="M8 18L7 22" stroke="#e8c872" stroke-width="1" stroke-linecap="round" opacity="0.5"/><path d="M16 18L17 22" stroke="#e8c872" stroke-width="1" stroke-linecap="round" opacity="0.5"/></svg></div>
     <h2 class="section-title">Ready to Find Your Nth Party?</h2>
     <p class="backronym">RSVP: Recursive Security Vendor Profiler</p>
     <div class="hero-ctas">
