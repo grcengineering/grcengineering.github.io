@@ -61,7 +61,7 @@ a:hover { color: var(--neon-blue); }
 .icon-xl svg { width: 4rem; height: 4rem; }
 .icon-feature svg { width: 2.2rem; height: 2.2rem; filter: drop-shadow(0 0 6px currentColor); }
 .icon-badge svg { width: 1rem; height: 1rem; filter: drop-shadow(0 0 3px currentColor); }
-.icon-install svg { width: 1.3rem; height: 1.3rem; filter: drop-shadow(0 0 4px currentColor); }
+.icon-install svg { width: 1.75rem; height: 1.75rem; filter: drop-shadow(0 0 4px currentColor); }
 
 /* ── NAV ── */
 .nav {
@@ -321,7 +321,7 @@ section { padding: 80px 0; }
 .feature-card:hover::before { opacity: 1; }
 .feature-icon {
   margin-bottom: 16px;
-  display: block;
+  display: flex;
   line-height: 1;
 }
 .feature-card h3 {
@@ -615,8 +615,8 @@ section { padding: 80px 0; }
     </div>
     <div class="hero-badges">
       <span class="badge"><span class="icon icon-badge" style="color:var(--neon-pink);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg></span> Rust</span>
-      <span class="badge"><span class="icon icon-badge" style="color:var(--neon-gold);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg></span> Async</span>
-      <span class="badge"><span class="icon icon-badge" style="color:var(--neon-purple);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="7" r="2.5"/><circle cx="12" cy="17" r="2.5"/><line x1="9.2" y1="8.2" x2="10.3" y2="15.2"/><line x1="14.8" y1="8.2" x2="13.7" y2="15.2"/><line x1="9.5" y1="7" x2="14.5" y2="7"/></svg></span> Embedded NER</span>
+      <span class="badge"><span class="icon icon-badge" style="color:var(--neon-gold);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span> Async</span>
+      <span class="badge"><span class="icon icon-badge" style="color:var(--neon-purple);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="4" cy="8" r="2"/><circle cx="4" cy="16" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="20" cy="8" r="2"/><circle cx="20" cy="16" r="2"/><line x1="6" y1="8" x2="10" y2="12"/><line x1="6" y1="16" x2="10" y2="12"/><line x1="14" y1="12" x2="18" y2="8"/><line x1="14" y1="12" x2="18" y2="16"/></svg></span> Embedded NER</span>
       <span class="badge"><span class="icon icon-badge" style="color:var(--neon-blue);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg></span> MIT License</span>
     </div>
   </div>
@@ -641,7 +641,7 @@ section { padding: 80px 0; }
         <p>The party doesn't stop at the 3rd. Configurable depth analysis or automatic discovery until it hits common denominators.</p>
       </div>
       <div class="feature-card">
-        <span class="feature-icon"><span class="icon icon-feature" style="color:var(--neon-purple);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="7" r="2.5"/><circle cx="12" cy="17" r="2.5"/><line x1="9.2" y1="8.2" x2="10.3" y2="15.2"/><line x1="14.8" y1="8.2" x2="13.7" y2="15.2"/><line x1="9.5" y1="7" x2="14.5" y2="7"/></svg></span></span>
+        <span class="feature-icon"><span class="icon icon-feature" style="color:var(--neon-purple);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="4" cy="6" r="2"/><circle cx="4" cy="18" r="2"/><circle cx="12" cy="4" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="20" r="2"/><circle cx="20" cy="8" r="2"/><circle cx="20" cy="16" r="2"/><line x1="6" y1="6" x2="10" y2="4"/><line x1="6" y1="6" x2="10" y2="12"/><line x1="6" y1="18" x2="10" y2="12"/><line x1="6" y1="18" x2="10" y2="20"/><line x1="14" y1="4" x2="18" y2="8"/><line x1="14" y1="12" x2="18" y2="8"/><line x1="14" y1="12" x2="18" y2="16"/><line x1="14" y1="20" x2="18" y2="16"/></svg></span></span>
         <h3>Embedded NER</h3>
         <p>Optional GLiNER model for intelligent organization name extraction. Works completely offline — no API keys, no external services.</p>
       </div>
@@ -651,12 +651,12 @@ section { padding: 80px 0; }
         <p>Runs on Windows, macOS (Intel + Apple Silicon), and Linux. Docker image available for containerized workflows.</p>
       </div>
       <div class="feature-card">
-        <span class="feature-icon"><span class="icon icon-feature" style="color:var(--neon-gold);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="14" width="4" height="7"/><rect x="10" y="9" width="4" height="12"/><rect x="17" y="4" width="4" height="17"/><line x1="2" y1="22" x2="22" y2="22"/></svg></span></span>
+        <span class="feature-icon"><span class="icon icon-feature" style="color:var(--neon-gold);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="14" width="4" height="7"/><rect x="10" y="9" width="4" height="12"/><rect x="17" y="4" width="4" height="17"/><line x1="2" y1="22" x2="22" y2="22"/></svg></span></span>
         <h3>Multiple Export Formats</h3>
         <p>CSV, JSON, Markdown, and HTML output with detailed relationship mapping. Your data, your format.</p>
       </div>
       <div class="feature-card">
-        <span class="feature-icon"><span class="icon icon-feature" style="color:var(--neon-gold);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg></span></span>
+        <span class="feature-icon"><span class="icon icon-feature" style="color:var(--neon-gold);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span></span>
         <h3>High Performance</h3>
         <p>Built in Rust with async processing, intelligent caching, and configurable parallelism. Finds parties fast.</p>
       </div>
