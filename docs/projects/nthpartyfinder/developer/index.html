@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
 <style>
 /* ══════════════════════════════════════════════
    DEVELOPER PARTY — Design System
@@ -57,11 +58,30 @@ a:hover { color: var(--cyan); }
 .container { max-width: var(--container); margin: 0 auto; padding: 0 var(--gutter); }
 
 /* ── ICON SYSTEM ── */
-.icon { display: inline-flex; align-items: center; justify-content: center; }
-.icon svg { width: 1em; height: 1em; }
-.icon-lg svg { width: 2rem; height: 2rem; }
-.icon-xl svg { width: 3rem; height: 3rem; }
-.icon-feature svg { width: 1.5rem; height: 1.5rem; }
+.feature-card i {
+  font-size: 1.3rem;
+}
+.badge i {
+  font-size: 0.75rem;
+  vertical-align: middle;
+}
+.install-card h3 i {
+  font-size: 1.2rem;
+}
+.btn i {
+  font-size: 1em;
+  vertical-align: middle;
+}
+.section-party i {
+  font-size: 1rem;
+}
+.celebration-icon i {
+  font-size: 2.5rem;
+}
+.nav-logo .party-hat i {
+  font-size: 0.85rem;
+  vertical-align: -0.05em;
+}
 
 /* ── NAV ── */
 .nav {
@@ -83,7 +103,6 @@ a:hover { color: var(--cyan); }
   margin-left: 4px;
   opacity: 0.5;
 }
-.nav-logo .party-hat svg { width: 0.85em; height: 0.85em; vertical-align: -0.05em; }
 .nav-links { display: flex; gap: 24px; }
 .nav-links a {
   font-family: var(--font-body);
@@ -109,15 +128,6 @@ a:hover { color: var(--cyan); }
     radial-gradient(ellipse 400px 250px at 70% 60%, rgba(63,185,80,.04) 0%, transparent 70%);
   pointer-events: none;
 }
-
-/* Subtle scattered party SVG easter eggs */
-.party-scatter {
-  position: absolute;
-  opacity: 0.08;
-  pointer-events: none;
-  user-select: none;
-}
-.party-scatter svg { width: 14px; height: 14px; }
 
 .hero-emoji { font-size: 2.8rem; margin-bottom: 20px; position: relative; z-index: 1; }
 .hero-emoji svg { vertical-align: middle; }
@@ -174,7 +184,6 @@ a:hover { color: var(--cyan); }
   align-items: center;
   gap: 8px;
 }
-.btn svg { width: 1em; height: 1em; flex-shrink: 0; vertical-align: middle; }
 .btn-green {
   background: #238636;
   color: #fff;
@@ -209,6 +218,9 @@ a:hover { color: var(--cyan); }
   background: rgba(74,158,255,.08);
   border: 1px solid rgba(74,158,255,.15);
   color: var(--text-dim);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 /* ── SECTIONS ── */
@@ -227,7 +239,6 @@ section { padding: 72px 0; }
   letter-spacing: -0.3px;
 }
 .section-party { opacity: 0.4; display: inline-flex; align-items: center; }
-.section-party svg { width: 16px; height: 16px; }
 
 /* ── FEATURE GRID ── */
 .features-grid {
@@ -248,7 +259,6 @@ section { padding: 72px 0; }
   margin-bottom: 10px;
 }
 .feature-icon { display: inline-flex; align-items: center; }
-.feature-icon svg { width: 24px; height: 24px; }
 .feature-card h3 {
   font-family: var(--font-display);
   font-size: 0.95rem;
@@ -391,7 +401,6 @@ section { padding: 72px 0; }
   align-items: center;
   gap: 8px;
 }
-.install-card h3 svg { width: 24px; height: 24px; flex-shrink: 0; }
 .install-card .rec {
   font-family: var(--font-mono);
   font-size: 0.65rem;
@@ -455,7 +464,6 @@ section { padding: 72px 0; }
   margin-top: 24px;
 }
 .bottom-cta .dev a { color: var(--blue); }
-.bottom-cta .celebration-icon svg { width: 2.5rem; height: 2.5rem; }
 
 /* ── FOOTER ── */
 .footer {
@@ -489,7 +497,7 @@ section { padding: 72px 0; }
 <!-- NAV -->
 <nav class="nav">
   <div class="container">
-    <div class="nav-logo">nthpartyfinder <span class="party-hat"><svg viewBox="0 0 24 24" fill="none" stroke="#d29922" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,2 4,20 20,20"/><circle cx="7" cy="6" r="0.7" fill="#a371f7" stroke="none"/><line x1="12" y1="2" x2="14" y2="0" stroke="#3fb950" stroke-width="1"/></svg></span></div>
+    <div class="nav-logo">nthpartyfinder <span class="party-hat"><i class="ri-sparkling-line" style="color: #d29922;"></i></span></div>
     <div class="nav-links">
       <a href="#features">Features</a>
       <a href="#how-it-works">How It Works</a>
@@ -501,14 +509,6 @@ section { padding: 72px 0; }
 
 <!-- HERO -->
 <header class="hero">
-  <!-- Subtle scattered confetti SVG easter eggs -->
-  <span class="party-scatter" style="top:10%;left:6%;"><svg viewBox="0 0 24 24" fill="none"><path d="M5 3l2 18M8 6l4-2" stroke="#d29922" stroke-width="2" stroke-linecap="round"/><circle cx="18" cy="5" r="1.5" fill="#a371f7"/><circle cx="14" cy="18" r="1" fill="#3fb950"/></svg></span>
-  <span class="party-scatter" style="top:20%;right:10%;"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="4" height="4" rx="1" fill="#4a9eff" transform="rotate(15 6 6)"/><rect x="14" y="12" width="3" height="3" rx="0.5" fill="#f85149" transform="rotate(-10 15.5 13.5)"/><circle cx="10" cy="18" r="1.5" fill="#d29922"/></svg></span>
-  <span class="party-scatter" style="bottom:25%;left:12%;"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="6" stroke="#56d4dd" stroke-width="1.5"/><line x1="12" y1="18" x2="12" y2="22" stroke="#56d4dd" stroke-width="1.5" stroke-linecap="round"/><path d="M9 6c1-2 4-2 5 0" stroke="#56d4dd" stroke-width="1" stroke-linecap="round"/></svg></span>
-  <span class="party-scatter" style="top:35%;right:22%;"><svg viewBox="0 0 24 24" fill="none"><polygon points="12,2 4,18 20,18" stroke="#d29922" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="6" r="1" fill="#3fb950"/><circle cx="16" cy="8" r="0.8" fill="#a371f7"/></svg></span>
-  <span class="party-scatter" style="bottom:15%;right:7%;"><svg viewBox="0 0 24 24" fill="none"><path d="M5 3l2 18M8 6l4-2" stroke="#3fb950" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="7" r="1.5" fill="#f85149"/><circle cx="20" cy="16" r="1" fill="#4a9eff"/></svg></span>
-  <span class="party-scatter" style="top:55%;left:4%;"><svg viewBox="0 0 24 24" fill="none"><rect x="6" y="5" width="4" height="4" rx="1" fill="#a371f7" transform="rotate(20 8 7)"/><rect x="15" y="14" width="3" height="3" rx="0.5" fill="#d29922" transform="rotate(-15 16.5 15.5)"/><circle cx="11" cy="19" r="1" fill="#56d4dd"/></svg></span>
-  <span class="party-scatter" style="bottom:35%;right:15%;"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="5" stroke="#4a9eff" stroke-width="1.5"/><line x1="12" y1="17" x2="12" y2="21" stroke="#4a9eff" stroke-width="1.5" stroke-linecap="round"/></svg></span>
 
   <div class="container">
     <div class="hero-emoji">
@@ -550,14 +550,14 @@ section { padding: 72px 0; }
       A high-performance CLI that maps your entire vendor party guest list — from third parties to the Nth degree — through DNS analysis. Built in Rust for speed, safety, and serious party-finding power.
     </p>
     <div class="hero-ctas">
-      <a href="https://github.com/grcengineering/nthpartyfinder" class="btn btn-green" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg> Star on GitHub</a>
-      <a href="https://github.com/grcengineering/nthpartyfinder/releases" class="btn btn-outline" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Download</a>
+      <a href="https://github.com/grcengineering/nthpartyfinder" class="btn btn-green" target="_blank" rel="noopener"><i class="ri-star-line"></i> Star on GitHub</a>
+      <a href="https://github.com/grcengineering/nthpartyfinder/releases" class="btn btn-outline" target="_blank" rel="noopener"><i class="ri-download-line"></i> Download</a>
     </div>
     <div class="hero-badges">
-      <span class="badge">rust</span>
-      <span class="badge">async</span>
-      <span class="badge">ner</span>
-      <span class="badge">mit</span>
+      <span class="badge"><i class="ri-settings-3-line"></i> rust</span>
+      <span class="badge"><i class="ri-flashlight-line"></i> async</span>
+      <span class="badge"><i class="ri-brain-line"></i> ner</span>
+      <span class="badge"><i class="ri-file-list-line"></i> mit</span>
     </div>
   </div>
 </header>
@@ -567,17 +567,17 @@ section { padding: 72px 0; }
   <div class="container">
     <div class="section-header">
       <h2 class="section-title">Features</h2>
-      <span class="section-party"><svg viewBox="0 0 24 24" fill="none" stroke="#56d4dd" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="7"/><line x1="12" y1="17" x2="12" y2="22"/><path d="M9 5c1-2 4-2 5 0" stroke-width="1"/></svg></span>
+      <span class="section-party"><i class="ri-sparkling-line" style="opacity: 0.3; color: #56d4dd;"></i></span>
     </div>
     <p class="section-sub">Your vendors have vendors who have vendors. Time to find out who's really on the guest list.</p>
 
     <div class="features-grid">
-      <div class="feature-card"><div class="feature-header"><span class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#4a9eff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><h3>DNS Analysis</h3></div><p>Analyzes DNS TXT records — SPF entries, domain verification strings — to uncover vendor relationships hiding in plain sight.</p></div>
-      <div class="feature-card"><div class="feature-header"><span class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg></span><h3>Recursive Discovery</h3></div><p>The party doesn't stop at the 3rd. Configurable depth or auto-discovery until common denominators.</p></div>
-      <div class="feature-card"><div class="feature-header"><span class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#a371f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.5 2 6 5 6 8c0 2 .5 3 1.5 4.5S9 15 9 17h6c0-2 .5-3 1.5-4.5S18 10 18 8c0-3-2.5-6-6-6z"/><path d="M9 17v1a3 3 0 006 0v-1"/><line x1="10" y1="13" x2="14" y2="13"/></svg></span><h3>Embedded NER</h3></div><p>Optional GLiNER model for intelligent org name extraction. Works offline — no API keys needed.</p></div>
-      <div class="feature-card"><div class="feature-header"><span class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#56d4dd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></span><h3>Cross-Platform</h3></div><p>Windows, macOS (Intel + Apple Silicon), Linux. Docker image available.</p></div>
-      <div class="feature-card"><div class="feature-header"><span class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#d29922" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="4" height="9" rx="0.5"/><rect x="10" y="7" width="4" height="14" rx="0.5"/><rect x="17" y="3" width="4" height="18" rx="0.5"/><line x1="2" y1="22" x2="22" y2="22"/></svg></span><h3>Export Formats</h3></div><p>CSV, JSON, Markdown, and HTML output with detailed relationship mapping.</p></div>
-      <div class="feature-card"><div class="feature-header"><span class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#f85149" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/></svg></span><h3>Performance</h3></div><p>Async Rust with intelligent caching and configurable parallelism. Finds parties fast.</p></div>
+      <div class="feature-card"><div class="feature-header"><span class="feature-icon" style="color: #4a9eff;"><i class="ri-search-line"></i></span><h3>DNS Analysis</h3></div><p>Analyzes DNS TXT records — SPF entries, domain verification strings — to uncover vendor relationships hiding in plain sight.</p></div>
+      <div class="feature-card"><div class="feature-header"><span class="feature-icon" style="color: #3fb950;"><i class="ri-loop-left-line"></i></span><h3>Recursive Discovery</h3></div><p>The party doesn't stop at the 3rd. Configurable depth or auto-discovery until common denominators.</p></div>
+      <div class="feature-card"><div class="feature-header"><span class="feature-icon" style="color: #a371f7;"><i class="ri-brain-line"></i></span><h3>Embedded NER</h3></div><p>Optional GLiNER model for intelligent org name extraction. Works offline — no API keys needed.</p></div>
+      <div class="feature-card"><div class="feature-header"><span class="feature-icon" style="color: #56d4dd;"><i class="ri-global-line"></i></span><h3>Cross-Platform</h3></div><p>Windows, macOS (Intel + Apple Silicon), Linux. Docker image available.</p></div>
+      <div class="feature-card"><div class="feature-header"><span class="feature-icon" style="color: #d29922;"><i class="ri-bar-chart-grouped-line"></i></span><h3>Export Formats</h3></div><p>CSV, JSON, Markdown, and HTML output with detailed relationship mapping.</p></div>
+      <div class="feature-card"><div class="feature-header"><span class="feature-icon" style="color: #f85149;"><i class="ri-flashlight-line"></i></span><h3>Performance</h3></div><p>Async Rust with intelligent caching and configurable parallelism. Finds parties fast.</p></div>
     </div>
   </div>
 </section>
@@ -587,7 +587,7 @@ section { padding: 72px 0; }
   <div class="container">
     <div class="section-header">
       <h2 class="section-title">How It Works</h2>
-      <span class="section-party"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="4" height="4" rx="1" fill="#4a9eff" transform="rotate(15 6 7)"/><rect x="14" y="3" width="3" height="3" rx="0.5" fill="#d29922" transform="rotate(-10 15.5 4.5)"/><rect x="9" y="14" width="3.5" height="3.5" rx="0.5" fill="#3fb950" transform="rotate(25 10.75 15.75)"/><circle cx="19" cy="14" r="1.5" fill="#a371f7"/></svg></span>
+      <span class="section-party"><i class="ri-sparkling-line" style="opacity: 0.3; color: #4a9eff;"></i></span>
     </div>
     <p class="section-sub">The party-finding algorithm, explained</p>
 
@@ -649,7 +649,7 @@ section { padding: 72px 0; }
   <div class="container">
     <div class="section-header">
       <h2 class="section-title">Common Denominators</h2>
-      <span class="section-party"><svg viewBox="0 0 24 24" fill="none" stroke="#f85149" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+      <span class="section-party"><i class="ri-alarm-warning-line" style="color: #f85149;"></i></span>
     </div>
     <p class="section-sub">a.k.a. "party crashers" — these show up everywhere, so recursion stops here</p>
     <div class="crasher-tags">
@@ -668,13 +668,13 @@ section { padding: 72px 0; }
   <div class="container">
     <div class="section-header">
       <h2 class="section-title">Installation</h2>
-      <span class="section-party"><svg viewBox="0 0 24 24" fill="none"><rect x="5" y="4" width="4" height="4" rx="1" fill="#3fb950" transform="rotate(12 7 6)"/><rect x="15" y="6" width="3" height="3" rx="0.5" fill="#a371f7" transform="rotate(-20 16.5 7.5)"/><circle cx="10" cy="16" r="1.5" fill="#d29922"/><circle cx="18" cy="15" r="1" fill="#4a9eff"/></svg></span>
+      <span class="section-party"><i class="ri-sparkling-line" style="opacity: 0.3; color: #3fb950;"></i></span>
     </div>
     <p class="section-sub">Three ways to get the party started</p>
 
     <div class="install-grid">
       <div class="install-card">
-        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18s2-1 4.5-1 4 1.5 5.5 1.5S18 17 20 17"/><rect x="8" y="8" width="3" height="3" rx="0.5"/><rect x="12" y="8" width="3" height="3" rx="0.5"/><rect x="16" y="8" width="3" height="3" rx="0.5"/><rect x="12" y="4" width="3" height="3" rx="0.5"/><rect x="8" y="12" width="3" height="3" rx="0.5"/><rect x="12" y="12" width="3" height="3" rx="0.5"/><path d="M3 14c0-1.5 1-3 3-4"/></svg> Docker</h3>
+        <h3><i class="ri-box-3-line"></i> Docker</h3>
         <span class="rec">recommended</span>
         <p>Pre-built image with embedded NER.</p>
         <pre><code>docker pull ghcr.io/grcengineering/nthpartyfinder:latest
@@ -683,12 +683,12 @@ docker run -v $(pwd)/output:/output \
   nthpartyfinder -d example.com -r 2</code></pre>
       </div>
       <div class="install-card">
-        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Pre-built Binaries</h3>
+        <h3><i class="ri-archive-line"></i> Pre-built Binaries</h3>
         <p>Download from <a href="https://github.com/grcengineering/nthpartyfinder/releases" target="_blank" rel="noopener">Releases</a>. Available as <code>full</code> (~150MB) or <code>slim</code> (~15MB).</p>
         <p style="font-size:.82rem;">windows-x86_64 · macos-x86_64 · macos-aarch64 · linux-x86_64</p>
       </div>
       <div class="install-card">
-        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg> From Source</h3>
+        <h3><i class="ri-terminal-box-line"></i> From Source</h3>
         <p>Clone and build. Requires Rust toolchain.</p>
         <pre><code>git clone https://github.com/grcengineering/nthpartyfinder.git
 cd nthpartyfinder
@@ -701,30 +701,12 @@ cargo build --release</code></pre>
 <!-- BOTTOM CTA -->
 <section class="bottom-cta">
   <div class="container">
-    <div class="celebration-icon" style="margin-bottom:16px;"><svg viewBox="0 0 48 48" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <!-- Confetti burst -->
-      <line x1="24" y1="20" x2="24" y2="8" stroke="#3fb950" stroke-width="2"/>
-      <line x1="24" y1="20" x2="14" y2="10" stroke="#4a9eff" stroke-width="2"/>
-      <line x1="24" y1="20" x2="34" y2="10" stroke="#d29922" stroke-width="2"/>
-      <line x1="24" y1="20" x2="10" y2="18" stroke="#a371f7" stroke-width="1.5"/>
-      <line x1="24" y1="20" x2="38" y2="18" stroke="#f85149" stroke-width="1.5"/>
-      <!-- Dots at burst ends -->
-      <circle cx="24" cy="8" r="2" fill="#3fb950"/>
-      <circle cx="14" cy="10" r="1.5" fill="#4a9eff"/>
-      <circle cx="34" cy="10" r="1.5" fill="#d29922"/>
-      <circle cx="10" cy="18" r="1.2" fill="#a371f7"/>
-      <circle cx="38" cy="18" r="1.2" fill="#f85149"/>
-      <!-- Party popper cone -->
-      <path d="M20 44 L24 20 L28 44 Z" stroke="#d29922" stroke-width="1.5" fill="none"/>
-      <!-- Extra confetti shapes -->
-      <rect x="16" y="14" width="2.5" height="2.5" rx="0.5" fill="#56d4dd" transform="rotate(30 17.25 15.25)" opacity="0.6"/>
-      <rect x="30" y="15" width="2" height="2" rx="0.3" fill="#f85149" transform="rotate(-20 31 16)" opacity="0.6"/>
-    </svg></div>
+    <div class="celebration-icon" style="margin-bottom:16px;"><i class="ri-sparkling-line" style="color: #d29922;"></i></div>
     <h2 class="section-title" style="text-align:center;">Find your Nth party</h2>
     <p class="backronym">// RSVP: recursive security vendor profiler</p>
     <div class="hero-ctas">
-      <a href="https://github.com/grcengineering/nthpartyfinder" class="btn btn-green" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg> Star on GitHub</a>
-      <a href="https://github.com/grcengineering/nthpartyfinder/releases" class="btn btn-outline" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Download Latest</a>
+      <a href="https://github.com/grcengineering/nthpartyfinder" class="btn btn-green" target="_blank" rel="noopener"><i class="ri-star-line"></i> Star on GitHub</a>
+      <a href="https://github.com/grcengineering/nthpartyfinder/releases" class="btn btn-outline" target="_blank" rel="noopener"><i class="ri-download-line"></i> Download Latest</a>
     </div>
     <p class="dev"><strong>Developer:</strong> <a href="https://linkedin.com/in/justinpagano" target="_blank" rel="noopener">Justin Pagano</a> · <a href="https://grc.engineering" target="_blank" rel="noopener">GRC Engineering</a></p>
   </div>
@@ -734,6 +716,7 @@ cargo build --release</code></pre>
 <footer class="footer">
   <div class="container">
     <p>nthpartyfinder · <a href="https://github.com/grcengineering/nthpartyfinder" target="_blank" rel="noopener">github</a> · mit · <a href="https://grc.engineering" target="_blank" rel="noopener">grc.engineering</a></p>
+    <span style="opacity: 0.5; font-size: 0.75rem;">Icons by <a href="https://remixicon.com" style="color: inherit;">Remix Icon</a></span>
   </div>
 </footer>
 

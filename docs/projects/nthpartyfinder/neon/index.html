@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
 <style>
 /* ══════════════════════════════════════════════
    NEON NIGHT CLUB — Design System
@@ -55,13 +56,27 @@ a:hover { color: var(--neon-blue); }
 .container { max-width: var(--container); margin: 0 auto; padding: 0 var(--gutter); }
 
 /* ── ICON SYSTEM ── */
-.icon { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; }
-.icon svg { width: 1em; height: 1em; }
-.icon-lg svg { width: 2.4rem; height: 2.4rem; }
-.icon-xl svg { width: 4rem; height: 4rem; }
-.icon-feature svg { width: 2.2rem; height: 2.2rem; filter: drop-shadow(0 0 6px currentColor); }
-.icon-badge svg { width: 1rem; height: 1rem; filter: drop-shadow(0 0 3px currentColor); }
-.icon-install svg { width: 1.75rem; height: 1.75rem; filter: drop-shadow(0 0 4px currentColor); }
+.feature-icon i {
+  font-size: 2.2rem;
+  text-shadow: 0 0 6px currentColor;
+}
+.badge i {
+  font-size: 0.9rem;
+  vertical-align: middle;
+  text-shadow: 0 0 3px currentColor;
+}
+.install-card h3 i {
+  font-size: 1.3rem;
+  text-shadow: 0 0 4px currentColor;
+}
+.bottom-cta-icon i {
+  font-size: 3.5rem;
+  text-shadow: 0 0 12px currentColor;
+}
+.terminal-body i {
+  font-size: 0.9rem;
+  vertical-align: middle;
+}
 
 /* ── NAV ── */
 .nav {
@@ -127,9 +142,10 @@ a:hover { color: var(--neon-blue); }
   pointer-events: none;
   opacity: 0;
 }
-.confetti-piece svg {
-  display: block;
-  filter: drop-shadow(0 0 4px currentColor);
+.confetti-piece {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
 }
 
 .hero-eyebrow {
@@ -568,37 +584,17 @@ section { padding: 80px 0; }
 
 <!-- HERO -->
 <header class="hero">
-  <!-- Confetti pieces — neon geometric SVG shapes -->
-  <div class="confetti-piece" style="left:5%;animation-duration:5s;animation-delay:0s;color:var(--neon-pink);">
-    <svg width="10" height="10" viewBox="0 0 10 10"><polygon points="5,0 10,10 0,10" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
-  </div>
-  <div class="confetti-piece" style="left:12%;animation-duration:6s;animation-delay:1.2s;color:var(--neon-blue);">
-    <svg width="10" height="10" viewBox="0 0 10 10"><polygon points="5,1 9,5 5,9 1,5" stroke="currentColor" stroke-width="1" fill="none"/></svg>
-  </div>
-  <div class="confetti-piece" style="left:22%;animation-duration:5.5s;animation-delay:.4s;color:var(--neon-green);">
-    <svg width="10" height="10" viewBox="0 0 10 10"><polygon points="5,0 9.5,3.5 7.9,8.5 2.1,8.5 0.5,3.5" stroke="currentColor" stroke-width="1" fill="none"/></svg>
-  </div>
-  <div class="confetti-piece" style="left:33%;animation-duration:6.5s;animation-delay:2s;color:var(--neon-gold);">
-    <svg width="12" height="8" viewBox="-1 -1 14 10"><polygon points="6,0 12,4 6,8 0,4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
-  </div>
-  <div class="confetti-piece" style="left:44%;animation-duration:5.2s;animation-delay:.8s;color:var(--neon-purple);">
-    <svg width="10" height="10" viewBox="0 0 10 10"><polygon points="5,0 10,10 0,10" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
-  </div>
-  <div class="confetti-piece" style="left:55%;animation-duration:6.2s;animation-delay:1.5s;color:var(--neon-pink);">
-    <svg width="8" height="12" viewBox="0 0 8 12"><polygon points="4,0 8,6 4,12 0,6" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
-  </div>
-  <div class="confetti-piece" style="left:66%;animation-duration:5.8s;animation-delay:.2s;color:var(--neon-blue);">
-    <svg width="10" height="10" viewBox="0 0 10 10"><polygon points="5,0 9.3,1.9 9.8,6.5 6.9,9.5 3.1,9.5 0.2,6.5 0.7,1.9" stroke="currentColor" stroke-width="1" fill="none"/></svg>
-  </div>
-  <div class="confetti-piece" style="left:77%;animation-duration:6.8s;animation-delay:2.5s;color:var(--neon-green);">
-    <svg width="9" height="9" viewBox="0 0 9 9"><rect x="1" y="1" width="7" height="7" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
-  </div>
-  <div class="confetti-piece" style="left:88%;animation-duration:5.4s;animation-delay:1s;color:var(--neon-gold);">
-    <svg width="10" height="10" viewBox="0 0 10 10"><polygon points="5,0 10,10 0,10" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
-  </div>
-  <div class="confetti-piece" style="left:95%;animation-duration:6.4s;animation-delay:.6s;color:var(--neon-purple);">
-    <svg width="10" height="10" viewBox="0 0 10 10"><polygon points="5,0 8,3.5 10,8 5,10 0,8 2,3.5" stroke="currentColor" stroke-width="1" fill="none"/></svg>
-  </div>
+  <!-- Confetti pieces -->
+  <div class="confetti-piece" style="left:5%;animation-duration:5s;animation-delay:0s;background:var(--neon-pink);"></div>
+  <div class="confetti-piece" style="left:12%;animation-duration:6s;animation-delay:1.2s;background:var(--neon-blue);border-radius:50%;"></div>
+  <div class="confetti-piece" style="left:22%;animation-duration:5.5s;animation-delay:.4s;background:var(--neon-green);"></div>
+  <div class="confetti-piece" style="left:33%;animation-duration:6.5s;animation-delay:2s;background:var(--neon-gold);border-radius:50%;"></div>
+  <div class="confetti-piece" style="left:44%;animation-duration:5.2s;animation-delay:.8s;background:var(--neon-purple);"></div>
+  <div class="confetti-piece" style="left:55%;animation-duration:6.2s;animation-delay:1.5s;background:var(--neon-pink);border-radius:50%;"></div>
+  <div class="confetti-piece" style="left:66%;animation-duration:5.8s;animation-delay:.2s;background:var(--neon-blue);"></div>
+  <div class="confetti-piece" style="left:77%;animation-duration:6.8s;animation-delay:2.5s;background:var(--neon-green);border-radius:50%;"></div>
+  <div class="confetti-piece" style="left:88%;animation-duration:5.4s;animation-delay:1s;background:var(--neon-gold);"></div>
+  <div class="confetti-piece" style="left:95%;animation-duration:6.4s;animation-delay:.6s;background:var(--neon-purple);border-radius:50%;"></div>
 
   <div class="container">
     <div class="hero-eyebrow"><span class="dot"></span> GRC Engineering Open Source</div>
@@ -611,13 +607,13 @@ section { padding: 80px 0; }
     </p>
     <div class="hero-ctas">
       <a href="https://github.com/grcengineering/nthpartyfinder" class="btn-neon btn-neon-primary" target="_blank" rel="noopener">Get the Party Started</a>
-      <a href="https://github.com/grcengineering/nthpartyfinder/releases" class="btn-neon btn-neon-ghost" target="_blank" rel="noopener">Download</a>
+      <a href="https://github.com/grcengineering/nthpartyfinder/releases" class="btn-neon btn-neon-ghost" target="_blank" rel="noopener"><i class="ri-download-line"></i> Download</a>
     </div>
     <div class="hero-badges">
-      <span class="badge"><span class="icon icon-badge" style="color:var(--neon-pink);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg></span> Rust</span>
-      <span class="badge"><span class="icon icon-badge" style="color:var(--neon-gold);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span> Async</span>
-      <span class="badge"><span class="icon icon-badge" style="color:var(--neon-purple);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="4" cy="8" r="2"/><circle cx="4" cy="16" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="20" cy="8" r="2"/><circle cx="20" cy="16" r="2"/><line x1="6" y1="8" x2="10" y2="12"/><line x1="6" y1="16" x2="10" y2="12"/><line x1="14" y1="12" x2="18" y2="8"/><line x1="14" y1="12" x2="18" y2="16"/></svg></span> Embedded NER</span>
-      <span class="badge"><span class="icon icon-badge" style="color:var(--neon-blue);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg></span> MIT License</span>
+      <span class="badge"><i class="ri-settings-3-line" style="color:var(--neon-pink);"></i> Rust</span>
+      <span class="badge"><i class="ri-flashlight-line" style="color:var(--neon-gold);"></i> Async</span>
+      <span class="badge"><i class="ri-brain-line" style="color:var(--neon-purple);"></i> Embedded NER</span>
+      <span class="badge"><i class="ri-file-list-line" style="color:var(--neon-blue);"></i> MIT License</span>
     </div>
   </div>
 </header>
@@ -631,32 +627,32 @@ section { padding: 80px 0; }
 
     <div class="features-grid">
       <div class="feature-card">
-        <span class="feature-icon"><span class="icon icon-feature" style="color:var(--neon-pink);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7"/><line x1="15" y1="15" x2="21" y2="21"/></svg></span></span>
+        <span class="feature-icon" style="color:var(--neon-pink);"><i class="ri-search-line"></i></span>
         <h3>Comprehensive DNS Analysis</h3>
         <p>Analyzes DNS TXT records — SPF entries, domain verification strings, and more — to uncover vendor relationships hiding in plain sight.</p>
       </div>
       <div class="feature-card">
-        <span class="feature-icon"><span class="icon icon-feature" style="color:var(--neon-blue);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg></span></span>
+        <span class="feature-icon" style="color:var(--neon-blue);"><i class="ri-loop-left-line"></i></span>
         <h3>Recursive Discovery</h3>
         <p>The party doesn't stop at the 3rd. Configurable depth analysis or automatic discovery until it hits common denominators.</p>
       </div>
       <div class="feature-card">
-        <span class="feature-icon"><span class="icon icon-feature" style="color:var(--neon-purple);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="4" cy="6" r="2"/><circle cx="4" cy="18" r="2"/><circle cx="12" cy="4" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="20" r="2"/><circle cx="20" cy="8" r="2"/><circle cx="20" cy="16" r="2"/><line x1="6" y1="6" x2="10" y2="4"/><line x1="6" y1="6" x2="10" y2="12"/><line x1="6" y1="18" x2="10" y2="12"/><line x1="6" y1="18" x2="10" y2="20"/><line x1="14" y1="4" x2="18" y2="8"/><line x1="14" y1="12" x2="18" y2="8"/><line x1="14" y1="12" x2="18" y2="16"/><line x1="14" y1="20" x2="18" y2="16"/></svg></span></span>
+        <span class="feature-icon" style="color:var(--neon-purple);"><i class="ri-brain-line"></i></span>
         <h3>Embedded NER</h3>
         <p>Optional GLiNER model for intelligent organization name extraction. Works completely offline — no API keys, no external services.</p>
       </div>
       <div class="feature-card">
-        <span class="feature-icon"><span class="icon icon-feature" style="color:var(--neon-green);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10A15.3 15.3 0 0112 2z"/></svg></span></span>
+        <span class="feature-icon" style="color:var(--neon-green);"><i class="ri-global-line"></i></span>
         <h3>Cross-Platform</h3>
         <p>Runs on Windows, macOS (Intel + Apple Silicon), and Linux. Docker image available for containerized workflows.</p>
       </div>
       <div class="feature-card">
-        <span class="feature-icon"><span class="icon icon-feature" style="color:var(--neon-gold);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="14" width="4" height="7"/><rect x="10" y="9" width="4" height="12"/><rect x="17" y="4" width="4" height="17"/><line x1="2" y1="22" x2="22" y2="22"/></svg></span></span>
+        <span class="feature-icon" style="color:var(--neon-gold);"><i class="ri-bar-chart-grouped-line"></i></span>
         <h3>Multiple Export Formats</h3>
         <p>CSV, JSON, Markdown, and HTML output with detailed relationship mapping. Your data, your format.</p>
       </div>
       <div class="feature-card">
-        <span class="feature-icon"><span class="icon icon-feature" style="color:var(--neon-gold);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span></span>
+        <span class="feature-icon" style="color:var(--neon-gold);"><i class="ri-flashlight-line"></i></span>
         <h3>High Performance</h3>
         <p>Built in Rust with async processing, intelligent caching, and configurable parallelism. Finds parties fast.</p>
       </div>
@@ -728,7 +724,7 @@ section { padding: 80px 0; }
 <span class="t-out">&nbsp;&nbsp;Layer 2 (4th party):</span> <span class="t-val">5 vendors</span><br>
 <span class="t-out">&nbsp;&nbsp;Layer 3 (5th party):</span> <span class="t-val">3 vendors</span><br>
 <br>
-<span class="t-ok"><span class="icon" style="color:var(--neon-green);"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg></span> Party mapped! Results → acme_vendors.json</span>
+<span class="t-ok"><i class="ri-checkbox-circle-line" style="color:var(--neon-green);"></i> Party mapped! Results → acme_vendors.json</span>
       </div>
     </div>
   </div>
@@ -761,7 +757,7 @@ section { padding: 80px 0; }
 
     <div class="install-grid">
       <div class="install-card">
-        <h3><span class="icon icon-install" style="color:var(--neon-blue);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18s2-1 4.5-1 4 1.5 5.5 1.5S18 17 20 17"/><rect x="8" y="8" width="3" height="3" rx="0.5"/><rect x="12" y="8" width="3" height="3" rx="0.5"/><rect x="16" y="8" width="3" height="3" rx="0.5"/><rect x="12" y="4" width="3" height="3" rx="0.5"/><rect x="8" y="12" width="3" height="3" rx="0.5"/><rect x="12" y="12" width="3" height="3" rx="0.5"/><path d="M3 14c0-1.5 1-3 3-4"/></svg></span> Docker</h3>
+        <h3><i class="ri-box-3-line" style="color:var(--neon-blue);"></i> Docker</h3>
         <span class="rec">Recommended</span>
         <p>Pre-built image with embedded NER. Start scanning immediately.</p>
         <pre><code>docker pull ghcr.io/grcengineering/nthpartyfinder:latest
@@ -770,12 +766,12 @@ docker run -v $(pwd)/output:/output \
   nthpartyfinder -d example.com -r 2</code></pre>
       </div>
       <div class="install-card">
-        <h3><span class="icon icon-install" style="color:var(--neon-gold);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span> Pre-built Binaries</h3>
+        <h3><i class="ri-archive-line" style="color:var(--neon-gold);"></i> Pre-built Binaries</h3>
         <p>Download from <a href="https://github.com/grcengineering/nthpartyfinder/releases" target="_blank" rel="noopener">GitHub Releases</a>. Available as <code style="background:var(--bg);color:var(--neon-blue);padding:2px 6px;border-radius:3px;font-family:var(--font-mono);font-size:.8rem;">full</code> (~150MB w/ NER) or <code style="background:var(--bg);color:var(--neon-blue);padding:2px 6px;border-radius:3px;font-family:var(--font-mono);font-size:.8rem;">slim</code> (~15MB).</p>
         <p style="font-size:.82rem;">Windows x86_64 · macOS Intel & Apple Silicon · Linux x86_64</p>
       </div>
       <div class="install-card">
-        <h3><span class="icon icon-install" style="color:var(--neon-pink);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg></span> Build from Source</h3>
+        <h3><i class="ri-terminal-box-line" style="color:var(--neon-pink);"></i> Build from Source</h3>
         <p>Clone, build, and customize. Requires Rust toolchain.</p>
         <pre><code>git clone https://github.com/grcengineering/nthpartyfinder.git
 cd nthpartyfinder
@@ -788,7 +784,7 @@ cargo build --release</code></pre>
 <!-- BOTTOM CTA -->
 <section class="bottom-cta">
   <div class="container">
-    <div style="margin-bottom:20px;"><span class="icon icon-xl" style="color:var(--neon-pink);filter:drop-shadow(0 0 12px var(--neon-pink));"><svg class="icon-xl" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 44L24 20L34 44Z" fill="none"/><line x1="24" y1="20" x2="24" y2="6"/><line x1="24" y1="20" x2="12" y2="10"/><line x1="24" y1="20" x2="36" y2="10"/><line x1="24" y1="20" x2="8" y2="20"/><line x1="24" y1="20" x2="40" y2="20"/><circle cx="24" cy="5" r="1.5" fill="currentColor" stroke="none"/><circle cx="11" cy="9" r="1.2" fill="currentColor" stroke="none"/><circle cx="37" cy="9" r="1.2" fill="currentColor" stroke="none"/><circle cx="7" cy="20" r="1" fill="currentColor" stroke="none"/><circle cx="41" cy="20" r="1" fill="currentColor" stroke="none"/><rect x="18" y="14" width="3" height="3" rx="0.5" transform="rotate(30 19.5 15.5)" opacity="0.6" fill="currentColor" stroke="none"/><rect x="30" y="15" width="2.5" height="2.5" rx="0.5" transform="rotate(-25 31.25 16.25)" opacity="0.6" fill="currentColor" stroke="none"/></svg></span></div>
+    <div class="bottom-cta-icon" style="margin-bottom:20px;color:var(--neon-pink);"><i class="ri-sparkling-line"></i></div>
     <h2 class="section-title">Ready to Find Your Nth Party?</h2>
     <p class="backronym">RSVP: Recursive Security Vendor Profiler</p>
     <div class="hero-ctas">
@@ -803,6 +799,7 @@ cargo build --release</code></pre>
 <footer class="footer">
   <div class="container">
     <p>Nth Party Finder · <a href="https://github.com/grcengineering/nthpartyfinder" target="_blank" rel="noopener">GitHub</a> · MIT License · <a href="https://grc.engineering" target="_blank" rel="noopener">GRC Engineering</a></p>
+    <span style="opacity: 0.5; font-size: 0.75rem;">Icons by <a href="https://remixicon.com" style="color: inherit;">Remix Icon</a></span>
   </div>
 </footer>
 
