@@ -180,28 +180,37 @@ a:hover { color: var(--neon-blue); }
 
 .hero-title {
   font-family: var(--font-display);
-  font-size: clamp(2.4rem, 7vw, 5rem);
-  font-weight: 700;
-  line-height: 1.8;
-  letter-spacing: 4px;
+  font-size: clamp(3.2rem, 9vw, 6.5rem);
+  font-weight: 900;
+  letter-spacing: 6px;
   text-transform: uppercase;
   line-height: 1.15;
-  color: var(--text-bright);
+  color: #fff;
   margin-bottom: 12px;
   position: relative;
   z-index: 1;
 }
+@keyframes lava-shadow {
+  0%   { text-shadow: 3px 3px 0 #FFA84F, -2px 2px 0 #1B95C1; }
+  15%  { text-shadow: 3px 3px 0 #ffb86a, -2px 2px 0 #1da8d6; }
+  30%  { text-shadow: 3px 3px 0 #1B95C1, -2px 2px 0 #FFA84F; }
+  45%  { text-shadow: 3px 3px 0 #1da8d6, -2px 2px 0 #ffb86a; }
+  60%  { text-shadow: 3px 3px 0 #2bb5e0, -2px 2px 0 #ff9a35; }
+  75%  { text-shadow: 3px 3px 0 #FFA84F, -2px 2px 0 #2bb5e0; }
+  100% { text-shadow: 3px 3px 0 #FFA84F, -2px 2px 0 #1B95C1; }
+}
 .hero-title .neon-word {
-  background: linear-gradient(135deg, var(--neon-pink), var(--neon-blue));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-shadow: none;
-  position: relative;
-  filter: drop-shadow(0 0 12px rgba(255,168,79,.6)) drop-shadow(0 0 40px rgba(255,168,79,.3));
+  -webkit-text-fill-color: #fff;
+  color: #fff;
+  background: none;
+  -webkit-background-clip: unset;
+  background-clip: unset;
+  animation: lava-shadow 6s ease-in-out infinite;
+  filter: none;
 }
 .hero-title span:not(.neon-word) {
-  text-shadow: 0 0 20px rgba(255,255,255,.3), 0 0 60px rgba(27,149,193,.3);
+  animation: lava-shadow 6s ease-in-out infinite;
+  animation-delay: -3s;
 }
 
 .hero-tagline {
