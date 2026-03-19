@@ -3,245 +3,806 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nth Party Finder — Choose Your Vibe</title>
+<title>Nth Party Finder — GRC Engineering</title>
+<meta name="description" content="Map your entire vendor party guest list — from third parties to the Nth degree — through DNS analysis.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
 <style>
+/* ══════════════════════════════════════════════
+   NTH PARTY FINDER — Design System
+   GRC Engineering colors + retro arcade aesthetic
+   ══════════════════════════════════════════════ */
 :root {
-  --bg: #0a0a12;
-  --card-bg: #12121e;
-  --border: rgba(255,255,255,.06);
-  --text: #a0a0b8;
-  --text-bright: #e8e8f0;
+  --bg-deep:    #06060f;
+  --bg:         #0b0b1a;
+  --bg-card:    #111128;
+  --bg-surface: #1a1a3e;
+  --border:     rgba(255, 168, 79, 0.15);
+  --border-hover: rgba(255, 168, 79, 0.5);
+
+  --neon-pink:   #FFA84F;
+  --neon-blue:   #1B95C1;
+  --neon-purple: #b388ff;
+  --neon-green:  #39ff14;
+  --neon-gold:   #ffd700;
+
+  --text:       #c8c8e0;
+  --text-dim:   #6e6e8a;
+  --text-bright:#f0f0ff;
+
+  --font-display: 'Press Start 2P', 'Syncopate', sans-serif;
+  --font-body:    'Space Grotesk', sans-serif;
+  --font-mono:    'Space Mono', monospace;
+
+  --container: 1100px;
+  --gutter: 24px;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{
-  font-family:'Sora',sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:40px 24px;
-  -webkit-font-smoothing:antialiased;
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg-deep);
+  -webkit-font-smoothing: antialiased;
 }
-.page{max-width:960px;width:100%;text-align:center;}
-.title{
-  font-size:clamp(1.8rem,4vw,2.6rem);
-  font-weight:700;
-  color:var(--text-bright);
-  margin-bottom:8px;
+a { color: var(--neon-pink); text-decoration: none; transition: color .2s; }
+a:hover { color: var(--neon-blue); }
+
+.container { max-width: var(--container); margin: 0 auto; padding: 0 var(--gutter); }
+
+/* ── ICON SYSTEM ── */
+.feature-icon i {
+  font-size: 2.2rem;
+  text-shadow: 0 0 6px currentColor;
 }
-.sub{
-  font-size:1rem;
-  color:var(--text);
-  margin-bottom:48px;
+.badge i {
+  font-size: 0.9rem;
+  vertical-align: middle;
+  text-shadow: 0 0 3px currentColor;
 }
-.cards{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:20px;
+.install-card h3 i {
+  font-size: 1.3rem;
+  text-shadow: 0 0 4px currentColor;
 }
-.card{
-  display:block;
-  text-decoration:none;
-  color:inherit;
-  border-radius:12px;
-  overflow:hidden;
-  border:1px solid var(--border);
-  transition:all .3s ease;
+.bottom-cta-icon i {
+  font-size: 3.5rem;
+  text-shadow: 0 0 12px currentColor;
 }
-.card:hover{
-  transform:translateY(-6px);
-  border-color:rgba(255,255,255,.15);
+.terminal-body i {
+  font-size: 0.9rem;
+  vertical-align: middle;
 }
-.card-preview{
-  height:180px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  gap:12px;
+
+/* ── NAV ── */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(6, 6, 15, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 0;
+}
+.nav .container {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--neon-pink);
+  text-shadow: 0 0 20px rgba(255, 168, 79, 0.4);
+}
+.nav-links { display: flex; gap: 28px; }
+.nav-links a {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  letter-spacing: 0.5px;
+  transition: color .2s, text-shadow .2s;
+}
+.nav-links a:hover {
+  color: var(--neon-pink);
+  text-shadow: 0 0 12px rgba(255, 168, 79, 0.5);
+}
+
+/* ── HERO ── */
+.hero {
+  padding: 120px 0 100px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 600px 400px at 20% 50%, rgba(255,168,79,.12) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 350px at 80% 30%, rgba(27,149,193,.1) 0%, transparent 70%),
+    radial-gradient(ellipse 400px 400px at 50% 80%, rgba(179,136,255,.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* confetti */
+@keyframes confetti-drift {
+  0%   { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+  10%  { opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+.confetti-piece {
+  position: absolute;
+  animation: confetti-drift linear infinite;
+  pointer-events: none;
+  opacity: 0;
+}
+.confetti-piece {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--neon-pink);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+  position: relative;
+  z-index: 1;
+}
+.hero-eyebrow .dot {
+  width: 6px; height: 6px;
+  background: var(--neon-pink);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--neon-pink);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--neon-pink); }
+  50% { opacity: .5; box-shadow: 0 0 20px var(--neon-pink); }
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 4vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1.8;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  line-height: 1.15;
+  color: var(--text-bright);
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+}
+.hero-title .neon-word {
+  background: linear-gradient(135deg, var(--neon-pink), var(--neon-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+}
+
+.hero-tagline {
+  font-family: var(--font-mono);
+  font-size: 1.05rem;
+  color: var(--neon-pink);
+  margin-bottom: 24px;
+  position: relative; z-index: 1;
+  text-shadow: 0 0 15px rgba(255,168,79,.4);
+}
+@keyframes flicker {
+  0%,19%,21%,23%,25%,54%,56%,100% { opacity:1; }
+  20%,24%,55% { opacity:.5; }
+}
+.hero-tagline { animation: flicker 4s infinite; }
+
+.hero-desc {
+  font-size: 1.1rem;
+  color: var(--text);
+  max-width: 640px;
+  margin: 0 auto 36px;
+  position: relative; z-index: 1;
+  line-height: 1.75;
+}
+
+.hero-ctas {
+  display: flex; gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  position: relative; z-index: 1;
+}
+
+.btn-neon {
+  font-family: var(--font-display);
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 16px 36px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: all .25s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+.btn-neon-primary {
+  background: linear-gradient(135deg, var(--neon-pink), #ff6b9d);
+  color: #fff;
+  box-shadow: 0 0 30px rgba(255,168,79,.3), inset 0 0 20px rgba(255,255,255,.05);
+}
+.btn-neon-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 50px rgba(255,168,79,.5), inset 0 0 20px rgba(255,255,255,.1);
+  color: #fff;
+}
+.btn-neon-ghost {
+  background: transparent;
+  color: var(--neon-blue);
+  border: 1px solid rgba(27,149,193,.3);
+}
+.btn-neon-ghost:hover {
+  border-color: var(--neon-blue);
+  box-shadow: 0 0 25px rgba(27,149,193,.2);
+  color: var(--neon-blue);
+}
+
+.hero-badges {
+  display: flex; gap: 10px;
+  justify-content: center; flex-wrap: wrap;
+  margin-top: 32px;
+  position: relative; z-index: 1;
+}
+.badge {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 5px 14px;
+  border-radius: 2px;
+  background: rgba(255,168,79,.08);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── SECTIONS ── */
+section { padding: 80px 0; }
+.section-label {
+  font-family: var(--font-display);
+  font-size: 0.45rem;
+  font-weight: 700;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--neon-pink);
+  margin-bottom: 8px;
+  text-shadow: 0 0 10px rgba(255,168,79,.3);
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(0.9rem, 2vw, 1.3rem);
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-bright);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+.section-sub {
+  color: var(--text-dim);
+  font-size: 1rem;
+  margin-bottom: 48px;
+  max-width: 600px;
+}
+
+/* ── FEATURE GRID ── */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+.feature-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 32px;
+  transition: all .3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--neon-pink), var(--neon-blue));
+  opacity: 0;
+  transition: opacity .3s;
+}
+.feature-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 40px rgba(255,168,79,.08);
+}
+.feature-card:hover::before { opacity: 1; }
+.feature-icon {
+  margin-bottom: 16px;
+  display: flex;
+  line-height: 1;
+}
+.feature-card h3 {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin-bottom: 8px;
+}
+.feature-card p {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* ── HOW IT WORKS (steps) ── */
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-width: 680px;
+}
+.step {
+  display: flex;
+  gap: 24px;
+  padding: 28px 0;
   position: relative;
 }
-.card-preview .card-icon { display: flex; align-items: center; gap: 8px; }
-.card-preview .label{
-  font-size:.7rem;
-  font-weight:600;
-  letter-spacing:3px;
-  text-transform:uppercase;
+.step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 23px; top: 76px; bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--neon-pink), transparent);
 }
-.card-body{
-  padding:24px;
-  background:var(--card-bg);
+.step-num {
+  min-width: 48px; height: 48px;
+  background: var(--bg-card);
+  border: 1px solid var(--neon-pink);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display);
+  font-size: 0.5rem;
+  font-weight: 700;
+  color: var(--neon-pink);
+  flex-shrink: 0;
+  box-shadow: 0 0 15px rgba(255,168,79,.15);
 }
-.card-body h3{
-  font-size:1.05rem;
-  font-weight:700;
-  color:var(--text-bright);
-  margin-bottom:4px;
+.step-content h3 {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--neon-blue);
+  margin-bottom: 4px;
 }
-.card-body .font-stack{
-  font-size:.72rem;
-  letter-spacing:.5px;
-  margin-bottom:8px;
-  opacity:.5;
-}
-.card-body p{
-  font-size:.88rem;
-  line-height:1.5;
-  color:var(--text);
+.step-content p {
+  color: var(--text-dim);
+  font-size: 0.9rem;
 }
 
-/* card A — Neon */
-.card-a .card-preview{
-  background:linear-gradient(135deg,#06060f,#0b0b1a,#1a1a3e);
+/* ── TERMINAL ── */
+.terminal {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  max-width: 720px;
+  margin: 48px auto 0;
+  overflow: hidden;
+  box-shadow: 0 0 60px rgba(255,168,79,.06);
 }
-.card-a .label{color:#e94560;text-shadow:0 0 12px rgba(233,69,96,.5);}
-.card-a:hover{box-shadow:0 12px 40px rgba(233,69,96,.15);}
-.card-a .card-icon svg { filter: drop-shadow(0 0 6px currentColor); }
+.terminal-bar {
+  background: var(--bg-card);
+  padding: 12px 16px;
+  display: flex; gap: 8px; align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+.terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+.terminal-title {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  margin-left: 8px;
+  letter-spacing: 1px;
+}
+.terminal-body {
+  padding: 24px;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  line-height: 2;
+  overflow-x: auto;
+}
+.t-prompt { color: var(--neon-pink); }
+.t-cmd { color: var(--text-bright); }
+.t-flag { color: var(--neon-blue); }
+.t-val { color: var(--neon-green); }
+.t-out { color: var(--text-dim); }
+.t-ok { color: var(--neon-green); }
+.t-num { color: var(--neon-gold); }
+.t-accent { color: var(--neon-pink); }
 
-/* card B — Invitation */
-.card-b .card-preview{
-  background:linear-gradient(135deg,#fdf8ef,#efe3c8,#fdf8ef);
+/* ── PARTY CRASHERS ── */
+.crasher-tags {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  margin-top: 20px;
 }
-.card-b .label{color:#722f37;}
-.card-b:hover{box-shadow:0 12px 40px rgba(201,149,43,.2);}
+.crasher-tag {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  padding: 8px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  transition: all .2s;
+}
+.crasher-tag:hover {
+  border-color: var(--neon-pink);
+  color: var(--neon-pink);
+  box-shadow: 0 0 15px rgba(255,168,79,.1);
+}
 
-/* card C — Developer */
-.card-c .card-preview{
-  background:linear-gradient(135deg,#0c1017,#111820,#1c2530);
+/* ── INSTALL ── */
+.install-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
 }
-.card-c .label{color:#4a9eff;}
-.card-c:hover{box-shadow:0 12px 40px rgba(74,158,255,.15);}
+.install-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 28px;
+  transition: all .3s;
+}
+.install-card:hover {
+  border-color: rgba(27,149,193,.3);
+}
+.install-card h3 {
+  font-family: var(--font-body);
+  font-weight: 600;
+  color: var(--text-bright);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.install-card .rec {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--neon-green);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.install-card p {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  margin: 8px 0;
+}
+.install-card pre {
+  background: var(--bg);
+  padding: 16px;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin-top: 12px;
+  border: 1px solid rgba(255,255,255,.04);
+}
+.install-card pre code {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--neon-green);
+  line-height: 1.7;
+}
+.install-card a { color: var(--neon-blue); }
 
-.back{
-  margin-top:40px;
-  font-size:.85rem;
+/* ── BOTTOM CTA ── */
+.bottom-cta {
+  text-align: center;
+  padding: 100px 0 80px;
+  position: relative;
 }
-.back a{
-  color:var(--text);
-  text-decoration:none;
-  transition:color .2s;
+.bottom-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 600px 300px at 50% 60%, rgba(255,168,79,.1) 0%, transparent 70%);
+  pointer-events: none;
 }
-.back a:hover{color:var(--text-bright);}
+.bottom-cta .section-title { margin-bottom: 8px; }
+.bottom-cta .backronym {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  margin-bottom: 32px;
+}
+.bottom-cta .dev {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  margin-top: 28px;
+}
+.bottom-cta .dev a { color: var(--neon-blue); }
+
+/* ── FOOTER ── */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 24px 0;
+  text-align: center;
+}
+.footer p {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+.footer a { color: var(--neon-pink); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .hero { padding: 80px 0 60px; }
+  .nav-links { gap: 16px; }
+  .features-grid { grid-template-columns: 1fr; }
+  .install-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 520px) {
+  .nav-links { display: none; }
+  .hero-ctas { flex-direction: column; align-items: center; }
+}
 </style>
 </head>
 <body>
-<div class="page">
-  <h1 class="title">Nth Party Finder</h1>
-  <p class="sub">Three vibes. Same great party-finding power. Pick one.</p>
 
-  <div class="cards">
-    <a href="neon/" class="card card-a">
-      <div class="card-preview">
-        <div class="card-icon">
-          <!-- Neon confetti burst -->
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20 4L22 14L30 8L24 16L34 18L24 20L30 28L22 22L20 34L18 22L10 28L16 20L4 18L16 16L10 8L18 14Z" stroke="#e94560" stroke-width="1.5" fill="none"/>
-            <circle cx="20" cy="20" r="3" fill="#4cc9f0"/>
-          </svg>
-          <!-- Neon crystal -->
-          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M18 3L28 13L18 33L8 13Z" stroke="#b388ff" stroke-width="1.5" fill="none"/>
-            <path d="M8 13H28" stroke="#b388ff" stroke-width="1" opacity=".5"/>
-            <path d="M18 3L13 13M18 3L23 13" stroke="#b388ff" stroke-width="1" opacity=".4"/>
-          </svg>
-          <!-- Neon starburst -->
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20 2V10M20 30V38M2 20H10M30 20H38M7 7L13 13M27 27L33 33M33 7L27 13M13 27L7 33" stroke="#4cc9f0" stroke-width="1.5" stroke-linecap="round"/>
-            <circle cx="20" cy="20" r="4" stroke="#e94560" stroke-width="1.5" fill="none"/>
-          </svg>
-        </div>
-        <span class="label">Neon Night Club</span>
-      </div>
-      <div class="card-body">
-        <h3>Option A</h3>
-        <div class="font-stack">Syncopate · Space Grotesk · Space Mono</div>
-        <p>Dark cyberpunk. Neon glows. Confetti raining down. The party that never sleeps.</p>
-      </div>
-    </a>
-
-    <a href="invitation/" class="card card-b">
-      <div class="card-preview">
-        <div class="card-icon">
-          <!-- Balloon -->
-          <svg width="28" height="42" viewBox="0 0 28 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <ellipse cx="14" cy="14" rx="12" ry="14" fill="#c9952b" opacity=".7"/>
-            <path d="M14 28L12 32H16L14 28Z" fill="#c9952b" opacity=".5"/>
-            <path d="M14 32C14 32 12 36 13 40" stroke="#8b6914" stroke-width="1" fill="none" stroke-linecap="round"/>
-            <ellipse cx="10" cy="10" rx="3" ry="4" fill="#e8c872" opacity=".3"/>
-          </svg>
-          <!-- Tiered cake -->
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="8" y="26" width="24" height="8" rx="2" fill="#722f37" opacity=".6"/>
-            <rect x="11" y="18" width="18" height="8" rx="2" fill="#722f37" opacity=".5"/>
-            <rect x="14" y="10" width="12" height="8" rx="2" fill="#722f37" opacity=".4"/>
-            <path d="M20 4V10" stroke="#c9952b" stroke-width="1.5" stroke-linecap="round"/>
-            <circle cx="20" cy="3" r="2" fill="#c9952b" opacity=".8"/>
-            <path d="M8 30H32M11 22H29M14 14H26" stroke="#e8c872" stroke-width=".5" opacity=".4"/>
-          </svg>
-          <!-- Balloon -->
-          <svg width="28" height="42" viewBox="0 0 28 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <ellipse cx="14" cy="14" rx="12" ry="14" fill="#722f37" opacity=".5"/>
-            <path d="M14 28L12 32H16L14 28Z" fill="#722f37" opacity=".4"/>
-            <path d="M14 32C14 32 16 37 15 40" stroke="#4a3520" stroke-width="1" fill="none" stroke-linecap="round"/>
-            <ellipse cx="10" cy="10" rx="3" ry="4" fill="#c9952b" opacity=".2"/>
-          </svg>
-        </div>
-        <span class="label">Party Invitation</span>
-      </div>
-      <div class="card-body">
-        <h3>Option B</h3>
-        <div class="font-stack">Playfair Display · Crimson Pro · Dancing Script</div>
-        <p>Warm parchment. Elegant serifs. Floating balloons. The party you'd RSVP to.</p>
-      </div>
-    </a>
-
-    <a href="developer/" class="card card-c">
-      <div class="card-preview">
-        <div class="card-icon">
-          <!-- Party crab (Rust mascot with party hat) -->
-          <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- party hat -->
-            <path d="M22 2L26 12H18Z" fill="#d29922" opacity=".6"/>
-            <circle cx="22" cy="2" r="1.5" fill="#f85149" opacity=".5"/>
-            <!-- crab body -->
-            <ellipse cx="22" cy="24" rx="10" ry="8" stroke="#4a9eff" stroke-width="1.5" fill="none"/>
-            <!-- eyes -->
-            <circle cx="18" cy="22" r="1.5" fill="#4a9eff"/>
-            <circle cx="26" cy="22" r="1.5" fill="#4a9eff"/>
-            <!-- claws -->
-            <path d="M12 24C8 22 6 18 8 16" stroke="#4a9eff" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-            <path d="M6 16C5 14 7 13 8 14" stroke="#4a9eff" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-            <path d="M32 24C36 22 38 18 36 16" stroke="#4a9eff" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-            <path d="M38 16C39 14 37 13 36 14" stroke="#4a9eff" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-            <!-- legs -->
-            <path d="M14 30L10 36M16 31L13 38M28 31L31 38M30 30L34 36" stroke="#4a9eff" stroke-width="1" stroke-linecap="round" opacity=".5"/>
-          </svg>
-          <!-- Terminal bracket -->
-          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8 10L16 18L8 26" stroke="#3fb950" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M18 26H28" stroke="#3fb950" stroke-width="2" stroke-linecap="round"/>
-            <!-- tiny confetti dots (easter egg) -->
-            <circle cx="28" cy="8" r="1" fill="#d29922" opacity=".3"/>
-            <circle cx="32" cy="12" r=".8" fill="#f85149" opacity=".2"/>
-          </svg>
-        </div>
-        <span class="label">Developer Party</span>
-      </div>
-      <div class="card-body">
-        <h3>Option C</h3>
-        <div class="font-stack">Sora · IBM Plex Sans · JetBrains Mono</div>
-        <p>GitHub-dark aesthetic. Party easter eggs in the details. Professional with surprises.</p>
-      </div>
-    </a>
+<!-- NAV -->
+<nav class="nav">
+  <div class="container">
+    <div class="nav-logo">Nth Party Finder</div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#install">Install</a>
+      <a href="https://github.com/grcengineering/nthpartyfinder" target="_blank" rel="noopener">GitHub</a>
+    </div>
   </div>
+</nav>
 
-  <p class="back"><a href="https://grc.engineering/projects/">&larr; Back to Projects</a></p>
-</div>
+<!-- HERO -->
+<header class="hero">
+  <!-- Confetti pieces -->
+  <div class="confetti-piece" style="left:5%;animation-duration:5s;animation-delay:0s;background:var(--neon-pink);"></div>
+  <div class="confetti-piece" style="left:12%;animation-duration:6s;animation-delay:1.2s;background:var(--neon-blue);border-radius:50%;"></div>
+  <div class="confetti-piece" style="left:22%;animation-duration:5.5s;animation-delay:.4s;background:var(--neon-green);"></div>
+  <div class="confetti-piece" style="left:33%;animation-duration:6.5s;animation-delay:2s;background:var(--neon-gold);border-radius:50%;"></div>
+  <div class="confetti-piece" style="left:44%;animation-duration:5.2s;animation-delay:.8s;background:var(--neon-purple);"></div>
+  <div class="confetti-piece" style="left:55%;animation-duration:6.2s;animation-delay:1.5s;background:var(--neon-pink);border-radius:50%;"></div>
+  <div class="confetti-piece" style="left:66%;animation-duration:5.8s;animation-delay:.2s;background:var(--neon-blue);"></div>
+  <div class="confetti-piece" style="left:77%;animation-duration:6.8s;animation-delay:2.5s;background:var(--neon-green);border-radius:50%;"></div>
+  <div class="confetti-piece" style="left:88%;animation-duration:5.4s;animation-delay:1s;background:var(--neon-gold);"></div>
+  <div class="confetti-piece" style="left:95%;animation-duration:6.4s;animation-delay:.6s;background:var(--neon-purple);border-radius:50%;"></div>
+
+  <div class="container">
+    <div class="hero-eyebrow"><span class="dot"></span> GRC Engineering Open Source</div>
+    <h1 class="hero-title">
+      <span class="neon-word">Nth Party</span><br>Finder
+    </h1>
+    <p class="hero-tagline">Every party has an Nth degree</p>
+    <p class="hero-desc">
+      A high-performance CLI that maps your entire vendor party guest list — from third parties to the Nth degree — through DNS analysis. Built in Rust for speed, safety, and serious party-finding power.
+    </p>
+    <div class="hero-ctas">
+      <a href="https://github.com/grcengineering/nthpartyfinder" class="btn-neon btn-neon-primary" target="_blank" rel="noopener">Get the Party Started</a>
+      <a href="https://github.com/grcengineering/nthpartyfinder/releases" class="btn-neon btn-neon-ghost" target="_blank" rel="noopener"><i class="ri-download-line"></i> Download</a>
+    </div>
+    <div class="hero-badges">
+      <span class="badge"><i class="ri-settings-3-line" style="color:var(--neon-pink);"></i> Rust</span>
+      <span class="badge"><i class="ri-flashlight-line" style="color:var(--neon-gold);"></i> Async</span>
+      <span class="badge"><i class="ri-brain-line" style="color:var(--neon-purple);"></i> Embedded NER</span>
+      <span class="badge"><i class="ri-file-list-line" style="color:var(--neon-blue);"></i> MIT License</span>
+    </div>
+  </div>
+</header>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="container">
+    <div class="section-label">Who's Coming to the Party?</div>
+    <h2 class="section-title">Features</h2>
+    <p class="section-sub">Your vendors have vendors who have vendors. Time to find out who's really on the guest list.</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <span class="feature-icon" style="color:var(--neon-pink);"><i class="ri-search-line"></i></span>
+        <h3>Comprehensive DNS Analysis</h3>
+        <p>Analyzes DNS TXT records — SPF entries, domain verification strings, and more — to uncover vendor relationships hiding in plain sight.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon" style="color:var(--neon-blue);"><i class="ri-loop-left-line"></i></span>
+        <h3>Recursive Discovery</h3>
+        <p>The party doesn't stop at the 3rd. Configurable depth analysis or automatic discovery until it hits common denominators.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon" style="color:var(--neon-purple);"><i class="ri-brain-line"></i></span>
+        <h3>Embedded NER</h3>
+        <p>Optional GLiNER model for intelligent organization name extraction. Works completely offline — no API keys, no external services.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon" style="color:var(--neon-green);"><i class="ri-global-line"></i></span>
+        <h3>Cross-Platform</h3>
+        <p>Runs on Windows, macOS (Intel + Apple Silicon), and Linux. Docker image available for containerized workflows.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon" style="color:var(--neon-gold);"><i class="ri-bar-chart-grouped-line"></i></span>
+        <h3>Multiple Export Formats</h3>
+        <p>CSV, JSON, Markdown, and HTML output with detailed relationship mapping. Your data, your format.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon" style="color:var(--neon-gold);"><i class="ri-flashlight-line"></i></span>
+        <h3>High Performance</h3>
+        <p>Built in Rust with async processing, intelligent caching, and configurable parallelism. Finds parties fast.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works" style="background: var(--bg);">
+  <div class="container">
+    <div class="section-label">The Main Event</div>
+    <h2 class="section-title">How the Party Gets Started</h2>
+    <p class="section-sub">From domain to full vendor map in seconds</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <h3>Send the Invites</h3>
+          <p>Point it at a domain. DNS TXT records get queried for SPF includes, domain verification tokens, and other vendor fingerprints.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <h3>Check the Guest List</h3>
+          <p>Parses discovered records to identify vendor domains. WHOIS lookups resolve organizations. The NER model catches names that regex would miss.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <h3>Follow the Plus-Ones</h3>
+          <p>Each discovered vendor gets the same treatment. Their DNS records reveal their vendors — mapping the full party tree to the Nth degree.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-content">
+          <h3>Bounce the Party Crashers</h3>
+          <p>Common infrastructure providers (AWS, Azure, Cloudflare) are flagged — everyone uses them, so recursion stops to keep results meaningful.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">05</div>
+        <div class="step-content">
+          <h3>Hand Out Party Favors</h3>
+          <p>Generates a comprehensive relationship map in CSV, JSON, Markdown, or HTML.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="terminal-dot" style="background:var(--neon-pink);"></div>
+        <div class="terminal-dot" style="background:var(--neon-gold);"></div>
+        <div class="terminal-dot" style="background:var(--neon-green);"></div>
+        <span class="terminal-title">party-terminal</span>
+      </div>
+      <div class="terminal-body">
+<span class="t-prompt">$</span> <span class="t-cmd">nthpartyfinder</span> <span class="t-flag">--domain</span> <span class="t-val">acme.com</span> <span class="t-flag">--depth</span> <span class="t-val">3</span> <span class="t-flag">-f</span> <span class="t-val">json</span>
+<br><br>
+<span class="t-accent">=== Party Analysis Summary ===</span><br>
+<span class="t-out">Total vendor relationships found:</span> <span class="t-num">12</span><br>
+<span class="t-out">Maximum depth reached:</span> <span class="t-num">3 layers</span><br>
+<span class="t-out">Unique vendor domains:</span> <span class="t-num">8</span><br>
+<span class="t-out">Unique vendor organizations:</span> <span class="t-num">6</span><br>
+<span class="t-out">&nbsp;&nbsp;Layer 1 (3rd party):</span> <span class="t-val">4 vendors</span><br>
+<span class="t-out">&nbsp;&nbsp;Layer 2 (4th party):</span> <span class="t-val">5 vendors</span><br>
+<span class="t-out">&nbsp;&nbsp;Layer 3 (5th party):</span> <span class="t-val">3 vendors</span><br>
+<br>
+<span class="t-ok"><i class="ri-checkbox-circle-line" style="color:var(--neon-green);"></i> Party mapped! Results → acme_vendors.json</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARTY CRASHERS -->
+<section>
+  <div class="container">
+    <div class="section-label">Uninvited</div>
+    <h2 class="section-title">Party Crashers Detected</h2>
+    <p class="section-sub">These common infrastructure vendors show up at everyone's party — recursion stops here to keep results meaningful.</p>
+
+    <div class="crasher-tags">
+      <span class="crasher-tag">AWS</span>
+      <span class="crasher-tag">Azure</span>
+      <span class="crasher-tag">Google Cloud</span>
+      <span class="crasher-tag">Cloudflare</span>
+      <span class="crasher-tag">Fastly</span>
+      <span class="crasher-tag">Akamai</span>
+    </div>
+  </div>
+</section>
+
+<!-- INSTALL -->
+<section id="install" style="background: var(--bg);">
+  <div class="container">
+    <div class="section-label">RSVP</div>
+    <h2 class="section-title">Get the Party Started</h2>
+    <p class="section-sub">Three ways to join — pick your vibe</p>
+
+    <div class="install-grid">
+      <div class="install-card">
+        <h3><i class="ri-box-3-line" style="color:var(--neon-blue);"></i> Docker</h3>
+        <span class="rec">Recommended</span>
+        <p>Pre-built image with embedded NER. Start scanning immediately.</p>
+        <pre><code>docker pull ghcr.io/grcengineering/nthpartyfinder:latest
+
+docker run -v $(pwd)/output:/output \
+  nthpartyfinder -d example.com -r 2</code></pre>
+      </div>
+      <div class="install-card">
+        <h3><i class="ri-archive-line" style="color:var(--neon-gold);"></i> Pre-built Binaries</h3>
+        <p>Download from <a href="https://github.com/grcengineering/nthpartyfinder/releases" target="_blank" rel="noopener">GitHub Releases</a>. Available as <code style="background:var(--bg);color:var(--neon-blue);padding:2px 6px;border-radius:3px;font-family:var(--font-mono);font-size:.8rem;">full</code> (~150MB w/ NER) or <code style="background:var(--bg);color:var(--neon-blue);padding:2px 6px;border-radius:3px;font-family:var(--font-mono);font-size:.8rem;">slim</code> (~15MB).</p>
+        <p style="font-size:.82rem;">Windows x86_64 · macOS Intel & Apple Silicon · Linux x86_64</p>
+      </div>
+      <div class="install-card">
+        <h3><i class="ri-terminal-box-line" style="color:var(--neon-pink);"></i> Build from Source</h3>
+        <p>Clone, build, and customize. Requires Rust toolchain.</p>
+        <pre><code>git clone https://github.com/grcengineering/nthpartyfinder.git
+cd nthpartyfinder
+cargo build --release</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOTTOM CTA -->
+<section class="bottom-cta">
+  <div class="container">
+    <div class="bottom-cta-icon" style="margin-bottom:20px;color:var(--neon-pink);"><i class="ri-sparkling-line"></i></div>
+    <h2 class="section-title">Ready to Find Your Nth Party?</h2>
+    <p class="backronym">RSVP: Recursive Security Vendor Profiler</p>
+    <div class="hero-ctas">
+      <a href="https://github.com/grcengineering/nthpartyfinder" class="btn-neon btn-neon-primary" target="_blank" rel="noopener">View on GitHub</a>
+      <a href="https://github.com/grcengineering/nthpartyfinder/releases" class="btn-neon btn-neon-ghost" target="_blank" rel="noopener">Download Latest Release</a>
+    </div>
+    <p class="dev"><strong>Developer:</strong> <a href="https://linkedin.com/in/justinpagano" target="_blank" rel="noopener">Justin Pagano</a> · <a href="https://grc.engineering" target="_blank" rel="noopener">GRC Engineering</a></p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <p>Nth Party Finder · <a href="https://github.com/grcengineering/nthpartyfinder" target="_blank" rel="noopener">GitHub</a> · MIT License · <a href="https://grc.engineering" target="_blank" rel="noopener">GRC Engineering</a></p>
+    <span style="opacity: 0.5; font-size: 0.75rem;">Icons by <a href="https://remixicon.com" style="color: inherit;">Remix Icon</a></span>
+  </div>
+</footer>
+
 </body>
 </html>
