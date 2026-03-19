@@ -7,9 +7,16 @@
 <meta name="description" content="Map your entire vendor party guest list — from third parties to the Nth degree — through DNS analysis.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
 <style>
+@font-face {
+  font-family: 'Cyberthrone';
+  src: url('fonts/Cyberthrone.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 /* ══════════════════════════════════════════════
    NTH PARTY FINDER — Design System
    GRC Engineering colors + retro arcade aesthetic
@@ -32,7 +39,7 @@
   --text-dim:   #6e6e8a;
   --text-bright:#f0f0ff;
 
-  --font-display: 'Press Start 2P', 'Syncopate', sans-serif;
+  --font-display: 'Cyberthrone', 'Syncopate', sans-serif;
   --font-body:    'Space Grotesk', sans-serif;
   --font-mono:    'Space Mono', monospace;
 
@@ -91,7 +98,7 @@ a:hover { color: var(--neon-blue); }
 }
 .nav-logo {
   font-family: var(--font-display);
-  font-size: 0.55rem;
+  font-size: 0.9rem;
   font-weight: 700;
   letter-spacing: 3px;
   text-transform: uppercase;
@@ -173,7 +180,7 @@ a:hover { color: var(--neon-blue); }
 
 .hero-title {
   font-family: var(--font-display);
-  font-size: clamp(1.4rem, 4vw, 2.8rem);
+  font-size: clamp(2.4rem, 7vw, 5rem);
   font-weight: 700;
   line-height: 1.8;
   letter-spacing: 4px;
@@ -229,7 +236,7 @@ a:hover { color: var(--neon-blue); }
 
 .btn-neon {
   font-family: var(--font-display);
-  font-size: 0.5rem;
+  font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 3px;
   text-transform: uppercase;
@@ -288,7 +295,7 @@ a:hover { color: var(--neon-blue); }
 section { padding: 80px 0; }
 .section-label {
   font-family: var(--font-display);
-  font-size: 0.45rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 5px;
   text-transform: uppercase;
@@ -298,7 +305,7 @@ section { padding: 80px 0; }
 }
 .section-title {
   font-family: var(--font-display);
-  font-size: clamp(0.9rem, 2vw, 1.3rem);
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
   font-weight: 700;
   letter-spacing: 3px;
   text-transform: uppercase;
@@ -389,7 +396,7 @@ section { padding: 80px 0; }
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   font-family: var(--font-display);
-  font-size: 0.5rem;
+  font-size: 0.8rem;
   font-weight: 700;
   color: var(--neon-pink);
   flex-shrink: 0;
