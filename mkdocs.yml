@@ -8,6 +8,7 @@ nav:
   - Learning Hub: learning-hub.md
   - Blog: "https://blog.grc.engineering"
   - Projects: projects.md
+  - GRC Engineering Cheat Sheet: projects/grcengineering-cheat-sheet.md
 extra_css:
   - stylesheets/extra.css
 extra_javascript:
