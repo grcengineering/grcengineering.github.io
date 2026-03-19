@@ -178,6 +178,11 @@ a:hover { color: var(--neon-blue); }
   50%  { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
+@keyframes lava-flow-reverse {
+  0%   { background-position: 100% 50%; }
+  50%  { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
 @keyframes neon-flicker {
   0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
     opacity: 1;
@@ -189,6 +194,7 @@ a:hover { color: var(--neon-blue); }
 .lava-text { display: inline; }
 .lava-letter {
   display: inline-block;
+  position: relative;
   background: linear-gradient(90deg, #FFA84F, #e8a44a, #1B95C1, #3aadd4, #FFA84F);
   background-size: 300% 100%;
   -webkit-background-clip: text;
@@ -196,6 +202,21 @@ a:hover { color: var(--neon-blue); }
   -webkit-text-fill-color: transparent;
   animation: lava-flow 8s ease-in-out infinite, neon-flicker 4s infinite;
   animation-delay: calc(var(--i) * -0.6s), 0s;
+}
+.lava-letter::before {
+  content: attr(data-letter);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, #FFA84F, #e8a44a, #1B95C1, #3aadd4, #FFA84F);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: lava-flow-reverse 8s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -0.6s);
+  filter: blur(5px);
 }
 
 .hero-tagline {
@@ -629,8 +650,8 @@ html, body { overflow-x: hidden; }
   <div class="container">
     <div class="hero-eyebrow"><span class="dot"></span> GRC Engineering Open Source</div>
     <h1 class="hero-title">
-      <span class="lava-text"><span class="lava-letter" style="--i:0">N</span><span class="lava-letter" style="--i:1">t</span><span class="lava-letter" style="--i:2">h</span><span class="lava-letter" style="--i:3">&nbsp;</span><span class="lava-letter" style="--i:4">P</span><span class="lava-letter" style="--i:5">a</span><span class="lava-letter" style="--i:6">r</span><span class="lava-letter" style="--i:7">t</span><span class="lava-letter" style="--i:8">y</span></span><br>
-      <span class="lava-text"><span class="lava-letter" style="--i:9">F</span><span class="lava-letter" style="--i:10">i</span><span class="lava-letter" style="--i:11">n</span><span class="lava-letter" style="--i:12">d</span><span class="lava-letter" style="--i:13">e</span><span class="lava-letter" style="--i:14">r</span></span>
+      <span class="lava-text"><span class="lava-letter" style="--i:0" data-letter="N">N</span><span class="lava-letter" style="--i:1" data-letter="t">t</span><span class="lava-letter" style="--i:2" data-letter="h">h</span><span class="lava-letter" style="--i:3" data-letter=" ">&nbsp;</span><span class="lava-letter" style="--i:4" data-letter="P">P</span><span class="lava-letter" style="--i:5" data-letter="a">a</span><span class="lava-letter" style="--i:6" data-letter="r">r</span><span class="lava-letter" style="--i:7" data-letter="t">t</span><span class="lava-letter" style="--i:8" data-letter="y">y</span></span><br>
+      <span class="lava-text"><span class="lava-letter" style="--i:9" data-letter="F">F</span><span class="lava-letter" style="--i:10" data-letter="i">i</span><span class="lava-letter" style="--i:11" data-letter="n">n</span><span class="lava-letter" style="--i:12" data-letter="d">d</span><span class="lava-letter" style="--i:13" data-letter="e">e</span><span class="lava-letter" style="--i:14" data-letter="r">r</span></span>
     </h1>
     <p class="hero-tagline">Every party has an Nth degree</p>
     <p class="hero-desc">
