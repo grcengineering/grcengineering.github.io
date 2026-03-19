@@ -178,6 +178,11 @@ a:hover { color: var(--neon-blue); }
   50%  { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
+@keyframes lava-flow-reverse {
+  0%   { background-position: 100% 50%; }
+  50%  { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
 @keyframes neon-flicker {
   0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
     opacity: 1;
@@ -197,6 +202,23 @@ a:hover { color: var(--neon-blue); }
   -webkit-text-fill-color: transparent;
   animation: lava-flow 8s ease-in-out infinite, neon-flicker 4s infinite;
   animation-delay: calc(var(--i) * -0.6s), 0s;
+}
+.lava-letter::before {
+  content: attr(data-letter);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, #FF8C00, #FF9A1F, #00A8E8, #00C2FF, #FF8C00);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 4px transparent;
+  paint-order: stroke fill;
+  animation: lava-flow-reverse 8s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -0.6s);
+  filter: blur(1.5px);
 }
 
 .hero-tagline {
