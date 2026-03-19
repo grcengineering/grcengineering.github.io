@@ -180,7 +180,7 @@ a:hover { color: var(--neon-blue); }
 
 .hero-title {
   font-family: var(--font-display);
-  font-size: clamp(3.2rem, 9vw, 6.5rem);
+  font-size: clamp(3.8rem, 10vw, 7.5rem);
   font-weight: 900;
   letter-spacing: 6px;
   text-transform: uppercase;
@@ -190,27 +190,18 @@ a:hover { color: var(--neon-blue); }
   position: relative;
   z-index: 1;
 }
-@keyframes lava-shadow {
-  0%   { text-shadow: 3px 3px 0 #FFA84F, -2px 2px 0 #1B95C1; }
-  15%  { text-shadow: 3px 3px 0 #ffb86a, -2px 2px 0 #1da8d6; }
-  30%  { text-shadow: 3px 3px 0 #1B95C1, -2px 2px 0 #FFA84F; }
-  45%  { text-shadow: 3px 3px 0 #1da8d6, -2px 2px 0 #ffb86a; }
-  60%  { text-shadow: 3px 3px 0 #2bb5e0, -2px 2px 0 #ff9a35; }
-  75%  { text-shadow: 3px 3px 0 #FFA84F, -2px 2px 0 #2bb5e0; }
-  100% { text-shadow: 3px 3px 0 #FFA84F, -2px 2px 0 #1B95C1; }
+@keyframes lava-letter {
+  0%   { text-shadow: 3px 3px 0 #FFA84F; }
+  25%  { text-shadow: 3px 3px 0 #e8a44a; }
+  50%  { text-shadow: 3px 3px 0 #1B95C1; }
+  75%  { text-shadow: 3px 3px 0 #3aadd4; }
+  100% { text-shadow: 3px 3px 0 #FFA84F; }
 }
-.hero-title .neon-word {
-  -webkit-text-fill-color: #fff;
-  color: #fff;
-  background: none;
-  -webkit-background-clip: unset;
-  background-clip: unset;
-  animation: lava-shadow 6s ease-in-out infinite;
-  filter: none;
-}
-.hero-title span:not(.neon-word) {
-  animation: lava-shadow 6s ease-in-out infinite;
-  animation-delay: -3s;
+.lava-text { display: inline; }
+.lava-letter {
+  display: inline-block;
+  animation: lava-letter 4s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -0.35s);
 }
 
 .hero-tagline {
@@ -624,7 +615,8 @@ section { padding: 80px 0; }
   <div class="container">
     <div class="hero-eyebrow"><span class="dot"></span> GRC Engineering Open Source</div>
     <h1 class="hero-title">
-      <span class="neon-word">Nth Party</span><br>Finder
+      <span class="lava-text"><span class="lava-letter" style="--i:0">N</span><span class="lava-letter" style="--i:1">t</span><span class="lava-letter" style="--i:2">h</span><span class="lava-letter" style="--i:3">&nbsp;</span><span class="lava-letter" style="--i:4">P</span><span class="lava-letter" style="--i:5">a</span><span class="lava-letter" style="--i:6">r</span><span class="lava-letter" style="--i:7">t</span><span class="lava-letter" style="--i:8">y</span></span><br>
+      <span class="lava-text"><span class="lava-letter" style="--i:9">F</span><span class="lava-letter" style="--i:10">i</span><span class="lava-letter" style="--i:11">n</span><span class="lava-letter" style="--i:12">d</span><span class="lava-letter" style="--i:13">e</span><span class="lava-letter" style="--i:14">r</span></span>
     </h1>
     <p class="hero-tagline">Every party has an Nth degree</p>
     <p class="hero-desc">
