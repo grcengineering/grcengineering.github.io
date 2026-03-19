@@ -11,8 +11,8 @@
 <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
 <style>
 @font-face {
-  font-family: 'Cyberthrone';
-  src: url('fonts/Cyberthrone.ttf') format('truetype');
+  font-family: 'NeonLux';
+  src: url('fonts/NeonLux.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -39,7 +39,7 @@
   --text-dim:   #6e6e8a;
   --text-bright:#f0f0ff;
 
-  --font-display: 'Cyberthrone', 'Syncopate', sans-serif;
+  --font-display: 'NeonLux', 'Syncopate', sans-serif;
   --font-body:    'Space Grotesk', sans-serif;
   --font-mono:    'Space Mono', monospace;
 
@@ -171,19 +171,33 @@ a:hover { color: var(--neon-blue); }
   margin-bottom: 12px;
   position: relative;
   z-index: 1;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
 }
-@keyframes lava-letter {
-  0%   { text-shadow: 2px 2px 0 #FFA84F; }
-  25%  { text-shadow: 2px 2px 0 #e8a44a; }
-  50%  { text-shadow: 2px 2px 0 #1B95C1; }
-  75%  { text-shadow: 2px 2px 0 #3aadd4; }
-  100% { text-shadow: 2px 2px 0 #FFA84F; }
+@keyframes lava-flow {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes neon-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 6px rgba(255,168,79,.5)) drop-shadow(0 0 18px rgba(27,149,193,.3));
+  }
+  20%, 24%, 55% {
+    opacity: 0.82;
+    filter: drop-shadow(0 0 2px rgba(255,168,79,.2)) drop-shadow(0 0 6px rgba(27,149,193,.1));
+  }
 }
 .lava-text { display: inline; }
 .lava-letter {
   display: inline-block;
-  animation: lava-letter 8s ease-in-out infinite;
-  animation-delay: calc(var(--i) * -0.6s);
+  background: linear-gradient(90deg, #FFA84F, #e8a44a, #1B95C1, #3aadd4, #FFA84F);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: lava-flow 8s ease-in-out infinite, neon-flicker 4s infinite;
+  animation-delay: calc(var(--i) * -0.6s), 0s;
 }
 
 .hero-tagline {
