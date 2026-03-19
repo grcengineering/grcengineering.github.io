@@ -214,10 +214,10 @@ a:hover { color: var(--neon-blue); }
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  -webkit-text-stroke: 4px transparent;
-  paint-order: stroke fill;
   animation: lava-flow-reverse 8s ease-in-out infinite;
   animation-delay: calc(var(--i) * -0.6s);
+  transform: scale(1.01);
+  filter: blur(1px);
 }
 
 .hero-tagline {
