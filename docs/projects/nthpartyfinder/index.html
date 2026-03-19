@@ -137,24 +137,6 @@ a:hover { color: var(--neon-blue); }
   pointer-events: none;
 }
 
-/* confetti */
-@keyframes confetti-drift {
-  0%   { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
-  10%  { opacity: 1; }
-  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
-}
-.confetti-piece {
-  position: absolute;
-  animation: confetti-drift linear infinite;
-  pointer-events: none;
-  opacity: 0;
-}
-.confetti-piece {
-  width: 10px;
-  height: 10px;
-  border-radius: 2px;
-}
-
 .hero-eyebrow {
   display: inline-flex; align-items: center; gap: 8px;
   font-family: var(--font-mono);
@@ -191,17 +173,17 @@ a:hover { color: var(--neon-blue); }
   z-index: 1;
 }
 @keyframes lava-letter {
-  0%   { text-shadow: 3px 3px 0 #FFA84F; }
-  25%  { text-shadow: 3px 3px 0 #e8a44a; }
-  50%  { text-shadow: 3px 3px 0 #1B95C1; }
-  75%  { text-shadow: 3px 3px 0 #3aadd4; }
-  100% { text-shadow: 3px 3px 0 #FFA84F; }
+  0%   { text-shadow: 2px 2px 0 #FFA84F; }
+  25%  { text-shadow: 2px 2px 0 #e8a44a; }
+  50%  { text-shadow: 2px 2px 0 #1B95C1; }
+  75%  { text-shadow: 2px 2px 0 #3aadd4; }
+  100% { text-shadow: 2px 2px 0 #FFA84F; }
 }
 .lava-text { display: inline; }
 .lava-letter {
   display: inline-block;
-  animation: lava-letter 4s ease-in-out infinite;
-  animation-delay: calc(var(--i) * -0.35s);
+  animation: lava-letter 8s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -0.6s);
 }
 
 .hero-tagline {
@@ -601,16 +583,6 @@ section { padding: 80px 0; }
 <!-- HERO -->
 <header class="hero">
   <!-- Confetti pieces -->
-  <div class="confetti-piece" style="left:5%;animation-duration:5s;animation-delay:0s;background:var(--neon-pink);"></div>
-  <div class="confetti-piece" style="left:12%;animation-duration:6s;animation-delay:1.2s;background:var(--neon-blue);border-radius:50%;"></div>
-  <div class="confetti-piece" style="left:22%;animation-duration:5.5s;animation-delay:.4s;background:var(--neon-green);"></div>
-  <div class="confetti-piece" style="left:33%;animation-duration:6.5s;animation-delay:2s;background:var(--neon-gold);border-radius:50%;"></div>
-  <div class="confetti-piece" style="left:44%;animation-duration:5.2s;animation-delay:.8s;background:var(--neon-purple);"></div>
-  <div class="confetti-piece" style="left:55%;animation-duration:6.2s;animation-delay:1.5s;background:var(--neon-pink);border-radius:50%;"></div>
-  <div class="confetti-piece" style="left:66%;animation-duration:5.8s;animation-delay:.2s;background:var(--neon-blue);"></div>
-  <div class="confetti-piece" style="left:77%;animation-duration:6.8s;animation-delay:2.5s;background:var(--neon-green);border-radius:50%;"></div>
-  <div class="confetti-piece" style="left:88%;animation-duration:5.4s;animation-delay:1s;background:var(--neon-gold);"></div>
-  <div class="confetti-piece" style="left:95%;animation-duration:6.4s;animation-delay:.6s;background:var(--neon-purple);border-radius:50%;"></div>
 
   <div class="container">
     <div class="hero-eyebrow"><span class="dot"></span> GRC Engineering Open Source</div>
