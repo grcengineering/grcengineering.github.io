@@ -144,6 +144,16 @@ body {
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+.page-desc {
+  font-size: 1.05rem;
+  color: var(--text);
+  max-width: 640px;
+  margin: 0 auto 20px;
+  position: relative;
+  z-index: 1;
+  line-height: 1.7;
+  opacity: 0.85;
+}
 .page-subtitle {
   font-family: var(--font-mono);
   font-size: 0.9rem;
@@ -370,6 +380,7 @@ tbody td:nth-child(3) li::before {
 <header class="page-header">
   <a href="https://grc.engineering" class="back-link">&larr; grc.engineering</a>
   <h1 class="page-title">The <span class="highlight">GRC Engineering</span> Cheat Sheet</h1>
+  <p class="page-desc">For decades, auditors and governments defined and molded Legacy GRC in their image. Today, engineers and analysts are transforming it into something new: GRC Engineering. This cheat sheet outlines what makes GRC Engineering different.</p>
   <p class="page-subtitle">Legacy GRC vs. GRC Engineering in practice</p>
 </header>
 
