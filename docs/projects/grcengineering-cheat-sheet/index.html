@@ -159,16 +159,18 @@ body {
   margin: 0 auto 80px;
   padding: 0 24px;
 }
-.table-container {
-  position: relative;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
+.table-outer {
   border-radius: 16px;
   box-shadow:
     0 4px 24px var(--shadow),
     0 1px 4px var(--shadow);
   border: 1px solid var(--border);
+  overflow: hidden;
+}
+.table-container {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   background: var(--bg-card);
   max-height: calc(100vh - 100px);
 }
@@ -208,9 +210,7 @@ thead th:first-child {
   border-right: 2px solid var(--border-header);
 }
 
-/* Rounded corners on table via header cells */
-thead th:first-child { border-top-left-radius: 15px; }
-thead th:last-child { border-top-right-radius: 15px; }
+/* Rounded corners handled by .table-outer overflow: hidden */
 
 /* Sticky first column */
 tbody td:first-child {
@@ -254,9 +254,6 @@ tbody tr:hover td:first-child {
   background: var(--bg-row-hover);
 }
 
-/* Last row rounded corners */
-tbody tr:last-child td:first-child { border-bottom-left-radius: 15px; }
-tbody tr:last-child td:last-child { border-bottom-right-radius: 15px; }
 tbody tr:last-child td { border-bottom: none; }
 
 /* Column header label styling */
@@ -378,6 +375,7 @@ tbody td:nth-child(3) li::before {
 </header>
 
 <main class="table-wrapper">
+  <div class="table-outer">
   <div class="table-container">
     <table>
       <thead>
@@ -482,6 +480,7 @@ tbody td:nth-child(3) li::before {
         </tr>
       </tbody>
     </table>
+  </div>
   </div>
 </main>
 
