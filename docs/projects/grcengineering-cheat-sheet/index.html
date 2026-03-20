@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The GRC Engineering Cheat Sheet</title>
+<meta name="description" content="Legacy GRC vs. GRC Engineering in practice — a side-by-side comparison across Governance, Risk, Compliance, and Trust & Assurance.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --orange: #FFA84F;
+  --orange-bright: #FF8C00;
+  --blue: #1B95C1;
+  --blue-bright: #00A8E8;
+
+  /* Light mode (default) */
+  --bg: #f4f5f7;
+  --bg-page: #ffffff;
+  --bg-card: #ffffff;
+  --bg-header: var(--orange);
+  --bg-row-header: #f8f9fa;
+  --bg-row-alt: rgba(27, 149, 193, 0.04);
+  --bg-row-hover: rgba(255, 168, 79, 0.08);
+  --text: #1a1a2e;
+  --text-dim: #555;
+  --text-header: #000;
+  --text-row-header: #1a1a2e;
+  --border: #e0e0e0;
+  --border-header: rgba(0,0,0,0.1);
+  --shadow: rgba(0,0,0,0.08);
+  --shadow-strong: rgba(0,0,0,0.12);
+  --toggle-bg: rgba(0,0,0,0.06);
+  --toggle-hover: rgba(0,0,0,0.1);
+
+  --font-body: 'Space Grotesk', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+}
+
+[data-theme="dark"] {
+  --bg: #0b0b1a;
+  --bg-page: #0f0f23;
+  --bg-card: #151530;
+  --bg-header: #1a1a3e;
+  --bg-row-header: #1a1a3e;
+  --bg-row-alt: rgba(27, 149, 193, 0.06);
+  --bg-row-hover: rgba(255, 168, 79, 0.08);
+  --text: #c8c8e0;
+  --text-dim: #8888a8;
+  --text-header: #f0f0ff;
+  --text-row-header: #f0f0ff;
+  --border: rgba(255, 168, 79, 0.12);
+  --border-header: rgba(255, 168, 79, 0.25);
+  --shadow: rgba(0,0,0,0.3);
+  --shadow-strong: rgba(0,0,0,0.5);
+  --toggle-bg: rgba(255,255,255,0.06);
+  --toggle-hover: rgba(255,255,255,0.1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* ── THEME TOGGLE ── */
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+  background: var(--toggle-bg);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  color: var(--text);
+}
+.theme-toggle:hover {
+  background: var(--toggle-hover);
+  transform: scale(1.1);
+}
+
+/* ── HEADER ── */
+.page-header {
+  text-align: center;
+  padding: 80px 24px 60px;
+  position: relative;
+  overflow: hidden;
+}
+.page-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 500px 300px at 30% 50%, rgba(255,168,79,0.1) 0%, transparent 70%),
+    radial-gradient(ellipse 400px 300px at 70% 40%, rgba(27,149,193,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  text-decoration: none;
+  letter-spacing: 1px;
+  margin-bottom: 32px;
+  position: relative;
+  z-index: 1;
+  transition: color 0.2s;
+}
+.back-link:hover { color: var(--orange); }
+
+.page-title {
+  font-family: var(--font-body);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  color: var(--text);
+  position: relative;
+  z-index: 1;
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+.page-title .highlight {
+  background: linear-gradient(135deg, var(--orange-bright), var(--blue-bright));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.page-subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  position: relative;
+  z-index: 1;
+  letter-spacing: 0.5px;
+}
+
+/* ── TABLE CONTAINER ── */
+.table-wrapper {
+  max-width: 1100px;
+  margin: 0 auto 80px;
+  padding: 0 24px;
+}
+.table-container {
+  position: relative;
+  overflow: auto;
+  border-radius: 16px;
+  box-shadow:
+    0 4px 24px var(--shadow),
+    0 1px 4px var(--shadow);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+}
+
+/* ── TABLE ── */
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  min-width: 700px;
+  font-size: 0.92rem;
+}
+
+/* Header row */
+thead th {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--bg-header);
+  color: var(--text-header);
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 18px 20px;
+  text-align: left;
+  border-bottom: 2px solid var(--border-header);
+  white-space: nowrap;
+}
+[data-theme="dark"] thead th {
+  background: linear-gradient(135deg, rgba(255,168,79,0.15), rgba(27,149,193,0.1));
+  border-bottom-color: var(--border-header);
+}
+thead th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 30;
+  text-align: center;
+  border-right: 2px solid var(--border-header);
+}
+
+/* Rounded corners on table via header cells */
+thead th:first-child { border-top-left-radius: 15px; }
+thead th:last-child { border-top-right-radius: 15px; }
+
+/* Sticky first column */
+tbody td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  background: var(--bg-row-header);
+  font-weight: 700;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  color: var(--text-row-header);
+  border-right: 2px solid var(--border);
+  min-width: 120px;
+}
+[data-theme="dark"] tbody td:first-child {
+  background: var(--bg-row-header);
+}
+/* Match alt row bg on sticky column */
+tbody tr:nth-child(even) td:first-child {
+  background: var(--bg-card);
+}
+[data-theme="dark"] tbody tr:nth-child(even) td:first-child {
+  background: var(--bg-card);
+}
+
+/* Body cells */
+tbody td {
+  padding: 16px 20px;
+  vertical-align: top;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s;
+}
+tbody tr:nth-child(odd) {
+  background: var(--bg-row-alt);
+}
+tbody tr:hover td {
+  background: var(--bg-row-hover);
+}
+tbody tr:hover td:first-child {
+  background: var(--bg-row-hover);
+}
+
+/* Last row rounded corners */
+tbody tr:last-child td:first-child { border-bottom-left-radius: 15px; }
+tbody tr:last-child td:last-child { border-bottom-right-radius: 15px; }
+tbody tr:last-child td { border-bottom: none; }
+
+/* Column header label styling */
+.col-legacy {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.col-legacy::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #888;
+  display: inline-block;
+}
+.col-engineering {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.col-engineering::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  background: linear-gradient(135deg, var(--orange-bright), var(--blue-bright));
+}
+
+/* Lists inside cells */
+tbody ul {
+  margin: 0;
+  padding-left: 18px;
+  list-style: none;
+}
+tbody li {
+  margin-bottom: 6px;
+  position: relative;
+  padding-left: 4px;
+}
+tbody li:last-child { margin-bottom: 0; }
+tbody li::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: 10px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+/* Legacy column bullets — grey */
+tbody td:nth-child(2) li::before {
+  background: #999;
+}
+/* Engineering column bullets — gradient */
+tbody td:nth-child(3) li::before {
+  background: linear-gradient(135deg, var(--orange-bright), var(--blue-bright));
+}
+
+/* Program labels */
+.program-label {
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+}
+.program-label em {
+  font-style: italic;
+  opacity: 0.8;
+}
+
+/* ── FOOTER ── */
+.page-footer {
+  text-align: center;
+  padding: 24px;
+  border-top: 1px solid var(--border);
+}
+.page-footer p {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  letter-spacing: 0.5px;
+}
+.page-footer a {
+  color: var(--orange);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.page-footer a:hover { color: var(--blue); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .page-header { padding: 60px 16px 40px; }
+  .page-title { font-size: clamp(1.6rem, 6vw, 2.5rem); }
+  .table-wrapper { padding: 0 12px; }
+  table { font-size: 0.82rem; }
+  thead th { padding: 14px 14px; font-size: 0.9rem; }
+  tbody td { padding: 12px 14px; }
+  .theme-toggle { top: 12px; right: 12px; width: 38px; height: 38px; font-size: 1rem; }
+}
+@media (max-width: 480px) {
+  .page-header { padding: 50px 12px 32px; }
+  table { font-size: 0.78rem; }
+  thead th { padding: 12px 10px; }
+  tbody td { padding: 10px 10px; }
+  tbody ul { padding-left: 14px; }
+}
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark mode">
+  <span class="theme-icon"></span>
+</button>
+
+<header class="page-header">
+  <a href="https://grc.engineering" class="back-link">&larr; grc.engineering</a>
+  <h1 class="page-title">The <span class="highlight">GRC Engineering</span> Cheat Sheet</h1>
+  <p class="page-subtitle">Legacy GRC vs. GRC Engineering in practice</p>
+</header>
+
+<main class="table-wrapper">
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Program</th>
+          <th><span class="col-legacy">Legacy GRC</span></th>
+          <th><span class="col-engineering">GRC Engineering</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="program-label"><em>All</em></span></td>
+          <td>
+            <ul>
+              <li>Framework-first focus</li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li>Threat-informed, systems thinking, design thinking</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="program-label">Governance</span></td>
+          <td>
+            <ul>
+              <li>Policies, standards, procedures</li>
+              <li>Docs =/= control reality</li>
+              <li>Metric-less committees &amp; decisions</li>
+              <li>Annual/semi-annual training (boring)</li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li>PaC enforces &ldquo;risk tolerance&rdquo; (pre-deploy/change)</li>
+              <li>&ldquo;Autocorrect/reconcile&rdquo; docs &harr; controls</li>
+              <li>Metrics-focused committees &amp; decisions</li>
+              <li>Real-time behavioral interventions &amp; scientific pedagogy</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="program-label">Risk</span></td>
+          <td>
+            <ul>
+              <li>Qualitative risk analysis (manual)</li>
+              <li>Subjective data &amp; heatmaps</li>
+              <li>Fragmented weaknesses &amp; issues</li>
+              <li>Accountability police</li>
+              <li>Fear, Uncertainty, &amp; Doubt (FUD)</li>
+              <li>TP<u>C</u>M, heavily third-party focused</li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li>Quantitative risk analysis (automated)</li>
+              <li>Objective data &amp; histograms</li>
+              <li>Holistic risk scenarios (threat + vector + asset + impact)</li>
+              <li>Decision support partners</li>
+              <li>Evidence, Logic, Math, Reason (ELMR &gt;&gt;&gt; FUD)</li>
+              <li>TP<u>R</u>M, balanced third + first-party focus</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="program-label">Compliance</span></td>
+          <td>
+            <ul>
+              <li>Periodic, isolated control monitoring</li>
+              <li>Evidence samples</li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li>Automated, holistic control monitoring &amp; active testing</li>
+              <li>Evidence populations (full)</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="program-label">Trust &amp;<br>Assurance</span></td>
+          <td>
+            <ul>
+              <li>Opaque, abstracted annual artifacts</li>
+              <li>RFIs handled via email</li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li>Transparent, real-time, historical visibility into controls</li>
+              <li>Self-service RFIs &amp; questionnaire completion</li>
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<footer class="page-footer">
+  <p><a href="https://grc.engineering">GRC Engineering</a></p>
+</footer>
+
+<script>
+function toggleTheme() {
+  var html = document.documentElement;
+  var current = html.getAttribute('data-theme');
+  var next = current === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('cheatsheet-theme', next);
+  updateIcon(next);
+}
+function updateIcon(theme) {
+  document.querySelector('.theme-icon').textContent = theme === 'dark' ? '\u2600' : '\u263E';
+}
+(function() {
+  var saved = localStorage.getItem('cheatsheet-theme');
+  var preferred = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  var theme = saved || preferred;
+  document.documentElement.setAttribute('data-theme', theme);
+  updateIcon(theme);
+})();
+</script>
+
+</body>
+</html>
