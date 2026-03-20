@@ -22,8 +22,8 @@
   --bg-card: #ffffff;
   --bg-header: var(--orange);
   --bg-row-header: #f8f9fa;
-  --bg-row-alt: rgba(27, 149, 193, 0.04);
-  --bg-row-hover: rgba(255, 168, 79, 0.08);
+  --bg-row-alt: #f2f7f9;
+  --bg-row-hover: #fff5eb;
   --text: #1a1a2e;
   --text-dim: #555;
   --text-header: #000;
@@ -45,8 +45,8 @@
   --bg-card: #151530;
   --bg-header: #1a1a3e;
   --bg-row-header: #1a1a3e;
-  --bg-row-alt: rgba(27, 149, 193, 0.06);
-  --bg-row-hover: rgba(255, 168, 79, 0.08);
+  --bg-row-alt: #151a33;
+  --bg-row-hover: #1f1a2e;
   --text: #c8c8e0;
   --text-dim: #8888a8;
   --text-header: #f0f0ff;
@@ -242,9 +242,9 @@ tbody td {
   padding: 16px 20px;
   vertical-align: top;
   border-bottom: 1px solid var(--border);
-  transition: background 0.2s;
+  background: var(--bg-card);
 }
-tbody tr:nth-child(odd) {
+tbody tr:nth-child(odd) td {
   background: var(--bg-row-alt);
 }
 tbody tr:hover td {
