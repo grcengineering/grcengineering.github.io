@@ -124,15 +124,61 @@ a:hover { color: var(--neon-blue); }
   position: relative;
   overflow: hidden;
 }
-.hero::before {
-  content: '';
+.haze {
   position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 600px 400px at 20% 50%, rgba(255,168,79,.12) 0%, transparent 70%),
-    radial-gradient(ellipse 500px 350px at 80% 30%, rgba(27,149,193,.1) 0%, transparent 70%),
-    radial-gradient(ellipse 400px 400px at 50% 80%, rgba(179,136,255,.08) 0%, transparent 60%);
+  border-radius: 50%;
   pointer-events: none;
+  filter: blur(80px);
+  will-change: transform, opacity;
+}
+.haze-orange {
+  width: 600px;
+  height: 400px;
+  background: rgba(255, 168, 79, 0.12);
+  top: 20%;
+  left: -5%;
+  animation: haze-drift-1 20s ease-in-out infinite, haze-pulse 8s ease-in-out infinite;
+}
+.haze-blue {
+  width: 500px;
+  height: 350px;
+  background: rgba(27, 149, 193, 0.10);
+  top: 5%;
+  right: -5%;
+  animation: haze-drift-2 24s ease-in-out infinite, haze-pulse 10s ease-in-out 2s infinite;
+}
+.haze-purple {
+  width: 400px;
+  height: 400px;
+  background: rgba(179, 136, 255, 0.08);
+  bottom: -5%;
+  left: 30%;
+  animation: haze-drift-3 22s ease-in-out infinite, haze-pulse 12s ease-in-out 4s infinite;
+}
+@keyframes haze-drift-1 {
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(40px, -30px); }
+  50%  { transform: translate(20px, 40px); }
+  75%  { transform: translate(-30px, 20px); }
+  100% { transform: translate(0, 0); }
+}
+@keyframes haze-drift-2 {
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(-50px, 30px); }
+  50%  { transform: translate(-20px, -40px); }
+  75%  { transform: translate(30px, -20px); }
+  100% { transform: translate(0, 0); }
+}
+@keyframes haze-drift-3 {
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(30px, 30px); }
+  50%  { transform: translate(-40px, 10px); }
+  75%  { transform: translate(10px, -30px); }
+  100% { transform: translate(0, 0); }
+}
+@keyframes haze-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 1.5; }
 }
 
 .hero-eyebrow {
@@ -643,7 +689,9 @@ html, body { overflow-x: hidden; }
 
 <!-- HERO -->
 <header class="hero">
-  <!-- Confetti pieces -->
+  <div class="haze haze-orange"></div>
+  <div class="haze haze-blue"></div>
+  <div class="haze haze-purple"></div>
 
   <div class="container">
     <div class="hero-eyebrow"><span class="dot"></span> GRC Engineering Open Source</div>
