@@ -154,6 +154,44 @@ body {
   line-height: 1.7;
   opacity: 0.85;
 }
+.definitions {
+  display: flex;
+  gap: 20px;
+  max-width: 700px;
+  margin: 24px auto;
+  position: relative;
+  z-index: 1;
+}
+.def-card {
+  flex: 1;
+  padding: 16px 20px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  text-align: left;
+}
+.def-term {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--orange);
+  display: block;
+  margin-bottom: 6px;
+}
+.def-card p {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  line-height: 1.6;
+  margin: 0;
+}
+.def-card a {
+  color: var(--blue);
+  text-decoration: none;
+  font-size: 0.8rem;
+}
+.def-card a:hover { text-decoration: underline; }
 .page-subtitle {
   font-family: var(--font-mono);
   font-size: 0.9rem;
@@ -356,6 +394,7 @@ tbody td:nth-child(3) li::before {
 @media (max-width: 768px) {
   .page-header { padding: 60px 16px 40px; }
   .page-title { font-size: clamp(1.6rem, 6vw, 2.5rem); }
+  .definitions { flex-direction: column; gap: 12px; }
   .table-wrapper { padding: 0 12px; }
   table { font-size: 0.82rem; }
   thead th { padding: 14px 14px; font-size: 0.9rem; }
@@ -381,6 +420,16 @@ tbody td:nth-child(3) li::before {
   <a href="https://grc.engineering" class="back-link">&larr; grc.engineering</a>
   <h1 class="page-title">The <span class="highlight">GRC Engineering</span> Cheat Sheet</h1>
   <p class="page-desc">For decades, auditors and governments defined and molded Legacy GRC in their image. Today, engineers and analysts are transforming it into something new: GRC Engineering. This cheat sheet outlines what makes GRC Engineering different.</p>
+  <div class="definitions">
+    <div class="def-card">
+      <span class="def-term">GRC</span>
+      <p>Governance, risk, and compliance (GRC) are three related facets that aim to assure an organization reliably achieves objectives, addresses uncertainty and acts with integrity. <a href="https://en.wikipedia.org/wiki/Governance,_risk,_and_compliance" target="_blank" rel="noopener">Wikipedia</a></p>
+    </div>
+    <div class="def-card">
+      <span class="def-term">Engineering</span>
+      <p>Engineering is the practice of using natural science, mathematics, and the engineering design process to solve problems within technology, increase efficiency and productivity, and improve systems. <a href="https://en.wikipedia.org/wiki/Engineering" target="_blank" rel="noopener">Wikipedia</a></p>
+    </div>
+  </div>
   <p class="page-subtitle">Legacy GRC vs. GRC Engineering in practice</p>
 </header>
 
