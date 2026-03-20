@@ -121,11 +121,12 @@ a:hover { color: var(--neon-blue); }
   overflow: hidden;
 }
 .haze {
-  position: absolute;
+  position: fixed;
   border-radius: 50%;
   pointer-events: none;
   filter: blur(80px);
   will-change: transform, opacity;
+  z-index: 0;
 }
 .haze-orange {
   width: 600px;
@@ -174,7 +175,7 @@ a:hover { color: var(--neon-blue); }
 }
 @keyframes haze-pulse {
   0%, 100% { opacity: 1; }
-  50%      { opacity: 1.5; }
+  50%      { opacity: 2; }
 }
 
 .hero-eyebrow {
@@ -684,11 +685,11 @@ html, body { overflow-x: hidden; }
 </nav>
 
 <!-- HERO -->
-<header class="hero">
-  <div class="haze haze-orange"></div>
-  <div class="haze haze-blue"></div>
-  <div class="haze haze-purple"></div>
+<div class="haze haze-orange"></div>
+<div class="haze haze-blue"></div>
+<div class="haze haze-purple"></div>
 
+<header class="hero">
   <div class="container">
     <div class="hero-eyebrow"><span class="dot"></span> GRC Engineering Open Source</div>
     <h1 class="hero-title">
