@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
 <style>
 :root {
   --orange: #FFA84F;
@@ -365,7 +366,7 @@ tbody td:nth-child(3) li::before {
 <body>
 
 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark mode">
-  <span class="theme-icon"></span>
+  <i class="theme-icon ri-moon-line"></i>
 </button>
 
 <header class="page-header">
@@ -489,7 +490,8 @@ function toggleTheme() {
   updateIcon(next);
 }
 function updateIcon(theme) {
-  document.querySelector('.theme-icon').textContent = theme === 'dark' ? '\u2600' : '\u263E';
+  var icon = document.querySelector('.theme-icon');
+  icon.className = theme === 'dark' ? 'theme-icon ri-sun-line' : 'theme-icon ri-moon-line';
 }
 (function() {
   var saved = localStorage.getItem('cheatsheet-theme');
