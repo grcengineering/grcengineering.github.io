@@ -372,70 +372,62 @@ tbody td:nth-child(3) li::before {
 }
 
 /* ── GLOSSARY SECTIONS ── */
-.glossary-section {
+.glossary-sections {
   max-width: 1100px;
-  margin: 0 auto 48px;
+  margin: 0 auto 60px;
   padding: 0 24px;
 }
+.glossary-section {
+  margin-bottom: 40px;
+}
+.glossary-section:last-child { margin-bottom: 0; }
 .glossary-section-title {
-  font-family: var(--font-body);
-  font-size: 1.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
   font-weight: 700;
-  color: var(--text);
-  margin-bottom: 16px;
-  padding-left: 4px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
 }
-.glossary-section-title .section-icon {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--orange-bright), var(--blue-bright));
-  margin-right: 10px;
-  vertical-align: middle;
+.glossary-list {
+  list-style: none;
 }
-.glossary-table {
-  border-collapse: separate;
-  border-spacing: 0;
-  width: 100%;
-  font-size: 0.92rem;
+.glossary-entry {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  align-items: baseline;
 }
-.glossary-table td:first-child {
+.glossary-entry:last-child { border-bottom: none; }
+.glossary-term {
   font-family: var(--font-mono);
   font-weight: 700;
   font-size: 0.85rem;
-  white-space: nowrap;
-  width: 140px;
-  padding: 14px 20px;
-  vertical-align: top;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg-row-header);
   color: var(--orange);
+  white-space: nowrap;
 }
-.glossary-table td:last-child {
-  padding: 14px 20px;
-  vertical-align: top;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg-card);
+.glossary-def {
+  font-size: 0.9rem;
   color: var(--text);
-  line-height: 1.65;
-}
-.glossary-table tr:nth-child(odd) td:last-child {
-  background: var(--bg-row-alt);
-}
-.glossary-table tr:nth-child(odd) td:first-child {
-  background: var(--bg-row-alt);
-}
-.glossary-table tr:last-child td { border-bottom: none; }
-.glossary-table tr:hover td {
-  background: var(--bg-row-hover);
+  line-height: 1.7;
+  opacity: 0.85;
 }
 .glossary-empty {
-  padding: 24px 20px;
-  text-align: center;
   font-size: 0.85rem;
   color: var(--text-dim);
   font-style: italic;
+  padding: 8px 0;
+}
+@media (max-width: 600px) {
+  .glossary-entry {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
 }
 
 /* ── FOOTER ── */
@@ -474,10 +466,7 @@ tbody td:nth-child(3) li::before {
   thead th { padding: 14px 14px; font-size: 0.9rem; }
   tbody td { padding: 12px 14px; }
   .theme-toggle { top: 12px; right: 12px; width: 38px; height: 38px; font-size: 1rem; }
-  .glossary-section { padding: 0 12px; margin-bottom: 36px; }
-  .glossary-section-title { font-size: 1.2rem; }
-  .glossary-table td:first-child { width: 100px; padding: 12px 14px; font-size: 0.8rem; }
-  .glossary-table td:last-child { padding: 12px 14px; }
+  .glossary-sections { padding: 0 12px; }
 }
 @media (max-width: 480px) {
   .page-header { padding: 50px 12px 32px; }
@@ -485,9 +474,7 @@ tbody td:nth-child(3) li::before {
   thead th { padding: 12px 10px; }
   tbody td { padding: 10px 10px; }
   tbody ul { padding-left: 14px; }
-  .glossary-section { padding: 0 8px; }
-  .glossary-table td:first-child { width: 80px; padding: 10px 10px; font-size: 0.75rem; }
-  .glossary-table td:last-child { padding: 10px 10px; font-size: 0.78rem; }
+  .glossary-sections { padding: 0 8px; }
 }
 </style>
 </head>
@@ -624,60 +611,40 @@ tbody td:nth-child(3) li::before {
   </div>
 </main>
 
+<div class="glossary-sections">
+
 <section class="glossary-section">
-  <h2 class="glossary-section-title"><span class="section-icon"></span>Governance</h2>
-  <div class="table-outer">
-  <div class="table-container">
-    <table class="glossary-table">
-      <tbody>
-        <tr><td colspan="2" class="glossary-empty">Coming soon</td></tr>
-      </tbody>
-    </table>
-  </div>
-  </div>
+  <h2 class="glossary-section-title">Governance</h2>
+  <ul class="glossary-list">
+    <li class="glossary-empty">Coming soon</li>
+  </ul>
 </section>
 
 <section class="glossary-section">
-  <h2 class="glossary-section-title"><span class="section-icon"></span>Risk</h2>
-  <div class="table-outer">
-  <div class="table-container">
-    <table class="glossary-table">
-      <tbody>
-        <tr>
-          <td>TPCM</td>
-          <td>Third-party compliance management. Legacy GRC approach to third-party &ldquo;risk&rdquo; management. Primarily focused on whether or not third parties comply with a customer&rsquo;s requirements as expressed in contract language and questionnaires. Does not account for real-world threats, value-at-risk, or positive vs. negative risk tradeoffs. Conflates outside-in vulnerability scanning with risk analysis.</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  </div>
+  <h2 class="glossary-section-title">Risk</h2>
+  <ul class="glossary-list">
+    <li class="glossary-entry">
+      <span class="glossary-term">TPCM</span>
+      <span class="glossary-def">Third-party compliance management. Legacy GRC approach to third-party &ldquo;risk&rdquo; management. Primarily focused on whether or not third parties comply with a customer&rsquo;s requirements as expressed in contract language and questionnaires. Does not account for real-world threats, value-at-risk, or positive vs. negative risk tradeoffs. Conflates outside-in vulnerability scanning with risk analysis.</span>
+    </li>
+  </ul>
 </section>
 
 <section class="glossary-section">
-  <h2 class="glossary-section-title"><span class="section-icon"></span>Compliance</h2>
-  <div class="table-outer">
-  <div class="table-container">
-    <table class="glossary-table">
-      <tbody>
-        <tr><td colspan="2" class="glossary-empty">Coming soon</td></tr>
-      </tbody>
-    </table>
-  </div>
-  </div>
+  <h2 class="glossary-section-title">Compliance</h2>
+  <ul class="glossary-list">
+    <li class="glossary-empty">Coming soon</li>
+  </ul>
 </section>
 
 <section class="glossary-section">
-  <h2 class="glossary-section-title"><span class="section-icon"></span>Trust &amp; Assurance</h2>
-  <div class="table-outer">
-  <div class="table-container">
-    <table class="glossary-table">
-      <tbody>
-        <tr><td colspan="2" class="glossary-empty">Coming soon</td></tr>
-      </tbody>
-    </table>
-  </div>
-  </div>
+  <h2 class="glossary-section-title">Trust &amp; Assurance</h2>
+  <ul class="glossary-list">
+    <li class="glossary-empty">Coming soon</li>
+  </ul>
 </section>
+
+</div>
 
 <footer class="page-footer">
   <p><a href="https://grc.engineering">GRC Engineering</a></p>
