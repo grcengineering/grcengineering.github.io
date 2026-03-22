@@ -682,8 +682,7 @@ html, body { overflow-x: hidden; }
 {
   "imports": {
     "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/",
-    "three/examples/jsm/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
   }
 }
 </script>
@@ -919,9 +918,6 @@ cargo build --release</code></pre>
 
 <script type="module">
 import * as THREE from 'three';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { BokehPass } from 'three/addons/postprocessing/BokehPass.js';
 
 // ── CONFIG ──
 const NODE_COUNT = 120;
@@ -1184,22 +1180,11 @@ for (let r = 1; r <= ringCount; r++) {
 }
 
 // ── RESIZE ──
-// ── POST-PROCESSING (Depth of Field) ──
-const composer = new EffectComposer(renderer);
-composer.addPass(new RenderPass(scene, camera));
-const bokehPass = new BokehPass(scene, camera, {
-  focus: 4.0,
-  aperture: 0.008,
-  maxblur: 0.012,
-});
-composer.addPass(bokehPass);
-
 function resize() {
   const rect = hero.getBoundingClientRect();
   const w = rect.width;
   const h = rect.height;
   renderer.setSize(w, h);
-  composer.setSize(w, h);
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
 }
@@ -1229,8 +1214,6 @@ function animate() {
     const lookY = Math.sin(t2 * 0.8) * 0.4;
     const lookZ = Math.cos(t3 * 0.6) * 1.2;
     camera.lookAt(lookX, lookY, lookZ);
-    // Update DOF focus to distance between camera and look target
-    bokehPass.uniforms['focus'].value = camera.position.distanceTo(new THREE.Vector3(lookX, lookY, lookZ));
 
     // Pulse primary glow
     const glowScale = 0.35 + 0.08 * Math.sin(elapsed * 1.5);
@@ -1275,7 +1258,7 @@ function animate() {
     }
   }
 
-  composer.render();
+  renderer.render(scene, camera);
 }
 animate();
 </script>
