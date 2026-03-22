@@ -668,6 +668,16 @@ html, body { overflow-x: hidden; }
   .hero-title { font-size: clamp(4.2rem, 17vw, 7rem); letter-spacing: 3px; }
 }
 /* ── 3D GRAPH ── */
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.10);
+  z-index: 0;
+  pointer-events: none;
+}
 #vendor-graph {
   position: absolute;
   top: 0;
@@ -709,6 +719,7 @@ html, body { overflow-x: hidden; }
 
 <header class="hero">
   <canvas id="vendor-graph"></canvas>
+  <div class="hero-overlay"></div>
   <div class="container">
     <h1 class="hero-title">
       <span class="lava-text"><span class="lava-letter" style="--i:0" data-letter="N">N</span><span class="lava-letter" style="--i:1" data-letter="t">t</span><span class="lava-letter" style="--i:2" data-letter="h">h</span><span class="lava-letter" style="--i:3" data-letter=" ">&nbsp;</span><span class="lava-letter" style="--i:4" data-letter="P">P</span><span class="lava-letter" style="--i:5" data-letter="a">a</span><span class="lava-letter" style="--i:6" data-letter="r">r</span><span class="lava-letter" style="--i:7" data-letter="t">t</span><span class="lava-letter" style="--i:8" data-letter="y">y</span></span><br>
@@ -1081,17 +1092,6 @@ for (let layer = 0; layer < LAYERS; layer++) {
   instancedMeshes.push(mesh);
 }
 
-// Outer glow spheres for primary node
-const glowGeo = new THREE.SphereGeometry(1, 16, 16);
-const glowMat = new THREE.MeshBasicMaterial({
-  color: COLORS[0],
-  transparent: true,
-  opacity: 0.08,
-});
-const glowSphere = new THREE.Mesh(glowGeo, glowMat);
-glowSphere.scale.setScalar(0.35);
-scene.add(glowSphere);
-
 // ── EDGES ──
 const edgePositions = [];
 const edgeColors = [];
@@ -1214,11 +1214,6 @@ function animate() {
     const lookY = Math.sin(t2 * 0.8) * 0.4;
     const lookZ = Math.cos(t3 * 0.6) * 1.2;
     camera.lookAt(lookX, lookY, lookZ);
-
-    // Pulse primary glow
-    const glowScale = 0.35 + 0.08 * Math.sin(elapsed * 1.5);
-    glowSphere.scale.setScalar(glowScale);
-    glowSphere.material.opacity = 0.06 + 0.03 * Math.sin(elapsed * 2);
 
     // Animate pulse particles
     for (const pe of pulseEdges) {
