@@ -667,7 +667,25 @@ html, body { overflow-x: hidden; }
 @media (max-width: 520px) and (orientation: portrait) {
   .hero-title { font-size: clamp(4.2rem, 17vw, 7rem); letter-spacing: 3px; }
 }
+/* ── 3D GRAPH ── */
+#vendor-graph {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
 </style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+  }
+}
+</script>
 </head>
 <body>
 
@@ -690,6 +708,7 @@ html, body { overflow-x: hidden; }
 <div class="haze haze-purple"></div>
 
 <header class="hero">
+  <canvas id="vendor-graph"></canvas>
   <div class="container">
     <h1 class="hero-title">
       <span class="lava-text"><span class="lava-letter" style="--i:0" data-letter="N">N</span><span class="lava-letter" style="--i:1" data-letter="t">t</span><span class="lava-letter" style="--i:2" data-letter="h">h</span><span class="lava-letter" style="--i:3" data-letter=" ">&nbsp;</span><span class="lava-letter" style="--i:4" data-letter="P">P</span><span class="lava-letter" style="--i:5" data-letter="a">a</span><span class="lava-letter" style="--i:6" data-letter="r">r</span><span class="lava-letter" style="--i:7" data-letter="t">t</span><span class="lava-letter" style="--i:8" data-letter="y">y</span></span><br>
@@ -897,5 +916,346 @@ cargo build --release</code></pre>
   </div>
 </footer>
 
+<script type="module">
+import * as THREE from 'three';
+
+// ── CONFIG ──
+const NODE_COUNT = 120;
+const LAYERS = 5; // primary + 4 depth layers
+const COLORS = [
+  new THREE.Color('#FFA84F'), // primary (your company) — orange
+  new THREE.Color('#FF8C00'), // 3rd party — deeper orange
+  new THREE.Color('#1B95C1'), // 4th party — blue
+  new THREE.Color('#6AB8D4'), // 5th party — lighter blue
+  new THREE.Color('#b388ff'), // Nth party — purple
+];
+const SIZES = [0.12, 0.07, 0.055, 0.04, 0.03];
+const EMISSIVE_INTENSITY = [1.5, 0.8, 0.6, 0.4, 0.25];
+const LAYER_COUNTS = [1, 12, 28, 38, 41]; // nodes per layer
+
+// ── SETUP ──
+const canvas = document.getElementById('vendor-graph');
+const hero = canvas.parentElement;
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+camera.position.set(0, 2.5, 5.5);
+camera.lookAt(0, 0, 0);
+
+// Lighting
+scene.add(new THREE.AmbientLight(0xffffff, 0.3));
+const pointLight = new THREE.PointLight(0xffffff, 0.6, 20);
+pointLight.position.set(2, 6, 4);
+scene.add(pointLight);
+
+// ── GENERATE NODE POSITIONS & EDGES ──
+const nodes = [];
+const edges = [];
+const layerStartIndex = [];
+
+// Place nodes in layered shells
+let nodeIndex = 0;
+for (let layer = 0; layer < LAYERS; layer++) {
+  layerStartIndex.push(nodeIndex);
+  const count = LAYER_COUNTS[layer];
+  const radius = layer === 0 ? 0 : 0.8 + layer * 1.1;
+
+  for (let i = 0; i < count; i++) {
+    if (layer === 0) {
+      nodes.push({ pos: new THREE.Vector3(0, 0, 0), layer, vel: new THREE.Vector3() });
+    } else {
+      // Distribute on a sphere shell with some randomness
+      const phi = Math.acos(1 - 2 * (i + 0.5) / count);
+      const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+      const r = radius + (Math.random() - 0.5) * 0.5;
+      const x = r * Math.sin(phi) * Math.cos(theta);
+      const y = (r * Math.cos(phi)) * 0.5; // flatten Y
+      const z = r * Math.sin(phi) * Math.sin(theta);
+      nodes.push({ pos: new THREE.Vector3(x, y, z), layer, vel: new THREE.Vector3() });
+    }
+    nodeIndex++;
+  }
+}
+
+// Create edges: connect each node to 1-3 nodes in the previous layer
+for (let layer = 1; layer < LAYERS; layer++) {
+  const start = layerStartIndex[layer];
+  const end = start + LAYER_COUNTS[layer];
+  const prevStart = layerStartIndex[layer - 1];
+  const prevEnd = prevStart + LAYER_COUNTS[layer - 1];
+
+  for (let i = start; i < end; i++) {
+    // Connect to closest node(s) in previous layer
+    const connections = 1 + Math.floor(Math.random() * 2); // 1-2 connections
+    const distances = [];
+    for (let j = prevStart; j < prevEnd; j++) {
+      distances.push({ idx: j, dist: nodes[i].pos.distanceTo(nodes[j].pos) });
+    }
+    distances.sort((a, b) => a.dist - b.dist);
+    for (let c = 0; c < Math.min(connections, distances.length); c++) {
+      edges.push([i, distances[c].idx]);
+    }
+  }
+
+  // Add a few cross-layer edges for realism
+  if (layer >= 2) {
+    const crossCount = Math.floor(LAYER_COUNTS[layer] * 0.15);
+    for (let c = 0; c < crossCount; c++) {
+      const from = start + Math.floor(Math.random() * LAYER_COUNTS[layer]);
+      const twoBack = layerStartIndex[layer - 2];
+      const twoBackEnd = twoBack + LAYER_COUNTS[layer - 2];
+      const to = twoBack + Math.floor(Math.random() * (twoBackEnd - twoBack));
+      edges.push([from, to]);
+    }
+  }
+}
+
+// ── SIMPLE FORCE SIMULATION (run once) ──
+const forceIterations = 80;
+for (let iter = 0; iter < forceIterations; iter++) {
+  const alpha = 1 - iter / forceIterations;
+  // Repulsion between all nodes
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      const diff = new THREE.Vector3().subVectors(nodes[i].pos, nodes[j].pos);
+      const dist = Math.max(diff.length(), 0.1);
+      const force = (0.15 * alpha) / (dist * dist);
+      diff.normalize().multiplyScalar(force);
+      if (i !== 0) nodes[i].pos.add(diff);
+      if (j !== 0) nodes[j].pos.sub(diff);
+    }
+  }
+  // Edge spring attraction
+  for (const [a, b] of edges) {
+    const diff = new THREE.Vector3().subVectors(nodes[b].pos, nodes[a].pos);
+    const dist = diff.length();
+    const targetDist = 1.2 + Math.abs(nodes[a].layer - nodes[b].layer) * 0.8;
+    const force = (dist - targetDist) * 0.02 * alpha;
+    diff.normalize().multiplyScalar(force);
+    if (a !== 0) nodes[a].pos.add(diff);
+    if (b !== 0) nodes[b].pos.sub(diff);
+  }
+  // Layer constraint — keep nodes roughly at their shell radius
+  for (let i = 1; i < nodes.length; i++) {
+    const n = nodes[i];
+    const targetR = 0.8 + n.layer * 1.1;
+    const currentR = n.pos.length();
+    if (currentR > 0.01) {
+      n.pos.multiplyScalar(1 + (targetR / currentR - 1) * 0.3 * alpha);
+    }
+  }
+  // Pin primary node
+  nodes[0].pos.set(0, 0, 0);
+}
+
+// ── INSTANCED MESHES (one per layer) ──
+const sphereGeo = new THREE.SphereGeometry(1, 24, 24);
+const instancedMeshes = [];
+const dummy = new THREE.Object3D();
+
+for (let layer = 0; layer < LAYERS; layer++) {
+  const count = LAYER_COUNTS[layer];
+  const mat = new THREE.MeshStandardMaterial({
+    color: COLORS[layer],
+    emissive: COLORS[layer],
+    emissiveIntensity: EMISSIVE_INTENSITY[layer],
+    roughness: 0.4,
+    metalness: 0.2,
+    transparent: true,
+    opacity: layer === 0 ? 1.0 : 0.85,
+  });
+  const mesh = new THREE.InstancedMesh(sphereGeo, mat, count);
+  const start = layerStartIndex[layer];
+  for (let i = 0; i < count; i++) {
+    const n = nodes[start + i];
+    dummy.position.copy(n.pos);
+    const s = SIZES[layer];
+    dummy.scale.set(s, s, s);
+    dummy.updateMatrix();
+    mesh.setMatrixAt(i, dummy.matrix);
+  }
+  mesh.instanceMatrix.needsUpdate = true;
+  scene.add(mesh);
+  instancedMeshes.push(mesh);
+}
+
+// Outer glow spheres for primary node
+const glowGeo = new THREE.SphereGeometry(1, 16, 16);
+const glowMat = new THREE.MeshBasicMaterial({
+  color: COLORS[0],
+  transparent: true,
+  opacity: 0.08,
+});
+const glowSphere = new THREE.Mesh(glowGeo, glowMat);
+glowSphere.scale.setScalar(0.35);
+scene.add(glowSphere);
+
+// ── EDGES ──
+const edgePositions = [];
+const edgeColors = [];
+for (const [a, b] of edges) {
+  const pa = nodes[a].pos;
+  const pb = nodes[b].pos;
+  edgePositions.push(pa.x, pa.y, pa.z, pb.x, pb.y, pb.z);
+  // Color: blend between the two node layers
+  const ca = COLORS[nodes[a].layer];
+  const cb = COLORS[nodes[b].layer];
+  edgeColors.push(ca.r, ca.g, ca.b, cb.r, cb.g, cb.b);
+}
+const edgeGeo = new THREE.BufferGeometry();
+edgeGeo.setAttribute('position', new THREE.Float32BufferAttribute(edgePositions, 3));
+edgeGeo.setAttribute('color', new THREE.Float32BufferAttribute(edgeColors, 3));
+const edgeMat = new THREE.LineBasicMaterial({
+  vertexColors: true,
+  transparent: true,
+  opacity: 0.15,
+  linewidth: 1,
+});
+const edgeMesh = new THREE.LineSegments(edgeGeo, edgeMat);
+scene.add(edgeMesh);
+
+// ── ANIMATED PULSE EDGES (subset) ──
+const pulseEdgeCount = Math.min(edges.length, 40);
+const pulseEdges = [];
+for (let i = 0; i < pulseEdgeCount; i++) {
+  const edgeIdx = Math.floor(Math.random() * edges.length);
+  const [a, b] = edges[edgeIdx];
+  const pa = nodes[a].pos.clone();
+  const pb = nodes[b].pos.clone();
+  // Create a line of points for the pulse to travel along
+  const segments = 20;
+  const positions = new Float32Array(segments * 3);
+  const alphas = new Float32Array(segments);
+  for (let s = 0; s < segments; s++) {
+    const t = s / (segments - 1);
+    positions[s * 3] = pa.x + (pb.x - pa.x) * t;
+    positions[s * 3 + 1] = pa.y + (pb.y - pa.y) * t;
+    positions[s * 3 + 2] = pa.z + (pb.z - pa.z) * t;
+    alphas[s] = 0;
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  const color = COLORS[nodes[a].layer].clone().lerp(COLORS[nodes[b].layer], 0.5);
+  const mat = new THREE.PointsMaterial({
+    size: 0.015,
+    color: color,
+    transparent: true,
+    opacity: 0.8,
+    sizeAttenuation: true,
+  });
+  const points = new THREE.Points(geo, mat);
+  scene.add(points);
+  pulseEdges.push({
+    points,
+    segments,
+    speed: 0.3 + Math.random() * 0.5,
+    phase: Math.random() * Math.PI * 2,
+    pa, pb,
+  });
+}
+
+// ── CONCENTRIC GRID RINGS ──
+const ringCount = 4;
+for (let r = 1; r <= ringCount; r++) {
+  const radius = r * 1.3;
+  const ringPoints = [];
+  const ringSegments = 64;
+  for (let s = 0; s <= ringSegments; s++) {
+    const angle = (s / ringSegments) * Math.PI * 2;
+    ringPoints.push(new THREE.Vector3(
+      Math.cos(angle) * radius,
+      -0.5,
+      Math.sin(angle) * radius
+    ));
+  }
+  const ringGeo = new THREE.BufferGeometry().setFromPoints(ringPoints);
+  const ringMat = new THREE.LineBasicMaterial({
+    color: 0xffffff,
+    transparent: true,
+    opacity: 0.03 + (ringCount - r) * 0.01,
+  });
+  scene.add(new THREE.Line(ringGeo, ringMat));
+}
+
+// ── RESIZE ──
+function resize() {
+  const rect = hero.getBoundingClientRect();
+  const w = rect.width;
+  const h = rect.height;
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+resize();
+window.addEventListener('resize', resize);
+
+// ── REDUCED MOTION CHECK ──
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ── ANIMATION LOOP ──
+const clock = new THREE.Clock();
+function animate() {
+  requestAnimationFrame(animate);
+  const elapsed = clock.getElapsedTime();
+  const delta = Math.min(clock.getDelta(), 0.05);
+
+  if (!prefersReducedMotion) {
+    // Slow camera orbit
+    const orbitSpeed = 0.06;
+    const angle = elapsed * orbitSpeed;
+    camera.position.x = Math.sin(angle) * 5.5;
+    camera.position.z = Math.cos(angle) * 5.5;
+    camera.position.y = 2.0 + Math.sin(elapsed * 0.15) * 0.5;
+    camera.lookAt(0, 0, 0);
+
+    // Pulse primary glow
+    const glowScale = 0.35 + 0.08 * Math.sin(elapsed * 1.5);
+    glowSphere.scale.setScalar(glowScale);
+    glowSphere.material.opacity = 0.06 + 0.03 * Math.sin(elapsed * 2);
+
+    // Animate pulse particles
+    for (const pe of pulseEdges) {
+      const t = ((elapsed * pe.speed + pe.phase) % 1);
+      // Create a gaussian pulse traveling along the edge
+      const posAttr = pe.points.geometry.attributes.position;
+      for (let s = 0; s < pe.segments; s++) {
+        const st = s / (pe.segments - 1);
+        const dist = Math.abs(st - t);
+        const brightness = Math.exp(-(dist * dist) / 0.008);
+        // Scale point size based on brightness
+        posAttr.array[s * 3] = pe.pa.x + (pe.pb.x - pe.pa.x) * st;
+        posAttr.array[s * 3 + 1] = pe.pa.y + (pe.pb.y - pe.pa.y) * st;
+        posAttr.array[s * 3 + 2] = pe.pa.z + (pe.pb.z - pe.pa.z) * st;
+      }
+      pe.points.material.opacity = 0.6;
+      posAttr.needsUpdate = true;
+    }
+
+    // Gentle node float
+    for (let layer = 1; layer < LAYERS; layer++) {
+      const mesh = instancedMeshes[layer];
+      const start = layerStartIndex[layer];
+      for (let i = 0; i < LAYER_COUNTS[layer]; i++) {
+        const n = nodes[start + i];
+        dummy.position.set(
+          n.pos.x + Math.sin(elapsed * 0.4 + i * 1.3) * 0.02,
+          n.pos.y + Math.sin(elapsed * 0.5 + i * 0.7) * 0.03,
+          n.pos.z + Math.cos(elapsed * 0.3 + i * 1.1) * 0.02
+        );
+        const s = SIZES[layer];
+        dummy.scale.set(s, s, s);
+        dummy.updateMatrix();
+        mesh.setMatrixAt(i, dummy.matrix);
+      }
+      mesh.instanceMatrix.needsUpdate = true;
+    }
+  }
+
+  renderer.render(scene, camera);
+}
+animate();
+</script>
 </body>
 </html>
