@@ -677,12 +677,23 @@ html, body { overflow-x: hidden; }
   z-index: 0;
   pointer-events: none;
 }
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.20);
+  z-index: 0;
+  pointer-events: none;
+}
 </style>
 <script type="importmap">
 {
   "imports": {
     "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/",
+    "three/examples/jsm/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
   }
 }
 </script>
@@ -709,6 +720,7 @@ html, body { overflow-x: hidden; }
 
 <header class="hero">
   <canvas id="vendor-graph"></canvas>
+  <div class="hero-overlay"></div>
   <div class="container">
     <h1 class="hero-title">
       <span class="lava-text"><span class="lava-letter" style="--i:0" data-letter="N">N</span><span class="lava-letter" style="--i:1" data-letter="t">t</span><span class="lava-letter" style="--i:2" data-letter="h">h</span><span class="lava-letter" style="--i:3" data-letter=" ">&nbsp;</span><span class="lava-letter" style="--i:4" data-letter="P">P</span><span class="lava-letter" style="--i:5" data-letter="a">a</span><span class="lava-letter" style="--i:6" data-letter="r">r</span><span class="lava-letter" style="--i:7" data-letter="t">t</span><span class="lava-letter" style="--i:8" data-letter="y">y</span></span><br>
@@ -918,6 +930,9 @@ cargo build --release</code></pre>
 
 <script type="module">
 import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { BokehPass } from 'three/addons/postprocessing/BokehPass.js';
 
 // ── CONFIG ──
 const NODE_COUNT = 120;
@@ -1180,11 +1195,22 @@ for (let r = 1; r <= ringCount; r++) {
 }
 
 // ── RESIZE ──
+// ── POST-PROCESSING (Depth of Field) ──
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bokehPass = new BokehPass(scene, camera, {
+  focus: 4.0,
+  aperture: 0.008,
+  maxblur: 0.012,
+});
+composer.addPass(bokehPass);
+
 function resize() {
   const rect = hero.getBoundingClientRect();
   const w = rect.width;
   const h = rect.height;
   renderer.setSize(w, h);
+  composer.setSize(w, h);
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
 }
@@ -1202,13 +1228,20 @@ function animate() {
   const delta = Math.min(clock.getDelta(), 0.05);
 
   if (!prefersReducedMotion) {
-    // Slow camera orbit
-    const orbitSpeed = 0.06;
-    const angle = elapsed * orbitSpeed;
-    camera.position.x = Math.sin(angle) * 5.5;
-    camera.position.z = Math.cos(angle) * 5.5;
-    camera.position.y = 2.0 + Math.sin(elapsed * 0.15) * 0.5;
-    camera.lookAt(0, 0, 0);
+    // Slow drifting pan through the network
+    const t1 = elapsed * 0.04;
+    const t2 = elapsed * 0.03;
+    const t3 = elapsed * 0.025;
+    camera.position.x = Math.sin(t1) * 4.5 + Math.cos(t2 * 1.3) * 1.5;
+    camera.position.z = Math.cos(t1) * 4.5 + Math.sin(t3 * 0.9) * 1.5;
+    camera.position.y = 1.8 + Math.sin(t2) * 1.0 + Math.cos(t3 * 0.7) * 0.5;
+    // Look at a slowly drifting target (not fixed on center)
+    const lookX = Math.sin(t3 * 1.1) * 1.2;
+    const lookY = Math.sin(t2 * 0.8) * 0.4;
+    const lookZ = Math.cos(t3 * 0.6) * 1.2;
+    camera.lookAt(lookX, lookY, lookZ);
+    // Update DOF focus to distance between camera and look target
+    bokehPass.uniforms['focus'].value = camera.position.distanceTo(new THREE.Vector3(lookX, lookY, lookZ));
 
     // Pulse primary glow
     const glowScale = 0.35 + 0.08 * Math.sin(elapsed * 1.5);
@@ -1253,7 +1286,7 @@ function animate() {
     }
   }
 
-  renderer.render(scene, camera);
+  composer.render();
 }
 animate();
 </script>
