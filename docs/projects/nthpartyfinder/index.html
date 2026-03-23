@@ -93,12 +93,50 @@ a:hover { color: var(--neon-blue); }
   display: flex; align-items: center; justify-content: space-between;
 }
 .nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+.nav-logo-mark {
+  position: relative;
+  height: 36px;
+  padding: 0 14px;
+  background: linear-gradient(135deg, var(--neon-pink), var(--neon-blue));
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-family: var(--font-display);
-  font-size: 0.9rem;
   font-weight: 700;
+  font-size: 0.75rem;
   letter-spacing: 3px;
   text-transform: uppercase;
-  color: var(--neon-pink);
+  color: #000;
+  box-shadow: 0 0 20px rgba(255, 168, 79, 0.25);
+  white-space: nowrap;
+  z-index: 1;
+}
+.nav-logo-mark::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 9px;
+  background: conic-gradient(
+    from var(--gradient-angle, 0deg),
+    transparent,
+    #fff 10%,
+    transparent 30%
+  );
+  z-index: -1;
+}
+.nav-logo-mark::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--neon-pink), var(--neon-blue));
+  z-index: -1;
 }
 .nav-links { display: flex; gap: 28px; }
 .nav-links a {
@@ -702,7 +740,9 @@ html, body { overflow-x: hidden; }
 <!-- NAV -->
 <nav class="nav">
   <div class="container">
-    <div class="nav-logo">Nth Party Finder</div>
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-mark">Nth Party Finder</div>
+    </a>
     <div class="nav-links">
       <a href="#features">Features</a>
       <a href="#how-it-works">How It Works</a>
@@ -926,6 +966,25 @@ cargo build --release</code></pre>
     <span style="opacity: 0.5; font-size: 0.75rem;">Icons by <a href="https://remixicon.com" style="color: inherit;">Remix Icon</a></span>
   </div>
 </footer>
+
+<script>
+(function() {
+  var logos = document.querySelectorAll('.nav-logo-mark');
+  var angle = 0;
+  var speed = 110;
+  var last = performance.now();
+  function rotate(now) {
+    var dt = (now - last) / 1000;
+    last = now;
+    angle = (angle + speed * dt) % 360;
+    logos.forEach(function(el) {
+      el.style.setProperty('--gradient-angle', angle + 'deg');
+    });
+    requestAnimationFrame(rotate);
+  }
+  requestAnimationFrame(rotate);
+}());
+</script>
 
 <script type="module">
 import * as THREE from 'three';
