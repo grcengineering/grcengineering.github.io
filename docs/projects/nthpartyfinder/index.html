@@ -88,6 +88,7 @@ a:hover { color: var(--neon-blue); }
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
   padding: 16px 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 .nav .container {
   display: flex; align-items: center; justify-content: space-between;
@@ -108,7 +109,7 @@ a:hover { color: var(--neon-blue); }
   align-items: center;
   justify-content: center;
   font-family: var(--font-body);
-  font-weight: 800;
+  font-weight: 900;
   font-size: 0.8rem;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -149,6 +150,54 @@ a:hover { color: var(--neon-blue); }
 }
 .nav-links a:hover {
   color: var(--neon-pink);
+}
+.nav-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  flex-direction: column;
+  gap: 5px;
+}
+.nav-hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+.nav-hamburger:hover span {
+  background: var(--neon-pink);
+}
+.nav-mobile-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(6, 6, 15, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 0;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+.nav-mobile-menu.open {
+  display: block;
+}
+.nav-mobile-menu a {
+  display: block;
+  padding: 12px 24px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  transition: color 0.2s, background 0.2s;
+}
+.nav-mobile-menu a:hover {
+  color: var(--neon-pink);
+  background: rgba(255, 168, 79, 0.05);
 }
 
 /* ── HERO ── */
@@ -698,6 +747,7 @@ html, body { overflow-x: hidden; }
 }
 @media (max-width: 520px) {
   .nav-links { display: none; }
+  .nav-hamburger { display: flex; }
   .hero-ctas { flex-direction: column; align-items: center; }
   .hero-title { font-size: clamp(2.8rem, 11vw, 4.5rem); letter-spacing: 3px; }
   .container { padding: 0 16px; }
@@ -749,6 +799,17 @@ html, body { overflow-x: hidden; }
       <a href="#install">Install</a>
       <a href="https://github.com/grcengineering/nthpartyfinder" target="_blank" rel="noopener">GitHub</a>
     </div>
+    <button class="nav-hamburger" aria-label="Menu" onclick="document.querySelector('.nav-mobile-menu').classList.toggle('open')">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+  <div class="nav-mobile-menu">
+    <a href="#features" onclick="this.parentElement.classList.remove('open')">Features</a>
+    <a href="#how-it-works" onclick="this.parentElement.classList.remove('open')">How It Works</a>
+    <a href="#install" onclick="this.parentElement.classList.remove('open')">Install</a>
+    <a href="https://github.com/grcengineering/nthpartyfinder" target="_blank" rel="noopener">GitHub</a>
   </div>
 </nav>
 
