@@ -770,11 +770,11 @@ html, body { overflow-x: clip; max-width: 100vw; }
   pointer-events: none;
 }
 #vendor-graph {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 100vh;
   z-index: 0;
   pointer-events: none;
 }
@@ -821,8 +821,9 @@ html, body { overflow-x: clip; max-width: 100vw; }
 <div class="haze haze-blue"></div>
 <div class="haze haze-purple"></div>
 
+<canvas id="vendor-graph"></canvas>
+
 <header class="hero">
-  <canvas id="vendor-graph"></canvas>
   <div class="hero-overlay"></div>
   <div class="container">
     <h1 class="hero-title">
@@ -1069,7 +1070,7 @@ const LAYER_COUNTS = [1, 12, 28, 38, 41]; // nodes per layer
 
 // ── SETUP ──
 const canvas = document.getElementById('vendor-graph');
-const hero = canvas.parentElement;
+const hero = document.querySelector('.hero');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
@@ -1304,9 +1305,8 @@ for (let r = 1; r <= ringCount; r++) {
 
 // ── RESIZE ──
 function resize() {
-  const rect = hero.getBoundingClientRect();
-  const w = rect.width;
-  const h = rect.height;
+  const w = window.innerWidth;
+  const h = window.innerHeight;
   renderer.setSize(w, h);
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
