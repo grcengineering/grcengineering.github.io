@@ -22,10 +22,10 @@
    GRC Engineering colors + retro arcade aesthetic
    ══════════════════════════════════════════════ */
 :root {
-  --bg-deep:    #06060f;
-  --bg:         #0b0b1a;
-  --bg-card:    #111128;
-  --bg-surface: #1a1a3e;
+  --bg-deep:    transparent;
+  --bg:         transparent;
+  --bg-card:    rgba(17, 17, 40, 0.45);
+  --bg-surface: rgba(26, 26, 62, 0.45);
   --border:     rgba(255, 168, 79, 0.15);
   --border-hover: rgba(255, 168, 79, 0.5);
 
@@ -214,7 +214,7 @@ a:hover { color: var(--neon-blue); }
   pointer-events: none;
   filter: blur(80px);
   will-change: transform, opacity;
-  z-index: 0;
+  z-index: -2;
   max-width: 100vw;
   overflow: hidden;
 }
@@ -759,23 +759,25 @@ html, body { overflow-x: clip; max-width: 100vw; }
   .hero-title { font-size: clamp(4.2rem, 17vw, 7rem); letter-spacing: 3px; }
 }
 /* ── 3D GRAPH ── */
-.hero-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.50);
-  z-index: 0;
-  pointer-events: none;
-}
+/* The .hero-overlay div is no longer used — dark tint is on body::after */
 #vendor-graph {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100vh;
-  z-index: 0;
+  z-index: -2;
+  pointer-events: none;
+}
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.50);
+  z-index: -1;
   pointer-events: none;
 }
 </style>
@@ -824,7 +826,6 @@ html, body { overflow-x: clip; max-width: 100vw; }
 <canvas id="vendor-graph"></canvas>
 
 <header class="hero">
-  <div class="hero-overlay"></div>
   <div class="container">
     <h1 class="hero-title">
       <span class="lava-text"><span class="lava-letter" style="--i:0" data-letter="N">N</span><span class="lava-letter" style="--i:1" data-letter="t">t</span><span class="lava-letter" style="--i:2" data-letter="h">h</span><span class="lava-letter" style="--i:3" data-letter=" ">&nbsp;</span><span class="lava-letter" style="--i:4" data-letter="P">P</span><span class="lava-letter" style="--i:5" data-letter="a">a</span><span class="lava-letter" style="--i:6" data-letter="r">r</span><span class="lava-letter" style="--i:7" data-letter="t">t</span><span class="lava-letter" style="--i:8" data-letter="y">y</span></span><br>
@@ -890,7 +891,7 @@ html, body { overflow-x: clip; max-width: 100vw; }
 </section>
 
 <!-- HOW IT WORKS -->
-<section id="how-it-works" style="background: var(--bg);">
+<section id="how-it-works">
   <div class="container">
     <div class="section-label">The Main Event</div>
     <h2 class="section-title">How the Party Gets Started</h2>
@@ -978,7 +979,7 @@ html, body { overflow-x: clip; max-width: 100vw; }
 </section>
 
 <!-- INSTALL -->
-<section id="install" style="background: var(--bg);">
+<section id="install">
   <div class="container">
     <div class="section-label">RSVP</div>
     <h2 class="section-title">Get the Party Started</h2>
