@@ -22,10 +22,10 @@
    GRC Engineering colors + retro arcade aesthetic
    ══════════════════════════════════════════════ */
 :root {
-  --bg-deep:    transparent;
-  --bg:         transparent;
-  --bg-card:    rgba(17, 17, 40, 0.45);
-  --bg-surface: rgba(26, 26, 62, 0.45);
+  --bg-deep:    #06060f;
+  --bg:         #0b0b1a;
+  --bg-card:    #111128;
+  --bg-surface: #1a1a3e;
   --border:     rgba(255, 168, 79, 0.15);
   --border-hover: rgba(255, 168, 79, 0.5);
 
@@ -1076,6 +1076,7 @@ const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true 
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x000000);
 const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
 camera.position.set(0, 2.5, 5.5);
 camera.lookAt(0, 0, 0);
