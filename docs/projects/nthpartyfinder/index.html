@@ -86,8 +86,9 @@ a:hover { color: var(--neon-blue); }
 /* ── NAV ── */
 .nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  background: rgba(6, 6, 15, 0.85);
+  background: rgba(6, 6, 15, 0.65);
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
   padding: 16px 0;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
@@ -179,8 +180,9 @@ a:hover { color: var(--neon-blue); }
   top: 100%;
   left: 0;
   right: 0;
-  background: rgba(6, 6, 15, 0.95);
+  background: rgba(6, 6, 15, 0.85);
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
   padding: 16px 0;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
@@ -472,10 +474,10 @@ section { padding: 80px 0; }
   gap: 20px;
 }
 .feature-card {
-  background: rgba(17, 17, 40, 0.45);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(30, 30, 60, 0.25);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 6px;
   padding: 32px;
   transition: all .3s ease;
@@ -537,9 +539,9 @@ section { padding: 80px 0; }
 }
 .step-num {
   min-width: 48px; height: 48px;
-  background: rgba(17, 17, 40, 0.5);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(30, 30, 60, 0.3);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
   border: 1px solid var(--neon-pink);
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
@@ -564,10 +566,10 @@ section { padding: 80px 0; }
 
 /* ── TERMINAL ── */
 .terminal {
-  background: rgba(11, 11, 26, 0.5);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(20, 20, 45, 0.3);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
   max-width: 720px;
   margin: 48px auto 0;
@@ -575,10 +577,10 @@ section { padding: 80px 0; }
   box-shadow: 0 0 60px rgba(255,168,79,.06);
 }
 .terminal-bar {
-  background: rgba(17, 17, 40, 0.5);
+  background: rgba(30, 30, 60, 0.3);
   padding: 12px 16px;
   display: flex; gap: 8px; align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 .terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
 .terminal-title {
@@ -613,10 +615,10 @@ section { padding: 80px 0; }
   font-family: var(--font-mono);
   font-size: 0.8rem;
   padding: 8px 20px;
-  background: rgba(17, 17, 40, 0.4);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(30, 30, 60, 0.25);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 2px;
   color: var(--text-dim);
   letter-spacing: 1px;
@@ -635,16 +637,16 @@ section { padding: 80px 0; }
   gap: 20px;
 }
 .install-card {
-  background: rgba(17, 17, 40, 0.45);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(30, 30, 60, 0.25);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 6px;
   padding: 28px;
   transition: all .3s;
 }
 .install-card:hover {
-  border-color: rgba(27,149,193,.3);
+  border-color: rgba(27,149,193,.4);
 }
 .install-card h3 {
   font-family: var(--font-body);
@@ -668,14 +670,14 @@ section { padding: 80px 0; }
   margin: 8px 0;
 }
 .install-card pre {
-  background: rgba(6, 6, 15, 0.5);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(15, 15, 35, 0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   padding: 16px;
   border-radius: 4px;
   overflow-x: auto;
   margin-top: 12px;
-  border: 1px solid rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
 }
 .install-card pre code {
   font-family: var(--font-mono);
@@ -714,7 +716,7 @@ section { padding: 80px 0; }
 
 /* ── FOOTER ── */
 .footer {
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
   padding: 24px 0;
   text-align: center;
 }
@@ -789,10 +791,10 @@ section > .container,
 .hero > .container,
 .bottom-cta > .container,
 .footer > .container {
-  background: rgba(6, 6, 15, 0.55);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(20, 20, 45, 0.3);
+  backdrop-filter: blur(20px) saturate(1.3);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 16px;
   padding-top: 40px;
   padding-bottom: 40px;
