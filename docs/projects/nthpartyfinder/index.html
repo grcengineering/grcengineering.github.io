@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
 <style>
 @font-face {
   font-family: 'NeonLux';
@@ -64,22 +64,23 @@ a:hover { color: var(--neon-blue); }
 .container { max-width: var(--container); margin: 0 auto; padding: 0 var(--gutter); }
 
 /* ── ICON SYSTEM ── */
-.feature-icon i {
+.material-symbols-outlined {
+  vertical-align: middle;
+}
+.feature-icon .material-symbols-outlined {
   font-size: 2.2rem;
 }
-.badge i {
+.badge .material-symbols-outlined {
   font-size: 0.9rem;
-  vertical-align: middle;
 }
-.install-card h3 i {
+.install-card h3 .material-symbols-outlined {
   font-size: 1.3rem;
 }
-.bottom-cta-icon i {
+.bottom-cta-icon .material-symbols-outlined {
   font-size: 3.5rem;
 }
-.terminal-body i {
+.terminal-body .material-symbols-outlined {
   font-size: 0.9rem;
-  vertical-align: middle;
 }
 
 /* ── NAV ── */
@@ -853,13 +854,13 @@ section > .container,
     </p>
     <div class="hero-ctas">
       <a href="https://github.com/grcengineering/nthpartyfinder" class="btn-neon btn-neon-primary" target="_blank" rel="noopener">Get the Party Started</a>
-      <a href="https://github.com/grcengineering/nthpartyfinder/releases" class="btn-neon btn-neon-ghost" target="_blank" rel="noopener"><i class="ri-download-line"></i> Download</a>
+      <a href="https://github.com/grcengineering/nthpartyfinder/releases" class="btn-neon btn-neon-ghost" target="_blank" rel="noopener"><span class="material-symbols-outlined">download</span> Download</a>
     </div>
     <div class="hero-badges">
-      <span class="badge"><i class="ri-settings-3-line" style="color:var(--neon-pink);"></i> Rust</span>
-      <span class="badge"><i class="ri-flashlight-line" style="color:var(--neon-gold);"></i> Async</span>
-      <span class="badge"><i class="ri-brain-line" style="color:var(--neon-purple);"></i> Embedded NER</span>
-      <span class="badge"><i class="ri-file-list-line" style="color:var(--neon-blue);"></i> MIT License</span>
+      <span class="badge"><span class="material-symbols-outlined" style="color:var(--neon-pink);">settings</span> Rust</span>
+      <span class="badge"><span class="material-symbols-outlined" style="color:var(--neon-gold);">bolt</span> Async</span>
+      <span class="badge"><span class="material-symbols-outlined" style="color:var(--neon-purple);">psychology</span> Embedded NER</span>
+      <span class="badge"><span class="material-symbols-outlined" style="color:var(--neon-blue);">description</span> MIT License</span>
     </div>
   </div>
 </header>
@@ -873,32 +874,32 @@ section > .container,
 
     <div class="features-grid">
       <div class="feature-card">
-        <span class="feature-icon" style="color:var(--neon-pink);"><i class="ri-search-line"></i></span>
+        <span class="feature-icon" style="color:var(--neon-pink);"><span class="material-symbols-outlined">search</span></span>
         <h3>Comprehensive DNS Analysis</h3>
         <p>Analyzes DNS TXT records — SPF entries, domain verification strings, and more — to uncover vendor relationships hiding in plain sight.</p>
       </div>
       <div class="feature-card">
-        <span class="feature-icon" style="color:var(--neon-blue);"><i class="ri-loop-left-line"></i></span>
+        <span class="feature-icon" style="color:var(--neon-blue);"><span class="material-symbols-outlined">sync</span></span>
         <h3>Recursive Discovery</h3>
         <p>The party doesn't stop at the 3rd. Configurable depth analysis or automatic discovery until it hits common denominators.</p>
       </div>
       <div class="feature-card">
-        <span class="feature-icon" style="color:var(--neon-purple);"><i class="ri-brain-line"></i></span>
+        <span class="feature-icon" style="color:var(--neon-purple);"><span class="material-symbols-outlined">psychology</span></span>
         <h3>Embedded NER</h3>
         <p>Optional GLiNER model for intelligent organization name extraction. Works completely offline — no API keys, no external services.</p>
       </div>
       <div class="feature-card">
-        <span class="feature-icon" style="color:var(--neon-green);"><i class="ri-global-line"></i></span>
+        <span class="feature-icon" style="color:var(--neon-green);"><span class="material-symbols-outlined">language</span></span>
         <h3>Cross-Platform</h3>
         <p>Runs on Windows, macOS (Intel + Apple Silicon), and Linux. Docker image available for containerized workflows.</p>
       </div>
       <div class="feature-card">
-        <span class="feature-icon" style="color:var(--neon-gold);"><i class="ri-bar-chart-grouped-line"></i></span>
+        <span class="feature-icon" style="color:var(--neon-gold);"><span class="material-symbols-outlined">bar_chart</span></span>
         <h3>Multiple Export Formats</h3>
         <p>CSV, JSON, Markdown, and HTML output with detailed relationship mapping. Your data, your format.</p>
       </div>
       <div class="feature-card">
-        <span class="feature-icon" style="color:var(--neon-gold);"><i class="ri-flashlight-line"></i></span>
+        <span class="feature-icon" style="color:var(--neon-gold);"><span class="material-symbols-outlined">bolt</span></span>
         <h3>High Performance</h3>
         <p>Built in Rust with async processing, intelligent caching, and configurable parallelism. Finds parties fast.</p>
       </div>
@@ -970,7 +971,7 @@ section > .container,
 <span class="t-out">&nbsp;&nbsp;Layer 2 (4th party):</span> <span class="t-val">5 vendors</span><br>
 <span class="t-out">&nbsp;&nbsp;Layer 3 (5th party):</span> <span class="t-val">3 vendors</span><br>
 <br>
-<span class="t-ok"><i class="ri-checkbox-circle-line" style="color:var(--neon-green);"></i> Party mapped! Results → acme_vendors.json</span>
+<span class="t-ok"><span class="material-symbols-outlined" style="color:var(--neon-green);">check_circle</span> Party mapped! Results → acme_vendors.json</span>
       </div>
     </div>
   </div>
@@ -1003,7 +1004,7 @@ section > .container,
 
     <div class="install-grid">
       <div class="install-card">
-        <h3><i class="ri-box-3-line" style="color:var(--neon-blue);"></i> Docker</h3>
+        <h3><span class="material-symbols-outlined" style="color:var(--neon-blue);">deployed_code</span> Docker</h3>
         <span class="rec">Recommended</span>
         <p>Pre-built image with embedded NER. Start scanning immediately.</p>
         <pre><code>docker pull ghcr.io/grcengineering/nthpartyfinder:latest
@@ -1012,12 +1013,12 @@ docker run -v $(pwd)/output:/output \
   nthpartyfinder -d example.com -r 2</code></pre>
       </div>
       <div class="install-card">
-        <h3><i class="ri-archive-line" style="color:var(--neon-gold);"></i> Pre-built Binaries</h3>
+        <h3><span class="material-symbols-outlined" style="color:var(--neon-gold);">inventory_2</span> Pre-built Binaries</h3>
         <p>Download from <a href="https://github.com/grcengineering/nthpartyfinder/releases" target="_blank" rel="noopener">GitHub Releases</a>. Available as <code style="background:var(--bg);color:var(--neon-blue);padding:2px 6px;border-radius:3px;font-family:var(--font-mono);font-size:.8rem;">full</code> (~150MB w/ NER) or <code style="background:var(--bg);color:var(--neon-blue);padding:2px 6px;border-radius:3px;font-family:var(--font-mono);font-size:.8rem;">slim</code> (~15MB).</p>
         <p style="font-size:.82rem;">Windows x86_64 · macOS Intel & Apple Silicon · Linux x86_64</p>
       </div>
       <div class="install-card">
-        <h3><i class="ri-terminal-box-line" style="color:var(--neon-pink);"></i> Build from Source</h3>
+        <h3><span class="material-symbols-outlined" style="color:var(--neon-pink);">terminal</span> Build from Source</h3>
         <p>Clone, build, and customize. Requires Rust toolchain.</p>
         <pre><code>git clone https://github.com/grcengineering/nthpartyfinder.git
 cd nthpartyfinder
@@ -1030,7 +1031,7 @@ cargo build --release</code></pre>
 <!-- BOTTOM CTA -->
 <section class="bottom-cta">
   <div class="container">
-    <div class="bottom-cta-icon" style="margin-bottom:20px;color:var(--neon-pink);"><i class="ri-sparkling-line"></i></div>
+    <div class="bottom-cta-icon" style="margin-bottom:20px;color:var(--neon-pink);"><span class="material-symbols-outlined">auto_awesome</span></div>
     <h2 class="section-title">Ready to Find Your Nth Party?</h2>
     <p class="backronym">RSVP: Recursive Security Vendor Profiler</p>
     <div class="hero-ctas">
@@ -1045,7 +1046,7 @@ cargo build --release</code></pre>
 <footer class="footer">
   <div class="container">
     <p>Nth Party Finder · <a href="https://github.com/grcengineering/nthpartyfinder" target="_blank" rel="noopener">GitHub</a> · MIT License · <a href="https://grc.engineering" target="_blank" rel="noopener">GRC Engineering</a></p>
-    <span style="opacity: 0.5; font-size: 0.75rem;">Icons by <a href="https://remixicon.com" style="color: inherit;">Remix Icon</a></span>
+    <span style="opacity: 0.5; font-size: 0.75rem;">Icons by <a href="https://fonts.google.com/icons" style="color: inherit;">Google Icons</a></span>
   </div>
 </footer>
 
