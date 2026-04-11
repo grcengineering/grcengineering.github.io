@@ -218,8 +218,6 @@ a:hover { color: var(--neon-blue); }
   filter: blur(80px);
   will-change: transform, opacity;
   z-index: -2;
-  max-width: 100vw;
-  overflow: hidden;
 }
 .haze-orange {
   width: 600px;
@@ -824,9 +822,8 @@ section { padding: 80px 0; }
 /* The .hero-overlay div is no longer used — dark tint is on body::after */
 #vendor-graph {
   position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  top: 0;
+  left: 0;
   z-index: -2;
   pointer-events: none;
 }
@@ -1390,17 +1387,19 @@ for (let r = 1; r <= ringCount; r++) {
 
 // ── RESIZE ──
 function resize() {
-  const w = canvas.clientWidth;
-  const h = canvas.clientHeight;
-  renderer.setSize(w, h, false);
-  canvas.width = w * devicePixelRatio;
-  canvas.height = h * devicePixelRatio;
+  const vv = window.visualViewport;
+  const w = vv ? vv.width : window.innerWidth;
+  const h = vv ? vv.height : window.innerHeight;
+  renderer.setSize(w, h);
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
 }
 resize();
 window.addEventListener('resize', resize);
-if (window.visualViewport) window.visualViewport.addEventListener('resize', resize);
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', resize);
+  window.visualViewport.addEventListener('scroll', resize);
+}
 
 // ── REDUCED MOTION CHECK ──
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
