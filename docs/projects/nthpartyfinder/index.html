@@ -824,10 +824,9 @@ html, body { overflow-x: clip; max-width: 100vw; }
 /* The .hero-overlay div is no longer used — dark tint is on body::after */
 #vendor-graph {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   z-index: -2;
   pointer-events: none;
 }
@@ -1391,14 +1390,17 @@ for (let r = 1; r <= ringCount; r++) {
 
 // ── RESIZE ──
 function resize() {
-  const w = window.innerWidth;
-  const h = window.innerHeight;
-  renderer.setSize(w, h);
+  const w = canvas.clientWidth;
+  const h = canvas.clientHeight;
+  renderer.setSize(w, h, false);
+  canvas.width = w * devicePixelRatio;
+  canvas.height = h * devicePixelRatio;
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
 }
 resize();
 window.addEventListener('resize', resize);
+if (window.visualViewport) window.visualViewport.addEventListener('resize', resize);
 
 // ── REDUCED MOTION CHECK ──
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
