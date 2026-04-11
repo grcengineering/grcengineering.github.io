@@ -44,7 +44,7 @@
   --font-mono:    'Space Mono', monospace;
 
   --container: 1100px;
-  --gutter: 24px;
+  --gutter: 28px;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -813,10 +813,13 @@ section { padding: 80px 0; }
   .nav-hamburger { display: flex; }
   .hero-ctas { flex-direction: column; align-items: center; }
   .hero-title { font-size: clamp(2.8rem, 11vw, 4.5rem); letter-spacing: 3px; }
-  .container { padding: 0 16px; }
+  .container { padding: 0 20px; }
 }
 @media (max-width: 520px) and (orientation: portrait) {
   .hero-title { font-size: clamp(4.2rem, 17vw, 7rem); letter-spacing: 3px; }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+  .container { padding: 0 48px; }
 }
 /* ── 3D GRAPH ── */
 /* The .hero-overlay div is no longer used — dark tint is on body::after */
