@@ -305,6 +305,11 @@ a:hover { color: var(--neon-blue); }
   z-index: 1;
   filter: drop-shadow(1px 1px 0px #000);
 }
+.hero-title > .lava-text:first-child > .lava-letter:nth-child(2),
+.hero-title > .lava-text:first-child > .lava-letter:nth-child(3) {
+  font-size: 0.55em;
+  vertical-align: super;
+}
 @keyframes lava-flow {
   0%   { background-position: 0% 50%; }
   50%  { background-position: 100% 50%; }
