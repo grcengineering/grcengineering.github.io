@@ -1,1034 +1,394 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nth Party Finder — GRC Engineering</title>
 <meta name="description" content="Map your entire vendor party guest list — from third parties to the Nth degree — through DNS analysis.">
+
+<!-- No-flash theme resolver: set data-theme before first paint -->
+<script>
+(function () {
+  try {
+    var k = 'npf-theme';
+    var c = localStorage.getItem(k) || 'system';
+    var dark = (c === 'dark') || (c === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    var el = document.documentElement;
+    el.setAttribute('data-theme', dark ? 'dark' : 'light');
+    el.setAttribute('data-theme-choice', c);
+  } catch (e) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.documentElement.setAttribute('data-theme-choice', 'system');
+  }
+})();
+</script>
+
+<!-- GRC Engineering Design System (vendored — tokens + self-hosted fonts) -->
+<link rel="stylesheet" href="ds/styles.css">
+
+<!-- Material Symbols (icon set kept from the original) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Saira:wght@300;400;500;600;700&family=Inconsolata:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+
 <style>
+/* ════════════════════════════════════════════════════════════
+   NTH PARTY FINDER — re-founded on the GRC Engineering Design System
+   Tokens, type, spacing, effects + motion all come from ds/styles.css.
+   This sheet adds only: the NeonLux face, the three NPF signature
+   components (LavaTitle, ToolLockup, NodeGraph), and the page layout.
+   ════════════════════════════════════════════════════════════ */
+
+/* NeonLux — the retro-arcade display face for the neon hero title */
 @font-face {
   font-family: 'NeonLux';
   src: url('fonts/NeonLux.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-/* ══════════════════════════════════════════════
-   NTH PARTY FINDER — Design System
-   GRC Engineering colors + retro arcade aesthetic
-   ══════════════════════════════════════════════ */
-:root {
-  --bg-deep:    #06060f;
-  --bg:         #0b0b1a;
-  --bg-card:    #111128;
-  --bg-surface: #1a1a3e;
-  --border:     rgba(255, 168, 79, 0.15);
-  --border-hover: rgba(255, 168, 79, 0.5);
-
-  --neon-pink:   #FFA84F;
-  --neon-blue:   #1B95C1;
-  --neon-purple: #b388ff;
-  --neon-green:  #39ff14;
-  --neon-gold:   #ffd700;
-
-  --text:       #c8c8e0;
-  --text-dim:   #6e6e8a;
-  --text-bright:#f0f0ff;
-
-  --font-display: 'Inconsolata', monospace;
-  --font-body:    'Saira', sans-serif;
-  --font-mono:    'Space Mono', monospace;
-
-  --container: 1100px;
-  --gutter: 28px;
+  font-weight: 400; font-style: normal; font-display: swap;
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; background: #000; }
+*, *::before, *::after { margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 body {
-  font-family: var(--font-body);
-  font-size: 16px;
-  line-height: 1.65;
-  color: var(--text);
-  background: transparent;
-  -webkit-font-smoothing: antialiased;
-  padding-top: 68px;
-}
-a { color: var(--neon-pink); text-decoration: none; transition: color .2s; }
-a:hover { color: var(--neon-blue); }
-
-.container { max-width: min(var(--container), 100% - 32px); margin: 0 auto; padding: 0 var(--gutter); }
-
-/* ── ICON SYSTEM ── */
-.material-symbols-outlined {
-  vertical-align: middle;
-}
-.feature-icon .material-symbols-outlined {
-  font-size: 2.2rem;
-}
-.badge .material-symbols-outlined {
-  font-size: 0.9rem;
-}
-.install-card h3 .material-symbols-outlined {
-  font-size: 1.3rem;
-}
-.bottom-cta-icon .material-symbols-outlined {
-  font-size: 3.5rem;
-}
-.terminal-body .material-symbols-outlined {
-  font-size: 0.9rem;
+  background: var(--surface-page);
+  color: var(--text-body);
+  overflow-x: hidden;
 }
 
-/* ── NAV ── */
-.nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(14px) saturate(1.4);
-  -webkit-backdrop-filter: blur(14px) saturate(1.4);
-  border-bottom: 1px solid rgba(255, 168, 79, 0.2);
-  padding: 16px 0;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-}
-.nav .container {
-  display: flex; align-items: center; justify-content: space-between;
-}
-.nav-logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  text-decoration: none;
-}
-.nav-logo-mark {
-  position: relative;
-  height: 36px;
-  padding: 0 14px;
-  background: linear-gradient(135deg, var(--neon-pink), var(--neon-blue));
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-body);
-  font-weight: 900;
-  font-size: 0.8rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: #000;
-  box-shadow: 0 0 20px rgba(255, 168, 79, 0.25);
-  white-space: nowrap;
-  z-index: 1;
-}
-.nav-logo-mark::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: 9px;
-  background: conic-gradient(
-    from var(--gradient-angle, 0deg),
-    transparent,
-    #fff 10%,
-    transparent 30%
-  );
-  z-index: -1;
-}
-.nav-logo-mark::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 8px;
-  background: linear-gradient(135deg, var(--neon-pink), var(--neon-blue));
-  z-index: -1;
-}
-.nav-links { display: flex; gap: 28px; }
-.nav-links a {
-  font-family: var(--font-body);
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--text-dim);
-  letter-spacing: 0.5px;
-  transition: color .2s;
-}
-.nav-links a:hover {
-  color: var(--neon-pink);
-}
-.nav-hamburger {
-  display: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  flex-direction: column;
-  gap: 5px;
-}
-.nav-hamburger span {
-  display: block;
-  width: 24px;
-  height: 2px;
-  background: var(--text);
-  border-radius: 2px;
-  transition: all 0.3s ease;
-}
-.nav-hamburger:hover span {
-  background: var(--neon-pink);
-}
-.nav-mobile-menu {
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: rgba(6, 6, 15, 0.75);
-  backdrop-filter: blur(14px) saturate(1.4);
-  -webkit-backdrop-filter: blur(14px) saturate(1.4);
-  border-bottom: 1px solid rgba(255, 168, 79, 0.2);
-  padding: 16px 0;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-}
-.nav-mobile-menu.open {
-  display: block;
-}
-.nav-mobile-menu a {
-  display: block;
-  padding: 12px 24px;
-  font-family: var(--font-body);
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: var(--text-dim);
-  transition: color 0.2s, background 0.2s;
-}
-.nav-mobile-menu a:hover {
-  color: var(--neon-pink);
-  background: rgba(255, 168, 79, 0.05);
-}
+.np-container { max-width: var(--container-lg); margin: 0 auto; padding: 0 var(--space-7); }
 
-/* ── HERO ── */
-.hero {
-  padding: 60px 0 100px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-.haze {
-  position: fixed;
-  border-radius: 50%;
-  pointer-events: none;
-  filter: blur(80px);
-  will-change: transform, opacity;
-  z-index: -2;
-}
-.haze-orange {
-  width: 600px;
-  height: 400px;
-  background: rgba(255, 168, 79, 0.12);
-  top: 20%;
-  left: 0;
-  animation: haze-drift-1 20s ease-in-out infinite, haze-pulse 8s ease-in-out infinite;
-}
-.haze-blue {
-  width: 500px;
-  height: 350px;
-  background: rgba(27, 149, 193, 0.10);
-  top: 5%;
-  right: 0;
-  animation: haze-drift-2 24s ease-in-out infinite, haze-pulse 10s ease-in-out 2s infinite;
-}
-.haze-purple {
-  width: 400px;
-  height: 400px;
-  background: rgba(179, 136, 255, 0.08);
-  bottom: 0;
-  left: 30%;
-  animation: haze-drift-3 22s ease-in-out infinite, haze-pulse 12s ease-in-out 4s infinite;
-}
-@keyframes haze-drift-1 {
-  0%   { transform: translate(0, 0); }
-  25%  { transform: translate(40px, -30px); }
-  50%  { transform: translate(20px, 40px); }
-  75%  { transform: translate(-30px, 20px); }
-  100% { transform: translate(0, 0); }
-}
-@keyframes haze-drift-2 {
-  0%   { transform: translate(0, 0); }
-  25%  { transform: translate(-50px, 30px); }
-  50%  { transform: translate(-20px, -40px); }
-  75%  { transform: translate(30px, -20px); }
-  100% { transform: translate(0, 0); }
-}
-@keyframes haze-drift-3 {
-  0%   { transform: translate(0, 0); }
-  25%  { transform: translate(30px, 30px); }
-  50%  { transform: translate(-40px, 10px); }
-  75%  { transform: translate(10px, -30px); }
-  100% { transform: translate(0, 0); }
-}
-@keyframes haze-pulse {
-  0%, 100% { opacity: 1; }
-  50%      { opacity: 1; }
-}
+.material-symbols-outlined { vertical-align: middle; line-height: 1; }
 
-.hero-eyebrow {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--neon-pink);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 28px;
-  position: relative;
-  z-index: 1;
-}
-.hero-eyebrow .dot {
-  width: 6px; height: 6px;
-  background: var(--neon-pink);
-  border-radius: 50%;
-  box-shadow: 0 0 8px var(--neon-pink);
-  animation: pulse-dot 2s ease-in-out infinite;
-}
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--neon-pink); }
-  50% { opacity: .5; box-shadow: 0 0 20px var(--neon-pink); }
-}
+/* ── LINKS ── */
+a { color: var(--text-link); text-decoration: none; transition: var(--transition-control); }
+a:hover { color: var(--brand-accent-strong); }
 
-.hero-title {
-  font-family: 'NeonLux', sans-serif;
-  font-size: clamp(4.5rem, 12vw, 9.5rem);
-  font-weight: 400;
-  letter-spacing: 6px;
-  text-transform: uppercase;
-  line-height: 1.15;
-  color: #fff;
-  margin-bottom: 12px;
-  position: relative;
-  z-index: 1;
-  filter: drop-shadow(1px 1px 0px #000);
+/* ════════ SIGNATURE 1 — ToolLockup (orange→blue pill, travelling glow) ════════ */
+@property --grc-lockup-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+.grc-lockup {
+  --grc-lockup-fs: 30px; --grc-lockup-ring: 2px;
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  box-sizing: border-box; font-size: var(--grc-lockup-fs);
+  padding: 0.46em 0.92em 0.5em; border-radius: 0.5em; text-decoration: none; isolation: isolate;
+  background: var(--gradient-ocean, linear-gradient(115deg, #FFA84F 0%, #1B95C1 100%));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), inset 0 0 0 1px rgba(255,255,255,0.32),
+              0 1px 2px rgba(0,0,0,0.25), 0 16px 34px -12px rgba(0,0,0,0.55);
 }
-.hero-title > .lava-text:first-child > .lava-letter:nth-child(2),
-.hero-title > .lava-text:first-child > .lava-letter:nth-child(3) {
-  font-size: 0.7em;
+.grc-lockup::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: var(--grc-lockup-ring);
+  background: conic-gradient(from var(--grc-lockup-angle),
+    rgba(255,255,255,0.14) 0deg, rgba(255,255,255,0.14) 275deg, rgba(255,255,255,0.55) 312deg,
+    rgba(255,255,255,1) 330deg, rgba(255,255,255,0.55) 348deg, rgba(255,255,255,0.14) 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  filter: drop-shadow(0 0 3px rgba(255,255,255,0.55));
+  animation: grc-lockup-spin 3.2s linear infinite; pointer-events: none; z-index: 1;
 }
-@keyframes lava-flow {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+.grc-lockup__text {
+  position: relative; z-index: 2; font-family: "Satoshi", "General Sans", system-ui, sans-serif;
+  font-weight: 900; letter-spacing: 0.005em; line-height: 1; color: #0A0D12; white-space: nowrap;
 }
-@keyframes lava-flow-reverse {
-  0%   { background-position: 100% 50%; }
-  50%  { background-position: 0% 50%; }
-  100% { background-position: 100% 50%; }
+@keyframes grc-lockup-spin { to { --grc-lockup-angle: 360deg; } }
+.grc-lockup--sm { --grc-lockup-fs: 16px; --grc-lockup-ring: 1.5px; }
+.grc-lockup--md { --grc-lockup-fs: 30px; }
+.grc-lockup--lg { --grc-lockup-fs: 44px; --grc-lockup-ring: 2.5px; }
+@media (prefers-reduced-motion: reduce) { .grc-lockup::after { animation: none; } }
+
+/* ════════ SIGNATURE 2 — LavaTitle (neon flowing wordmark) ════════ */
+.grc-lava-title {
+  font-family: 'NeonLux', sans-serif; font-size: clamp(4rem, 11vw, 8.5rem); font-weight: 400;
+  letter-spacing: 6px; text-transform: uppercase; line-height: 1.12; color: #fff;
+  margin: 0; position: relative; z-index: 1; filter: drop-shadow(1px 1px 0px #000);
 }
-@keyframes neon-flicker {
-  0%, 17%, 21%, 23%, 27%, 52%, 56%, 100% {
-    opacity: 1;
-  }
-  18%, 22%, 24%, 53%, 55% {
-    opacity: 0.35;
-  }
-}
-.lava-text { display: inline; }
-.lava-letter {
-  display: inline-block;
-  position: relative;
+@keyframes grc-lava-flow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+@keyframes grc-lava-flow-reverse { 0% { background-position: 100% 50%; } 50% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+@keyframes grc-lava-flicker { 0%,17%,21%,23%,27%,52%,56%,100% { opacity: 1; } 18%,22%,24%,53%,55% { opacity: 0.35; } }
+.grc-lava-text { display: inline; white-space: nowrap; }
+.grc-lava-letter {
+  display: inline-block; position: relative;
   background: linear-gradient(90deg, #FF8C00, #FF9A1F, #00A8E8, #00C2FF, #FF8C00);
-  background-size: 300% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
+  background-size: 300% 100%; -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: lava-flow 8s ease-in-out infinite;
-  animation-delay: calc(var(--i) * -0.6s);
+  animation: grc-lava-flow 8s ease-in-out infinite; animation-delay: calc(var(--i) * -0.6s);
 }
-.hero-title > .lava-text:first-child > .lava-letter:nth-child(-n+3) {
-  animation: lava-flow 8s ease-in-out infinite, neon-flicker 4s infinite;
+.grc-lava-letter--sm { font-size: 0.7em; }
+.grc-lava-letter--flicker {
+  animation: grc-lava-flow 8s ease-in-out infinite, grc-lava-flicker 4s infinite;
   animation-delay: calc(var(--i) * -0.6s), 0s;
 }
-.lava-letter::before {
-  content: attr(data-letter);
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: -1;
+.grc-lava-letter::before {
+  content: attr(data-letter); position: absolute; top: 0; left: 0; z-index: -1;
   background: linear-gradient(90deg, #FF8C00, #FF9A1F, #00A8E8, #00C2FF, #FF8C00);
-  background-size: 300% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  -webkit-text-stroke: 0.25px transparent;
-  paint-order: stroke fill;
-  animation: lava-flow-reverse 8s ease-in-out infinite;
-  animation-delay: calc(var(--i) * -0.6s);
+  background-size: 300% 100%; -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; -webkit-text-stroke: 0.25px transparent; paint-order: stroke fill;
+  animation: grc-lava-flow-reverse 8s ease-in-out infinite; animation-delay: calc(var(--i) * -0.6s);
   filter: blur(1.5px);
 }
-
-.hero-tagline {
-  font-family: var(--font-mono);
-  font-size: 1.05rem;
-  color: var(--neon-pink);
-  margin-bottom: 24px;
-  position: relative; z-index: 1;
-}
-@keyframes flicker {
-  0%,19%,21%,23%,25%,54%,56%,100% { opacity:1; }
-  20%,24%,55% { opacity:.5; }
+@media (prefers-reduced-motion: reduce) {
+  .grc-lava-letter, .grc-lava-letter::before, .grc-lava-letter--flicker { animation: none; }
 }
 
-.hero-desc {
-  font-size: 1.1rem;
-  color: var(--text);
-  max-width: 640px;
-  margin: 0 auto 36px;
-  position: relative; z-index: 1;
-  line-height: 1.75;
-}
+/* ════════ SIGNATURE 3 — NodeGraph backdrop ════════ */
+.grc-nodegraph { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; z-index: 0; background: transparent; }
+.grc-nodegraph__canvas { width: 100%; height: 100%; display: block; }
 
-.hero-ctas {
-  display: flex; gap: 16px;
-  justify-content: center;
-  flex-wrap: wrap;
-  position: relative; z-index: 1;
+/* ════════ NAV ════════ */
+.np-nav {
+  position: sticky; top: 0; z-index: 100;
+  background: color-mix(in srgb, var(--surface-page) 80%, transparent);
+  backdrop-filter: blur(var(--blur-md)) saturate(1.3);
+  -webkit-backdrop-filter: blur(var(--blur-md)) saturate(1.3);
+  border-bottom: 1px solid var(--border-subtle);
 }
+.np-nav__inner { display: flex; align-items: center; gap: var(--space-7); height: 64px; }
+.np-nav__brand { display: inline-flex; align-items: center; }
+.np-nav__spacer { flex: 1; }
+.np-nav__links { display: flex; gap: var(--space-1); }
+.np-nav__links a {
+  font-family: var(--ui-family); font-size: var(--text-sm); font-weight: var(--fw-medium);
+  color: var(--text-body); padding: 7px 12px; border-radius: var(--radius-sm); letter-spacing: 0.01em;
+}
+.np-nav__links a:hover { background: var(--surface-inset); color: var(--text-strong); }
+.np-nav__right { display: flex; align-items: center; gap: var(--space-2); }
+.np-icon-btn {
+  display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px;
+  border-radius: var(--radius-md); border: 1px solid var(--border-default); background: transparent;
+  color: var(--text-body); cursor: pointer; transition: var(--transition-control);
+}
+.np-icon-btn:hover { background: var(--surface-inset); color: var(--text-strong); border-color: var(--border-strong); }
+.np-icon-btn .material-symbols-outlined { font-size: 20px; }
+.np-hamburger { display: none; }
+.np-mobile { display: none; border-bottom: 1px solid var(--border-subtle); background: var(--surface-card); }
+.np-mobile.open { display: block; }
+.np-mobile a { display: block; padding: 13px var(--space-7); font-family: var(--ui-family); font-size: var(--text-base); font-weight: var(--fw-medium); color: var(--text-body); }
+.np-mobile a:hover { background: var(--surface-inset); color: var(--text-strong); }
 
-.btn-neon {
-  font-family: var(--font-display);
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  padding: 16px 36px;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  transition: all .25s ease;
-  text-decoration: none;
-  display: inline-block;
+/* ════════ HERO — dark ink band + constellation (always dark, the signature) ════════ */
+.np-hero {
+  position: relative; overflow: hidden;
+  background: var(--surface-ink); color: var(--text-on-ink);
+  border-bottom: 1px solid var(--border-ink);
 }
-.btn-neon-primary {
-  background: linear-gradient(135deg, var(--neon-pink), #ffbe7a);
-  color: #fff;
-  box-shadow: 0 0 20px rgba(255,168,79,.4), 0 0 60px rgba(255,168,79,.15), inset 0 0 20px rgba(255,255,255,.05);
+.np-hero__glow { position: absolute; inset: 0; background: var(--gradient-ink-glow); pointer-events: none; z-index: 1; }
+.np-hero__grid { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px); background-size: 24px 24px; pointer-events: none; z-index: 1; }
+.np-hero__inner { position: relative; z-index: 2; max-width: 880px; margin: 0 auto; text-align: center; padding: var(--space-20) 0 var(--space-24); }
+.np-hero__eyebrow {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  font-family: var(--font-mono); font-size: var(--text-xs); font-weight: var(--fw-medium);
+  letter-spacing: var(--tracking-wider); text-transform: uppercase; color: var(--grc-orange-300);
+  margin-bottom: var(--space-6);
 }
-.btn-neon-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 30px rgba(255,168,79,.6), 0 0 80px rgba(255,168,79,.3), inset 0 0 20px rgba(255,255,255,.1);
-  color: #fff;
+.np-hero__dot { width: 7px; height: 7px; background: var(--grc-orange-400); border-radius: 50%; box-shadow: 0 0 8px var(--grc-orange-400); animation: np-pulse 2s ease-in-out infinite; }
+@keyframes np-pulse { 0%,100% { opacity: 1; box-shadow: 0 0 8px var(--grc-orange-400); } 50% { opacity: .5; box-shadow: 0 0 18px var(--grc-orange-400); } }
+.np-hero__title { margin: 0 0 var(--space-4); }
+.np-hero__tagline { font-family: var(--font-mono); font-size: var(--text-md); color: var(--grc-orange-300); margin-bottom: var(--space-5); }
+.np-hero__desc { font-size: var(--text-md); line-height: var(--leading-relaxed); color: var(--text-on-ink-muted); max-width: 56ch; margin: 0 auto var(--space-8); }
+.np-hero__ctas { display: flex; gap: var(--space-3); flex-wrap: wrap; justify-content: center; }
+.np-hero__badges { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-top: var(--space-8); justify-content: center; }
+.np-chip {
+  display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wide); padding: 5px 12px; border-radius: var(--radius-pill);
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border-ink); color: var(--text-on-ink-muted);
 }
-.btn-neon-ghost {
-  background: transparent;
-  color: var(--neon-blue);
-  border: 1px solid rgba(27,149,193,.4);
-}
-.btn-neon-ghost:hover {
-  border-color: var(--neon-blue);
-  box-shadow: 0 0 20px rgba(27,149,193,.4), 0 0 60px rgba(27,149,193,.15);
-  color: var(--neon-blue);
-}
+.np-chip .material-symbols-outlined { font-size: 15px; }
 
-.hero-badges {
-  display: flex; gap: 10px;
-  justify-content: center; flex-wrap: wrap;
-  margin-top: 32px;
-  position: relative; z-index: 1;
+/* ════════ BUTTONS ════════ */
+.np-btn {
+  display: inline-flex; align-items: center; gap: 8px; font-family: var(--ui-family); font-size: var(--text-sm);
+  font-weight: var(--fw-semibold); letter-spacing: 0.01em; padding: 12px 22px; border-radius: var(--radius-md);
+  border: 1px solid transparent; cursor: pointer; transition: var(--transition-control); white-space: nowrap;
 }
-.badge {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  padding: 5px 14px;
-  border-radius: 2px;
-  background: rgba(255,168,79,.08);
-  border: 1px solid var(--border);
-  color: var(--text-dim);
-  letter-spacing: 1px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
+.np-btn .material-symbols-outlined { font-size: 18px; }
+/* primary = solid orange (DS: tools lead with orange) */
+.np-btn--primary { background: linear-gradient(135deg, var(--grc-orange-400), var(--grc-orange-500)); color: #1a1208; box-shadow: var(--glow-grc); }
+.np-btn--primary:hover { transform: translateY(-1px); filter: brightness(1.05); color: #1a1208; box-shadow: 0 10px 34px -8px rgba(255,168,79,0.6); }
+/* ghost = engineering blue outline */
+.np-btn--ghost { background: transparent; color: var(--eng-blue-300); border-color: rgba(99,190,220,0.45); }
+.np-btn--ghost:hover { border-color: var(--eng-blue-300); background: rgba(27,149,193,0.12); color: var(--eng-blue-200); }
 
-/* ── SECTIONS ── */
-section { padding: 80px 0; }
-.section-label {
-  font-family: var(--font-display);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 5px;
-  text-transform: uppercase;
-  color: var(--neon-pink);
-  margin-bottom: 8px;
+/* ════════ HERO TERMINAL — glass card over the constellation (signature) ════════ */
+.np-term {
+  position: relative; border-radius: var(--radius-xl); overflow: hidden;
+  max-width: 720px; margin: var(--space-12) auto 0; text-align: left;
+  /* always dark glass — the terminal lives in the always-dark hero, over the constellation */
+  background: color-mix(in srgb, #0C1117 74%, transparent); backdrop-filter: blur(var(--blur-md)); -webkit-backdrop-filter: blur(var(--blur-md));
+  box-shadow: var(--glass-shadow), var(--glass-highlight);
 }
-.section-title {
-  font-family: var(--font-display);
-  font-size: clamp(1.5rem, 3vw, 2.2rem);
-  font-weight: 700;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--text-bright);
-  margin-bottom: 8px;
-  line-height: 1.3;
+.np-term::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; background: var(--glass-border);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; z-index: 1;
 }
-.section-sub {
-  color: var(--text-dim);
-  font-size: 1rem;
-  margin-bottom: 48px;
-  max-width: 600px;
-}
+.np-term__bar { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border-ink); }
+.np-term__dot { width: 11px; height: 11px; border-radius: 50%; }
+.np-term__title { font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: var(--tracking-wide); color: var(--text-on-ink-muted); margin-left: 6px; }
+.np-term__body { padding: var(--space-6); font-family: var(--font-mono); font-size: var(--text-sm); line-height: 1.9; color: var(--text-on-ink); overflow-x: auto; }
+.t-prompt { color: var(--grc-orange-400); } .t-cmd { color: var(--text-on-ink); } .t-flag { color: var(--eng-blue-300); }
+.t-val { color: #4FD396; } .t-out { color: var(--text-on-ink-muted); } .t-ok { color: #4FD396; }
+.t-num { color: var(--grc-orange-300); } .t-accent { color: var(--grc-orange-400); }
 
-/* ── FEATURE GRID ── */
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-}
-.feature-card {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(10px) saturate(1.4);
-  -webkit-backdrop-filter: blur(10px) saturate(1.4);
-  border: 1px solid transparent;
-  border-radius: 6px;
-  padding: 32px;
-  transition: all .3s ease;
-  position: relative;
-  overflow: hidden;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
-}
-.feature-card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 6px;
-  padding: 1px;
-  background: linear-gradient(135deg, rgba(255, 168, 79, 0.3), rgba(27, 149, 193, 0.3));
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  pointer-events: none;
-}
-.feature-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--neon-pink), var(--neon-blue));
-  opacity: 0;
-  transition: opacity .3s;
-}
-.feature-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 40px rgba(255,168,79,.08);
-}
-.feature-card:hover::after {
-  background: linear-gradient(135deg, rgba(255, 168, 79, 0.5), rgba(27, 149, 193, 0.5));
-}
-.feature-card:hover::before { opacity: 1; }
-.feature-icon {
-  margin-bottom: 16px;
-  display: flex;
-  line-height: 1;
-}
-.feature-card h3 {
-  font-family: var(--font-body);
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: var(--text-bright);
-  margin-bottom: 8px;
-}
-.feature-card p {
-  color: var(--text-dim);
-  font-size: 0.9rem;
-  line-height: 1.6;
-}
+/* ════════ SECTIONS ════════ */
+.np-section { padding: var(--space-24) 0; }
+.np-section--sunken { background: var(--surface-sunken); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); }
+.np-eyebrow { font-family: var(--font-mono); font-size: var(--text-xs); font-weight: var(--fw-medium); letter-spacing: var(--tracking-wider); text-transform: uppercase; color: var(--brand-eng); margin-bottom: var(--space-3); }
+.np-title { font-size: var(--text-3xl); letter-spacing: var(--tracking-tight); color: var(--text-strong); }
+.np-lead { font-size: var(--text-md); color: var(--text-body); max-width: 60ch; margin-top: var(--space-4); line-height: var(--leading-relaxed); }
+.np-head { margin-bottom: var(--space-12); }
 
-/* ── HOW IT WORKS (steps) ── */
-.steps {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  max-width: 680px;
+/* ════════ FEATURE GRID ════════ */
+.np-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-4); }
+.np-card {
+  background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg);
+  padding: var(--space-7); box-shadow: var(--shadow-xs); transition: var(--transition-control); position: relative;
 }
-.step {
-  display: flex;
-  gap: 24px;
-  padding: 28px 0;
-  position: relative;
-}
-.step:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  left: 23px; top: 76px; bottom: 0;
-  width: 1px;
-  background: linear-gradient(to bottom, var(--neon-pink), transparent);
-}
-.step-num {
-  min-width: 48px; height: 48px;
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(8px) saturate(1.4);
-  -webkit-backdrop-filter: blur(8px) saturate(1.4);
-  border: 1px solid var(--neon-pink);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-display);
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--neon-pink);
-  flex-shrink: 0;
-  box-shadow: 0 0 15px rgba(255,168,79,.15);
-}
-.step-content h3 {
-  font-family: var(--font-body);
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--neon-blue);
-  margin-bottom: 4px;
-}
-.step-content p {
-  color: var(--text-dim);
-  font-size: 0.9rem;
-}
+.np-card:hover { transform: translateY(-3px); border-color: var(--border-strong); box-shadow: var(--shadow-md); }
+.np-card__icon { display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: var(--radius-md); background: var(--gradient-fusion-soft); margin-bottom: var(--space-4); }
+.np-card__icon .material-symbols-outlined { font-size: 24px; }
+.np-card h3 { font-size: var(--text-md); font-weight: var(--fw-semibold); color: var(--text-strong); margin-bottom: var(--space-2); letter-spacing: -0.01em; }
+.np-card p { font-size: var(--text-sm); color: var(--text-body); line-height: var(--leading-snug); }
 
-/* ── TERMINAL ── */
-.terminal {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(10px) saturate(1.4);
-  -webkit-backdrop-filter: blur(10px) saturate(1.4);
-  border: 1px solid transparent;
-  border-radius: 8px;
-  position: relative;
-  max-width: 720px;
-  margin: 48px auto 0;
-  overflow: hidden;
-  box-shadow: 0 0 60px rgba(255,168,79,.06), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+/* ════════ STEPS ════════ */
+.np-steps { display: flex; flex-direction: column; max-width: 720px; }
+.np-step { display: flex; gap: var(--space-6); padding: var(--space-6) 0; position: relative; }
+.np-step:not(:last-child)::after { content: ""; position: absolute; left: 23px; top: 70px; bottom: -6px; width: 1.5px; background: linear-gradient(to bottom, var(--brand-grc), transparent); }
+.np-step__num {
+  min-width: 48px; height: 48px; border-radius: var(--radius-pill); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: var(--text-sm);
+  font-weight: var(--fw-bold); color: var(--brand-grc); background: var(--surface-card); border: 1.5px solid var(--brand-grc);
 }
-.terminal::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 8px;
-  padding: 1px;
-  background: linear-gradient(135deg, rgba(255, 168, 79, 0.3), rgba(27, 149, 193, 0.3));
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  pointer-events: none;
-  z-index: 1;
-}
-.terminal-bar {
-  background: rgba(255, 255, 255, 0.03);
-  padding: 12px 16px;
-  display: flex; gap: 8px; align-items: center;
-  border-bottom: 1px solid rgba(255, 168, 79, 0.15);
-}
-.terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
-.terminal-title {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  color: var(--text-dim);
-  margin-left: 8px;
-  letter-spacing: 1px;
-}
-.terminal-body {
-  padding: 24px;
-  font-family: var(--font-mono);
-  font-size: 0.82rem;
-  line-height: 2;
-  overflow-x: auto;
-}
-.t-prompt { color: var(--neon-pink); }
-.t-cmd { color: var(--text-bright); }
-.t-flag { color: var(--neon-blue); }
-.t-val { color: var(--neon-green); }
-.t-out { color: var(--text-dim); }
-.t-ok { color: var(--neon-green); }
-.t-num { color: var(--neon-gold); }
-.t-accent { color: var(--neon-pink); }
+.np-step__c h3 { font-size: var(--text-md); font-weight: var(--fw-semibold); color: var(--brand-eng); margin-bottom: 4px; }
+.np-step__c p { font-size: var(--text-sm); color: var(--text-body); line-height: var(--leading-snug); }
 
-/* ── PARTY CRASHERS ── */
-.crasher-tags {
-  display: flex; flex-wrap: wrap; gap: 10px;
-  margin-top: 20px;
-}
-.crasher-tag {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  padding: 8px 20px;
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(8px) saturate(1.4);
-  -webkit-backdrop-filter: blur(8px) saturate(1.4);
-  border: 1px solid rgba(255, 168, 79, 0.2);
-  border-radius: 2px;
-  color: var(--text-dim);
-  letter-spacing: 1px;
-  transition: all .2s;
-}
-.crasher-tag:hover {
-  border-color: var(--neon-pink);
-  color: var(--neon-pink);
-  box-shadow: 0 0 15px rgba(255,168,79,.1);
-}
+/* ════════ PARTY CRASHERS ════════ */
+.np-tags { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.np-tag { font-family: var(--font-mono); font-size: var(--text-sm); padding: 8px 18px; border-radius: var(--radius-pill); background: var(--surface-card); border: 1px solid var(--border-default); color: var(--text-muted); transition: var(--transition-control); }
+.np-tag:hover { border-color: var(--brand-grc); color: var(--brand-grc); }
 
-/* ── INSTALL ── */
-.install-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
+/* ════════ INSTALL ════════ */
+.np-install { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-4); align-items: start; }
+.np-install__head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.np-install h3 { font-size: var(--text-md); font-weight: var(--fw-semibold); color: var(--text-strong); }
+.np-install .material-symbols-outlined { font-size: 22px; }
+.np-rec { font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--status-pass-fg); }
+.np-install p { font-size: var(--text-sm); color: var(--text-body); margin: var(--space-2) 0; line-height: var(--leading-snug); }
+.np-code {
+  background: var(--surface-ink); color: var(--text-on-ink); border: 1px solid var(--border-ink);
+  border-radius: var(--radius-md); padding: var(--space-4); margin-top: var(--space-3); overflow-x: auto;
 }
-.install-card {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(10px) saturate(1.4);
-  -webkit-backdrop-filter: blur(10px) saturate(1.4);
-  border: 1px solid transparent;
-  border-radius: 6px;
-  padding: 28px;
-  transition: all .3s;
-  position: relative;
-  overflow: hidden;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
-}
-.install-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 6px;
-  padding: 1px;
-  background: linear-gradient(135deg, rgba(255, 168, 79, 0.3), rgba(27, 149, 193, 0.3));
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  pointer-events: none;
-}
-.install-card:hover::before {
-  background: linear-gradient(135deg, rgba(255, 168, 79, 0.5), rgba(27, 149, 193, 0.5));
-}
-.install-card h3 {
-  font-family: var(--font-body);
-  font-weight: 600;
-  color: var(--text-bright);
-  margin-bottom: 4px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.install-card .rec {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  color: var(--neon-green);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-.install-card p {
-  color: var(--text-dim);
-  font-size: 0.9rem;
-  margin: 8px 0;
-}
-.install-card pre {
-  background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  padding: 16px;
-  border-radius: 4px;
-  overflow-x: auto;
-  margin-top: 12px;
-  border: 1px solid rgba(255, 168, 79, 0.12);
-}
-.install-card pre code {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: var(--neon-green);
-  line-height: 1.7;
-}
-.install-card a { color: var(--neon-blue); }
+.np-code code { font-family: var(--font-mono); font-size: var(--text-sm); color: #8FE3B6; line-height: 1.7; white-space: pre; }
+.np-inline-code { font-family: var(--font-mono); font-size: 0.82em; background: var(--surface-inset); color: var(--text-link); padding: 2px 6px; border-radius: var(--radius-xs); }
 
-/* ── BOTTOM CTA ── */
-.bottom-cta {
-  text-align: center;
-  padding: 100px 0 80px;
-  position: relative;
-}
-.bottom-cta::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 600px 300px at 50% 60%, rgba(255,168,79,.1) 0%, transparent 70%);
-  pointer-events: none;
-}
-.bottom-cta .section-title { margin-bottom: 8px; }
-.bottom-cta .backronym {
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  color: var(--text-dim);
-  margin-bottom: 32px;
-}
-.bottom-cta .dev {
-  font-size: 0.85rem;
-  color: var(--text-dim);
-  margin-top: 28px;
-}
-.bottom-cta .dev a { color: var(--neon-blue); }
+/* ════════ BOTTOM CTA — dark ink band ════════ */
+.np-cta { position: relative; overflow: hidden; background: var(--surface-ink); color: var(--text-on-ink); text-align: center; padding: var(--space-24) 0; }
+.np-cta__glow { position: absolute; inset: 0; background: var(--gradient-ink-glow); pointer-events: none; }
+.np-cta > .np-container { position: relative; z-index: 1; }
+.np-cta__icon { color: var(--grc-orange-400); margin-bottom: var(--space-4); }
+.np-cta__icon .material-symbols-outlined { font-size: 52px; }
+.np-cta h2 { font-size: var(--text-3xl); color: #fff; letter-spacing: var(--tracking-tight); }
+.np-cta__backronym { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--text-on-ink-muted); margin: var(--space-3) 0 var(--space-8); }
+.np-cta__ctas { display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap; }
+.np-cta__dev { font-size: var(--text-sm); color: var(--text-on-ink-muted); margin-top: var(--space-8); }
+.np-cta__dev a { color: var(--eng-blue-300); }
 
-/* ── FOOTER ── */
-.footer {
-  border-top: 1px solid rgba(255, 168, 79, 0.15);
-  padding: 24px 0;
-  text-align: center;
-}
-.footer p {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  color: var(--text-dim);
-  letter-spacing: 1px;
-}
-.footer a { color: var(--neon-pink); }
+/* ════════ FOOTER ════════ */
+.np-footer { border-top: 1px solid var(--border-subtle); padding: var(--space-10) 0; text-align: center; background: var(--surface-page); }
+.np-footer__logo { height: 24px; opacity: 0.85; margin: 0 auto var(--space-4); display: block; }
+.np-footer__logo--dark { display: none; }
+[data-theme="dark"] .np-footer__logo--light { display: none; }
+[data-theme="dark"] .np-footer__logo--dark { display: block; }
+.np-footer p { font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: var(--tracking-wide); color: var(--text-muted); }
+.np-footer a { color: var(--text-link); }
+.np-footer__credit { display: block; margin-top: 8px; color: var(--text-faint); }
 
-/* ── RESPONSIVE ── */
-.container { overflow-x: clip; }
-
-.install-card pre {
-  max-width: 100%;
-  word-wrap: break-word;
+/* ════════ RESPONSIVE ════════ */
+@media (max-width: 900px) {
+  .np-hero__inner { padding: var(--space-16) 0 var(--space-20); }
 }
-.install-card pre code {
-  white-space: pre-wrap;
-  word-break: break-all;
-}
-.terminal-body {
-  word-break: break-word;
-  overflow-wrap: break-word;
-}
-
 @media (max-width: 768px) {
-  .hero { padding: 80px 0 60px; }
-  .hero-title { font-size: clamp(3.2rem, 12vw, 5.5rem); letter-spacing: 4px; }
-  .nav-links { gap: 16px; }
-  .features-grid { grid-template-columns: 1fr; }
-  .install-grid { grid-template-columns: 1fr; }
-  .install-card { padding: 20px; }
-  .install-card pre { padding: 12px; }
-  .install-card pre code { font-size: 0.72rem; }
-  .terminal { max-width: 100%; }
-  .terminal-body { font-size: 0.72rem; padding: 16px; }
-  .steps { max-width: 100%; }
-  .section-title { font-size: clamp(1.2rem, 4vw, 1.8rem); }
-  .crasher-tags { gap: 8px; }
-  .crasher-tag { font-size: 0.72rem; padding: 6px 14px; }
-  .hero-badges { gap: 6px; }
-  .badge { font-size: 0.62rem; padding: 4px 10px; }
-  .bottom-cta { padding: 60px 0 50px; }
+  .np-title { font-size: var(--text-2xl); }
+  .grc-lava-title { letter-spacing: 4px; }
 }
-@media (max-width: 520px) {
-  .nav-links { display: none; }
-  .nav-hamburger { display: flex; }
-  .hero-ctas { flex-direction: column; align-items: center; }
-  .hero-title { font-size: clamp(2.8rem, 11vw, 4.5rem); letter-spacing: 3px; }
-}
-@media (max-width: 520px) and (orientation: portrait) {
-  .hero-title { font-size: clamp(2.8rem, 13vw, 7rem); letter-spacing: 3px; }
-}
-/* ── 3D GRAPH ── */
-/* The .hero-overlay div is no longer used — dark tint is on body::after */
-#vendor-graph {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: -2;
-  pointer-events: none;
-}
-/* body::after overlay removed — each section uses glass panels instead */
-
-/* ── GLASS PANELS ── */
-section > .container,
-.hero > .container,
-.bottom-cta > .container,
-.footer > .container {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(12px) saturate(1.4);
-  -webkit-backdrop-filter: blur(12px) saturate(1.4);
-  border: 1px solid transparent;
-  border-radius: 16px;
-  padding-top: 40px;
-  padding-bottom: 40px;
-  position: relative;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
-}
-section > .container::before,
-.hero > .container::before,
-.bottom-cta > .container::before,
-.footer > .container::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 16px;
-  padding: 1px;
-  background: linear-gradient(135deg, rgba(255, 168, 79, 0.35), rgba(27, 149, 193, 0.35));
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  pointer-events: none;
+@media (max-width: 640px) {
+  .np-nav__links { display: none; }
+  .np-hamburger { display: inline-flex; }
+  .np-hero__ctas, .np-cta__ctas { flex-direction: column; align-items: stretch; }
+  .np-btn { justify-content: center; }
+  .grc-lava-title { font-size: clamp(2.2rem, 12vw, 3.8rem); letter-spacing: 3px; }
 }
 </style>
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
-  }
-}
-</script>
 </head>
 <body>
 
 <!-- NAV -->
-<nav class="nav">
-  <div class="container">
-    <a href="#" class="nav-logo">
-      <div class="nav-logo-mark">Nth Party Finder</div>
+<nav class="np-nav">
+  <div class="np-container np-nav__inner">
+    <a href="#top" class="np-nav__brand" aria-label="Nth Party Finder">
+      <span class="grc-lockup grc-lockup--sm" role="img" aria-label="Nth Party Finder"><span class="grc-lockup__text">NTH PARTY FINDER</span></span>
     </a>
-    <div class="nav-links">
+    <div class="np-nav__spacer"></div>
+    <div class="np-nav__links">
       <a href="#features">Features</a>
       <a href="#how-it-works">How It Works</a>
       <a href="#install">Install</a>
       <a href="https://github.com/grcengineering/nthpartyfinder" target="_blank" rel="noopener">GitHub</a>
     </div>
-    <button class="nav-hamburger" aria-label="Menu" onclick="document.querySelector('.nav-mobile-menu').classList.toggle('open')">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
+    <div class="np-nav__right">
+      <button id="theme-toggle" class="np-icon-btn" type="button" aria-label="Toggle theme">
+        <span id="theme-icon" class="material-symbols-outlined">brightness_auto</span>
+      </button>
+      <button class="np-icon-btn np-hamburger" type="button" aria-label="Menu" aria-expanded="false"
+              onclick="var m=document.getElementById('np-mobile');var o=m.classList.toggle('open');this.setAttribute('aria-expanded',o);">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+    </div>
   </div>
-  <div class="nav-mobile-menu">
-    <a href="#features" onclick="this.parentElement.classList.remove('open')">Features</a>
-    <a href="#how-it-works" onclick="this.parentElement.classList.remove('open')">How It Works</a>
-    <a href="#install" onclick="this.parentElement.classList.remove('open')">Install</a>
-    <a href="https://github.com/grcengineering/nthpartyfinder" target="_blank" rel="noopener">GitHub</a>
+  <div class="np-mobile" id="np-mobile">
+    <div class="np-container">
+      <a href="#features" onclick="document.getElementById('np-mobile').classList.remove('open')">Features</a>
+      <a href="#how-it-works" onclick="document.getElementById('np-mobile').classList.remove('open')">How It Works</a>
+      <a href="#install" onclick="document.getElementById('np-mobile').classList.remove('open')">Install</a>
+      <a href="https://github.com/grcengineering/nthpartyfinder" target="_blank" rel="noopener">GitHub</a>
+    </div>
   </div>
 </nav>
 
 <!-- HERO -->
-<div class="haze haze-orange"></div>
-<div class="haze haze-blue"></div>
-<div class="haze haze-purple"></div>
-
-<canvas id="vendor-graph"></canvas>
-
-<header class="hero">
-  <div class="container">
-    <h1 class="hero-title">
-      <span class="lava-text"><span class="lava-letter" style="--i:0" data-letter="N">N</span><span class="lava-letter" style="--i:1" data-letter="t">t</span><span class="lava-letter" style="--i:2" data-letter="h">h</span><span class="lava-letter" style="--i:3" data-letter=" ">&nbsp;</span><span class="lava-letter" style="--i:4" data-letter="P">P</span><span class="lava-letter" style="--i:5" data-letter="a">a</span><span class="lava-letter" style="--i:6" data-letter="r">r</span><span class="lava-letter" style="--i:7" data-letter="t">t</span><span class="lava-letter" style="--i:8" data-letter="y">y</span></span><br>
-      <span class="lava-text"><span class="lava-letter" style="--i:9" data-letter="F">F</span><span class="lava-letter" style="--i:10" data-letter="i">i</span><span class="lava-letter" style="--i:11" data-letter="n">n</span><span class="lava-letter" style="--i:12" data-letter="d">d</span><span class="lava-letter" style="--i:13" data-letter="e">e</span><span class="lava-letter" style="--i:14" data-letter="r">r</span></span>
-    </h1>
-    <p class="hero-tagline">See who's crashing your supply chain party</p>
-    <p class="hero-desc">
-      A high-performance CLI that maps your entire vendor party guest list — from third parties to the Nth degree — through DNS analysis. Built in Rust for speed, safety, and serious party-finding power.
-    </p>
-    <div class="hero-ctas">
-      <a href="https://github.com/grcengineering/nthpartyfinder" class="btn-neon btn-neon-primary" target="_blank" rel="noopener">Get the Party Started</a>
-      <a href="https://github.com/grcengineering/nthpartyfinder/releases" class="btn-neon btn-neon-ghost" target="_blank" rel="noopener"><span class="material-symbols-outlined">download</span> Download</a>
-    </div>
-    <div class="hero-badges">
-      <span class="badge"><span class="material-symbols-outlined" style="color:var(--neon-pink);">settings</span> Rust</span>
-      <span class="badge"><span class="material-symbols-outlined" style="color:var(--neon-gold);">bolt</span> Async</span>
-      <span class="badge"><span class="material-symbols-outlined" style="color:var(--neon-purple);">psychology</span> Embedded NER</span>
-      <span class="badge"><span class="material-symbols-outlined" style="color:var(--neon-blue);">description</span> MIT License</span>
-    </div>
-  </div>
-</header>
-
-<!-- FEATURES -->
-<section id="features">
-  <div class="container">
-    <div class="section-label">Who's Coming to the Party?</div>
-    <h2 class="section-title">Features</h2>
-    <p class="section-sub">Your vendors have vendors who have vendors. Time to find out who's really on the guest list.</p>
-
-    <div class="features-grid">
-      <div class="feature-card">
-        <span class="feature-icon" style="color:var(--neon-pink);"><span class="material-symbols-outlined">search</span></span>
-        <h3>Comprehensive DNS Analysis</h3>
-        <p>Analyzes DNS TXT records — SPF entries, domain verification strings, and more — to uncover vendor relationships hiding in plain sight.</p>
-      </div>
-      <div class="feature-card">
-        <span class="feature-icon" style="color:var(--neon-blue);"><span class="material-symbols-outlined">sync</span></span>
-        <h3>Recursive Discovery</h3>
-        <p>The party doesn't stop at the 3rd. Configurable depth analysis or automatic discovery until it hits common denominators.</p>
-      </div>
-      <div class="feature-card">
-        <span class="feature-icon" style="color:var(--neon-purple);"><span class="material-symbols-outlined">psychology</span></span>
-        <h3>Embedded NER</h3>
-        <p>Optional GLiNER model for intelligent organization name extraction. Works completely offline — no API keys, no external services.</p>
-      </div>
-      <div class="feature-card">
-        <span class="feature-icon" style="color:var(--neon-green);"><span class="material-symbols-outlined">language</span></span>
-        <h3>Cross-Platform</h3>
-        <p>Runs on Windows, macOS (Intel + Apple Silicon), and Linux. Docker image available for containerized workflows.</p>
-      </div>
-      <div class="feature-card">
-        <span class="feature-icon" style="color:var(--neon-gold);"><span class="material-symbols-outlined">bar_chart</span></span>
-        <h3>Multiple Export Formats</h3>
-        <p>CSV, JSON, Markdown, and HTML output with detailed relationship mapping. Your data, your format.</p>
-      </div>
-      <div class="feature-card">
-        <span class="feature-icon" style="color:var(--neon-gold);"><span class="material-symbols-outlined">bolt</span></span>
-        <h3>High Performance</h3>
-        <p>Built in Rust with async processing, intelligent caching, and configurable parallelism. Finds parties fast.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section id="how-it-works">
-  <div class="container">
-    <div class="section-label">The Main Event</div>
-    <h2 class="section-title">How the Party Gets Started</h2>
-    <p class="section-sub">From domain to full vendor map in seconds</p>
-
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">01</div>
-        <div class="step-content">
-          <h3>Send the Invites</h3>
-          <p>Point it at a domain. DNS TXT records get queried for SPF includes, domain verification tokens, and other vendor fingerprints.</p>
+<header class="np-hero" id="top">
+  <div class="grc-nodegraph" data-grc-nodegraph data-palette="spectrum" data-max-nodes="90" data-speed="1" aria-hidden="true"></div>
+  <div class="np-hero__glow"></div>
+  <div class="np-hero__grid"></div>
+  <div class="np-container">
+    <div class="np-hero__inner">
+      <div class="np-hero__copy">
+        <span class="np-hero__eyebrow"><span class="np-hero__dot"></span>// Nth-Party Supply-Chain Mapping</span>
+        <h1 class="np-hero__title">
+          <span class="grc-lava-title">
+            <span class="grc-lava-text"><span class="grc-lava-letter grc-lava-letter--flicker" style="--i:0" data-letter="N">N</span><span class="grc-lava-letter grc-lava-letter--flicker grc-lava-letter--sm" style="--i:1" data-letter="t">t</span><span class="grc-lava-letter grc-lava-letter--flicker grc-lava-letter--sm" style="--i:2" data-letter="h">h</span><span class="grc-lava-letter" style="--i:3" data-letter=" ">&nbsp;</span><span class="grc-lava-letter" style="--i:4" data-letter="P">P</span><span class="grc-lava-letter" style="--i:5" data-letter="a">a</span><span class="grc-lava-letter" style="--i:6" data-letter="r">r</span><span class="grc-lava-letter" style="--i:7" data-letter="t">t</span><span class="grc-lava-letter" style="--i:8" data-letter="y">y</span></span><br>
+            <span class="grc-lava-text"><span class="grc-lava-letter" style="--i:9" data-letter="F">F</span><span class="grc-lava-letter" style="--i:10" data-letter="i">i</span><span class="grc-lava-letter" style="--i:11" data-letter="n">n</span><span class="grc-lava-letter" style="--i:12" data-letter="d">d</span><span class="grc-lava-letter" style="--i:13" data-letter="e">e</span><span class="grc-lava-letter" style="--i:14" data-letter="r">r</span></span>
+          </span>
+        </h1>
+        <p class="np-hero__tagline">See who's crashing your supply chain party</p>
+        <p class="np-hero__desc">
+          A high-performance CLI that maps your entire vendor party guest list — from third parties to the Nth degree — through DNS analysis. Built in Rust for speed, safety, and serious party-finding power.
+        </p>
+        <div class="np-hero__ctas">
+          <a href="https://github.com/grcengineering/nthpartyfinder" class="np-btn np-btn--primary" target="_blank" rel="noopener">Get the Party Started</a>
+          <a href="https://github.com/grcengineering/nthpartyfinder/releases" class="np-btn np-btn--ghost" target="_blank" rel="noopener"><span class="material-symbols-outlined">download</span> Download</a>
+        </div>
+        <div class="np-hero__badges">
+          <span class="np-chip"><span class="material-symbols-outlined" style="color:var(--grc-orange-300)">settings</span> Rust</span>
+          <span class="np-chip"><span class="material-symbols-outlined" style="color:var(--grc-orange-300)">bolt</span> Async</span>
+          <span class="np-chip"><span class="material-symbols-outlined" style="color:var(--eng-blue-300)">psychology</span> Embedded NER</span>
+          <span class="np-chip"><span class="material-symbols-outlined" style="color:var(--eng-blue-300)">description</span> MIT License</span>
         </div>
       </div>
-      <div class="step">
-        <div class="step-num">02</div>
-        <div class="step-content">
-          <h3>Check the Guest List</h3>
-          <p>Parses discovered records to identify vendor domains. WHOIS lookups resolve organizations. The NER model catches names that regex would miss.</p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">03</div>
-        <div class="step-content">
-          <h3>Follow the Plus-Ones</h3>
-          <p>Each discovered vendor gets the same treatment. Their DNS records reveal their vendors — mapping the full party tree to the Nth degree.</p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">04</div>
-        <div class="step-content">
-          <h3>Bounce the Party Crashers</h3>
-          <p>Common infrastructure providers (AWS, Azure, Cloudflare) are flagged — everyone uses them, so recursion stops to keep results meaningful.</p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">05</div>
-        <div class="step-content">
-          <h3>Hand Out Party Favors</h3>
-          <p>Generates a comprehensive relationship map in CSV, JSON, Markdown, or HTML.</p>
-        </div>
-      </div>
-    </div>
 
-    <div class="terminal">
-      <div class="terminal-bar">
-        <div class="terminal-dot" style="background:var(--neon-pink);"></div>
-        <div class="terminal-dot" style="background:var(--neon-gold);"></div>
-        <div class="terminal-dot" style="background:var(--neon-green);"></div>
-        <span class="terminal-title">party-terminal</span>
-      </div>
-      <div class="terminal-body">
+      <div class="np-term" aria-hidden="true">
+        <div class="np-term__bar">
+          <span class="np-term__dot" style="background:var(--grc-orange-400)"></span>
+          <span class="np-term__dot" style="background:var(--grc-orange-300)"></span>
+          <span class="np-term__dot" style="background:#4FD396"></span>
+          <span class="np-term__title">party-terminal</span>
+        </div>
+        <div class="np-term__body">
 <span class="t-prompt">$</span> <span class="t-cmd">nthpartyfinder</span> <span class="t-flag">--domain</span> <span class="t-val">acme.com</span> <span class="t-flag">--depth</span> <span class="t-val">3</span> <span class="t-flag">-f</span> <span class="t-val">json</span>
 <br><br>
 <span class="t-accent">=== Party Analysis Summary ===</span><br>
@@ -1040,56 +400,135 @@ section > .container::before,
 <span class="t-out">&nbsp;&nbsp;Layer 2 (4th party):</span> <span class="t-val">5 vendors</span><br>
 <span class="t-out">&nbsp;&nbsp;Layer 3 (5th party):</span> <span class="t-val">3 vendors</span><br>
 <br>
-<span class="t-ok"><span class="material-symbols-outlined" style="color:var(--neon-green);">check_circle</span> Party mapped! Results → acme_vendors.json</span>
+<span class="t-ok"><span class="material-symbols-outlined" style="color:#4FD396;font-size:15px;">check_circle</span> Party mapped! Results &rarr; acme_vendors.json</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- FEATURES -->
+<section class="np-section" id="features">
+  <div class="np-container">
+    <div class="np-head">
+      <div class="np-eyebrow">// Who's Coming to the Party?</div>
+      <h2 class="np-title">Features</h2>
+      <p class="np-lead">Your vendors have vendors who have vendors. Time to find out who's really on the guest list.</p>
+    </div>
+    <div class="np-grid">
+      <div class="np-card">
+        <span class="np-card__icon" style="color:var(--brand-grc)"><span class="material-symbols-outlined">search</span></span>
+        <h3>Comprehensive DNS Analysis</h3>
+        <p>Analyzes DNS TXT records — SPF entries, domain verification strings, and more — to uncover vendor relationships hiding in plain sight.</p>
+      </div>
+      <div class="np-card">
+        <span class="np-card__icon" style="color:var(--brand-eng)"><span class="material-symbols-outlined">sync</span></span>
+        <h3>Recursive Discovery</h3>
+        <p>The party doesn't stop at the 3rd. Configurable depth analysis or automatic discovery until it hits common denominators.</p>
+      </div>
+      <div class="np-card">
+        <span class="np-card__icon" style="color:var(--neon-purple,#b388ff)"><span class="material-symbols-outlined">psychology</span></span>
+        <h3>Embedded NER</h3>
+        <p>Optional GLiNER model for intelligent organization name extraction. Works completely offline — no API keys, no external services.</p>
+      </div>
+      <div class="np-card">
+        <span class="np-card__icon" style="color:var(--brand-eng)"><span class="material-symbols-outlined">language</span></span>
+        <h3>Cross-Platform</h3>
+        <p>Runs on Windows, macOS (Intel + Apple Silicon), and Linux. Docker image available for containerized workflows.</p>
+      </div>
+      <div class="np-card">
+        <span class="np-card__icon" style="color:var(--brand-grc)"><span class="material-symbols-outlined">bar_chart</span></span>
+        <h3>Multiple Export Formats</h3>
+        <p>CSV, JSON, Markdown, and HTML output with detailed relationship mapping. Your data, your format.</p>
+      </div>
+      <div class="np-card">
+        <span class="np-card__icon" style="color:var(--brand-grc)"><span class="material-symbols-outlined">bolt</span></span>
+        <h3>High Performance</h3>
+        <p>Built in Rust with async processing, intelligent caching, and configurable parallelism. Finds parties fast.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="np-section np-section--sunken" id="how-it-works">
+  <div class="np-container">
+    <div class="np-head">
+      <div class="np-eyebrow">// The Main Event</div>
+      <h2 class="np-title">How the Party Gets Started</h2>
+      <p class="np-lead">From domain to full vendor map in seconds.</p>
+    </div>
+    <div class="np-steps">
+      <div class="np-step">
+        <div class="np-step__num">01</div>
+        <div class="np-step__c"><h3>Send the Invites</h3><p>Point it at a domain. DNS TXT records get queried for SPF includes, domain verification tokens, and other vendor fingerprints.</p></div>
+      </div>
+      <div class="np-step">
+        <div class="np-step__num">02</div>
+        <div class="np-step__c"><h3>Check the Guest List</h3><p>Parses discovered records to identify vendor domains. WHOIS lookups resolve organizations. The NER model catches names that regex would miss.</p></div>
+      </div>
+      <div class="np-step">
+        <div class="np-step__num">03</div>
+        <div class="np-step__c"><h3>Follow the Plus-Ones</h3><p>Each discovered vendor gets the same treatment. Their DNS records reveal their vendors — mapping the full party tree to the Nth degree.</p></div>
+      </div>
+      <div class="np-step">
+        <div class="np-step__num">04</div>
+        <div class="np-step__c"><h3>Bounce the Party Crashers</h3><p>Common infrastructure providers (AWS, Azure, Cloudflare) are flagged — everyone uses them, so recursion stops to keep results meaningful.</p></div>
+      </div>
+      <div class="np-step">
+        <div class="np-step__num">05</div>
+        <div class="np-step__c"><h3>Hand Out Party Favors</h3><p>Generates a comprehensive relationship map in CSV, JSON, Markdown, or HTML.</p></div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- PARTY CRASHERS -->
-<section>
-  <div class="container">
-    <div class="section-label">Uninvited</div>
-    <h2 class="section-title">Party Crashers Detected</h2>
-    <p class="section-sub">These common infrastructure vendors show up at everyone's party — recursion stops here to keep results meaningful.</p>
-
-    <div class="crasher-tags">
-      <span class="crasher-tag">AWS</span>
-      <span class="crasher-tag">Azure</span>
-      <span class="crasher-tag">Google Cloud</span>
-      <span class="crasher-tag">Cloudflare</span>
-      <span class="crasher-tag">Fastly</span>
-      <span class="crasher-tag">Akamai</span>
+<section class="np-section">
+  <div class="np-container">
+    <div class="np-head">
+      <div class="np-eyebrow">// Uninvited</div>
+      <h2 class="np-title">Party Crashers Detected</h2>
+      <p class="np-lead">These common infrastructure vendors show up at everyone's party — recursion stops here to keep results meaningful.</p>
+    </div>
+    <div class="np-tags">
+      <span class="np-tag">AWS</span>
+      <span class="np-tag">Azure</span>
+      <span class="np-tag">Google Cloud</span>
+      <span class="np-tag">Cloudflare</span>
+      <span class="np-tag">Fastly</span>
+      <span class="np-tag">Akamai</span>
     </div>
   </div>
 </section>
 
 <!-- INSTALL -->
-<section id="install">
-  <div class="container">
-    <div class="section-label">RSVP</div>
-    <h2 class="section-title">Get the Party Started</h2>
-    <p class="section-sub">Three ways to join — pick your vibe</p>
-
-    <div class="install-grid">
-      <div class="install-card">
-        <h3><span class="material-symbols-outlined" style="color:var(--neon-blue);">deployed_code</span> Docker</h3>
-        <span class="rec">Recommended</span>
+<section class="np-section np-section--sunken" id="install">
+  <div class="np-container">
+    <div class="np-head">
+      <div class="np-eyebrow">// RSVP</div>
+      <h2 class="np-title">Get the Party Started</h2>
+      <p class="np-lead">Three ways to join — pick your vibe.</p>
+    </div>
+    <div class="np-install">
+      <div class="np-card">
+        <div class="np-install__head"><span class="material-symbols-outlined" style="color:var(--brand-eng)">deployed_code</span><h3>Docker</h3></div>
+        <span class="np-rec">Recommended</span>
         <p>Pre-built image with embedded NER. Start scanning immediately.</p>
-        <pre><code>docker pull ghcr.io/grcengineering/nthpartyfinder:latest
+        <pre class="np-code"><code>docker pull ghcr.io/grcengineering/nthpartyfinder:latest
 
 docker run -v $(pwd)/output:/output \
   nthpartyfinder -d example.com -r 2</code></pre>
       </div>
-      <div class="install-card">
-        <h3><span class="material-symbols-outlined" style="color:var(--neon-gold);">inventory_2</span> Pre-built Binaries</h3>
-        <p>Download from <a href="https://github.com/grcengineering/nthpartyfinder/releases" target="_blank" rel="noopener">GitHub Releases</a>. Available as <code style="background:var(--bg);color:var(--neon-blue);padding:2px 6px;border-radius:3px;font-family:var(--font-mono);font-size:.8rem;">full</code> (~150MB w/ NER) or <code style="background:var(--bg);color:var(--neon-blue);padding:2px 6px;border-radius:3px;font-family:var(--font-mono);font-size:.8rem;">slim</code> (~15MB).</p>
-        <p style="font-size:.82rem;">Windows x86_64 · macOS Intel & Apple Silicon · Linux x86_64</p>
+      <div class="np-card">
+        <div class="np-install__head"><span class="material-symbols-outlined" style="color:var(--brand-grc)">inventory_2</span><h3>Pre-built Binaries</h3></div>
+        <p>Download from <a href="https://github.com/grcengineering/nthpartyfinder/releases" target="_blank" rel="noopener">GitHub Releases</a>. Available as <code class="np-inline-code">full</code> (~150MB w/ NER) or <code class="np-inline-code">slim</code> (~15MB).</p>
+        <p>Windows x86_64 · macOS Intel &amp; Apple Silicon · Linux x86_64</p>
       </div>
-      <div class="install-card">
-        <h3><span class="material-symbols-outlined" style="color:var(--neon-pink);">terminal</span> Build from Source</h3>
+      <div class="np-card">
+        <div class="np-install__head"><span class="material-symbols-outlined" style="color:var(--brand-grc)">terminal</span><h3>Build from Source</h3></div>
         <p>Clone, build, and customize. Requires Rust toolchain.</p>
-        <pre><code>git clone https://github.com/grcengineering/nthpartyfinder.git
+        <pre class="np-code"><code>git clone https://github.com/grcengineering/nthpartyfinder.git
 cd nthpartyfinder
 cargo build --release</code></pre>
       </div>
@@ -1098,380 +537,59 @@ cargo build --release</code></pre>
 </section>
 
 <!-- BOTTOM CTA -->
-<section class="bottom-cta">
-  <div class="container">
-    <div class="bottom-cta-icon" style="margin-bottom:20px;color:var(--neon-pink);"><span class="material-symbols-outlined">auto_awesome</span></div>
-    <h2 class="section-title">Ready to Find Your Nth Party?</h2>
-    <p class="backronym">RSVP: Recursive Security Vendor Profiler</p>
-    <div class="hero-ctas">
-      <a href="https://github.com/grcengineering/nthpartyfinder" class="btn-neon btn-neon-primary" target="_blank" rel="noopener">View on GitHub</a>
-      <a href="https://github.com/grcengineering/nthpartyfinder/releases" class="btn-neon btn-neon-ghost" target="_blank" rel="noopener">Download Latest Release</a>
+<section class="np-cta">
+  <div class="np-cta__glow"></div>
+  <div class="np-container">
+    <div class="np-cta__icon"><span class="material-symbols-outlined">auto_awesome</span></div>
+    <h2>Ready to Find Your Nth Party?</h2>
+    <p class="np-cta__backronym">RSVP: Recursive Security Vendor Profiler</p>
+    <div class="np-cta__ctas">
+      <a href="https://github.com/grcengineering/nthpartyfinder" class="np-btn np-btn--primary" target="_blank" rel="noopener">View on GitHub</a>
+      <a href="https://github.com/grcengineering/nthpartyfinder/releases" class="np-btn np-btn--ghost" target="_blank" rel="noopener">Download Latest Release</a>
     </div>
-    <p class="dev"><strong>Developer:</strong> <a href="https://linkedin.com/in/justinpagano" target="_blank" rel="noopener">Justin Pagano</a> · <a href="https://grc.engineering" target="_blank" rel="noopener">GRC Engineering</a></p>
+    <p class="np-cta__dev"><strong>Developer:</strong> <a href="https://linkedin.com/in/justinpagano" target="_blank" rel="noopener">Justin Pagano</a> · <a href="https://grc.engineering" target="_blank" rel="noopener">GRC Engineering</a></p>
   </div>
 </section>
 
 <!-- FOOTER -->
-<footer class="footer">
-  <div class="container">
+<footer class="np-footer">
+  <div class="np-container">
+    <img class="np-footer__logo np-footer__logo--light" src="ds/assets/logo-wordmark.svg" alt="GRC Engineering" onerror="this.style.display='none'">
+    <img class="np-footer__logo np-footer__logo--dark" src="ds/assets/logo-wordmark-dark.svg" alt="GRC Engineering" onerror="this.style.display='none'">
     <p>Nth Party Finder · <a href="https://github.com/grcengineering/nthpartyfinder" target="_blank" rel="noopener">GitHub</a> · MIT License · <a href="https://grc.engineering" target="_blank" rel="noopener">GRC Engineering</a></p>
-    <span style="opacity: 0.5; font-size: 0.75rem;">Icons by <a href="https://fonts.google.com/icons" style="color: inherit;">Google Icons</a></span>
+    <span class="np-footer__credit">Icons by <a href="https://fonts.google.com/icons">Google Icons</a></span>
   </div>
 </footer>
 
+<!-- Theme toggle -->
 <script>
-(function() {
-  var logos = document.querySelectorAll('.nav-logo-mark');
-  var angle = 0;
-  var speed = 110;
-  var last = performance.now();
-  function rotate(now) {
-    var dt = (now - last) / 1000;
-    last = now;
-    angle = (angle + speed * dt) % 360;
-    logos.forEach(function(el) {
-      el.style.setProperty('--gradient-angle', angle + 'deg');
+(function () {
+  var html = document.documentElement, KEY = 'npf-theme';
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  var mq = window.matchMedia('(prefers-color-scheme: dark)');
+  function choice() { return html.getAttribute('data-theme-choice') || 'system'; }
+  function apply(c) {
+    try { localStorage.setItem(KEY, c); } catch (e) {}
+    html.setAttribute('data-theme-choice', c);
+    var dark = (c === 'dark') || (c === 'system' && mq.matches);
+    html.setAttribute('data-theme', dark ? 'dark' : 'light');
+    if (icon) icon.textContent = c === 'system' ? 'brightness_auto' : (c === 'dark' ? 'dark_mode' : 'light_mode');
+    if (btn) btn.setAttribute('aria-label', 'Theme: ' + c + ' — click to change');
+  }
+  if (btn) {
+    apply(choice());
+    btn.addEventListener('click', function () {
+      var c = choice();
+      apply(c === 'system' ? 'light' : c === 'light' ? 'dark' : 'system');
     });
-    requestAnimationFrame(rotate);
   }
-  requestAnimationFrame(rotate);
-}());
+  mq.addEventListener('change', function () { if (choice() === 'system') apply('system'); });
+})();
 </script>
 
-<script type="module">
-import * as THREE from 'three';
+<!-- Constellation backdrop (vanilla, auto-mounts; replaces three.js) -->
+<script src="ds/node-graph.js" defer></script>
 
-// ── CONFIG ──
-const NODE_COUNT = 120;
-const LAYERS = 5; // primary + 4 depth layers
-const COLORS = [
-  new THREE.Color('#FFA84F'), // primary (your company) — orange
-  new THREE.Color('#FF8C00'), // 3rd party — deeper orange
-  new THREE.Color('#1B95C1'), // 4th party — blue
-  new THREE.Color('#6AB8D4'), // 5th party — lighter blue
-  new THREE.Color('#b388ff'), // Nth party — purple
-];
-const SIZES = [0.12, 0.07, 0.055, 0.04, 0.03];
-const EMISSIVE_INTENSITY = [1.5, 0.8, 0.6, 0.4, 0.25];
-const LAYER_COUNTS = [1, 12, 28, 38, 41]; // nodes per layer
-
-// ── SETUP ──
-const canvas = document.getElementById('vendor-graph');
-const hero = document.querySelector('.hero');
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x000000);
-const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
-camera.position.set(0, 2.5, 5.5);
-camera.lookAt(0, 0, 0);
-
-// Lighting
-scene.add(new THREE.AmbientLight(0xffffff, 0.3));
-const pointLight = new THREE.PointLight(0xffffff, 0.6, 20);
-pointLight.position.set(2, 6, 4);
-scene.add(pointLight);
-
-// ── GENERATE NODE POSITIONS & EDGES ──
-const nodes = [];
-const edges = [];
-const layerStartIndex = [];
-
-// Place nodes in layered shells
-let nodeIndex = 0;
-for (let layer = 0; layer < LAYERS; layer++) {
-  layerStartIndex.push(nodeIndex);
-  const count = LAYER_COUNTS[layer];
-  const radius = layer === 0 ? 0 : 0.8 + layer * 1.1;
-
-  for (let i = 0; i < count; i++) {
-    if (layer === 0) {
-      nodes.push({ pos: new THREE.Vector3(0, 0, 0), layer, vel: new THREE.Vector3() });
-    } else {
-      // Distribute on a sphere shell with some randomness
-      const phi = Math.acos(1 - 2 * (i + 0.5) / count);
-      const theta = Math.PI * (1 + Math.sqrt(5)) * i;
-      const r = radius + (Math.random() - 0.5) * 0.5;
-      const x = r * Math.sin(phi) * Math.cos(theta);
-      const y = (r * Math.cos(phi)) * 0.5; // flatten Y
-      const z = r * Math.sin(phi) * Math.sin(theta);
-      nodes.push({ pos: new THREE.Vector3(x, y, z), layer, vel: new THREE.Vector3() });
-    }
-    nodeIndex++;
-  }
-}
-
-// Create edges: connect each node to 1-3 nodes in the previous layer
-for (let layer = 1; layer < LAYERS; layer++) {
-  const start = layerStartIndex[layer];
-  const end = start + LAYER_COUNTS[layer];
-  const prevStart = layerStartIndex[layer - 1];
-  const prevEnd = prevStart + LAYER_COUNTS[layer - 1];
-
-  for (let i = start; i < end; i++) {
-    // Connect to closest node(s) in previous layer
-    const connections = 1 + Math.floor(Math.random() * 2); // 1-2 connections
-    const distances = [];
-    for (let j = prevStart; j < prevEnd; j++) {
-      distances.push({ idx: j, dist: nodes[i].pos.distanceTo(nodes[j].pos) });
-    }
-    distances.sort((a, b) => a.dist - b.dist);
-    for (let c = 0; c < Math.min(connections, distances.length); c++) {
-      edges.push([i, distances[c].idx]);
-    }
-  }
-
-  // Add a few cross-layer edges for realism
-  if (layer >= 2) {
-    const crossCount = Math.floor(LAYER_COUNTS[layer] * 0.15);
-    for (let c = 0; c < crossCount; c++) {
-      const from = start + Math.floor(Math.random() * LAYER_COUNTS[layer]);
-      const twoBack = layerStartIndex[layer - 2];
-      const twoBackEnd = twoBack + LAYER_COUNTS[layer - 2];
-      const to = twoBack + Math.floor(Math.random() * (twoBackEnd - twoBack));
-      edges.push([from, to]);
-    }
-  }
-}
-
-// ── SIMPLE FORCE SIMULATION (run once) ──
-const forceIterations = 80;
-for (let iter = 0; iter < forceIterations; iter++) {
-  const alpha = 1 - iter / forceIterations;
-  // Repulsion between all nodes
-  for (let i = 0; i < nodes.length; i++) {
-    for (let j = i + 1; j < nodes.length; j++) {
-      const diff = new THREE.Vector3().subVectors(nodes[i].pos, nodes[j].pos);
-      const dist = Math.max(diff.length(), 0.1);
-      const force = (0.15 * alpha) / (dist * dist);
-      diff.normalize().multiplyScalar(force);
-      if (i !== 0) nodes[i].pos.add(diff);
-      if (j !== 0) nodes[j].pos.sub(diff);
-    }
-  }
-  // Edge spring attraction
-  for (const [a, b] of edges) {
-    const diff = new THREE.Vector3().subVectors(nodes[b].pos, nodes[a].pos);
-    const dist = diff.length();
-    const targetDist = 1.2 + Math.abs(nodes[a].layer - nodes[b].layer) * 0.8;
-    const force = (dist - targetDist) * 0.02 * alpha;
-    diff.normalize().multiplyScalar(force);
-    if (a !== 0) nodes[a].pos.add(diff);
-    if (b !== 0) nodes[b].pos.sub(diff);
-  }
-  // Layer constraint — keep nodes roughly at their shell radius
-  for (let i = 1; i < nodes.length; i++) {
-    const n = nodes[i];
-    const targetR = 0.8 + n.layer * 1.1;
-    const currentR = n.pos.length();
-    if (currentR > 0.01) {
-      n.pos.multiplyScalar(1 + (targetR / currentR - 1) * 0.3 * alpha);
-    }
-  }
-  // Pin primary node
-  nodes[0].pos.set(0, 0, 0);
-}
-
-// ── INSTANCED MESHES (one per layer) ──
-const sphereGeo = new THREE.SphereGeometry(1, 24, 24);
-const instancedMeshes = [];
-const dummy = new THREE.Object3D();
-
-for (let layer = 0; layer < LAYERS; layer++) {
-  const count = LAYER_COUNTS[layer];
-  const mat = new THREE.MeshStandardMaterial({
-    color: COLORS[layer],
-    emissive: COLORS[layer],
-    emissiveIntensity: EMISSIVE_INTENSITY[layer],
-    roughness: 0.4,
-    metalness: 0.2,
-    transparent: true,
-    opacity: layer === 0 ? 1.0 : 0.85,
-  });
-  const mesh = new THREE.InstancedMesh(sphereGeo, mat, count);
-  const start = layerStartIndex[layer];
-  for (let i = 0; i < count; i++) {
-    const n = nodes[start + i];
-    dummy.position.copy(n.pos);
-    const s = SIZES[layer];
-    dummy.scale.set(s, s, s);
-    dummy.updateMatrix();
-    mesh.setMatrixAt(i, dummy.matrix);
-  }
-  mesh.instanceMatrix.needsUpdate = true;
-  scene.add(mesh);
-  instancedMeshes.push(mesh);
-}
-
-// ── EDGES ──
-const edgePositions = [];
-const edgeColors = [];
-for (const [a, b] of edges) {
-  const pa = nodes[a].pos;
-  const pb = nodes[b].pos;
-  edgePositions.push(pa.x, pa.y, pa.z, pb.x, pb.y, pb.z);
-  // Color: blend between the two node layers
-  const ca = COLORS[nodes[a].layer];
-  const cb = COLORS[nodes[b].layer];
-  edgeColors.push(ca.r, ca.g, ca.b, cb.r, cb.g, cb.b);
-}
-const edgeGeo = new THREE.BufferGeometry();
-edgeGeo.setAttribute('position', new THREE.Float32BufferAttribute(edgePositions, 3));
-edgeGeo.setAttribute('color', new THREE.Float32BufferAttribute(edgeColors, 3));
-const edgeMat = new THREE.LineBasicMaterial({
-  vertexColors: true,
-  transparent: true,
-  opacity: 0.30,
-  linewidth: 1,
-});
-const edgeMesh = new THREE.LineSegments(edgeGeo, edgeMat);
-scene.add(edgeMesh);
-
-// ── ANIMATED PULSE EDGES (subset) ──
-const pulseEdgeCount = Math.min(edges.length, 40);
-const pulseEdges = [];
-for (let i = 0; i < pulseEdgeCount; i++) {
-  const edgeIdx = Math.floor(Math.random() * edges.length);
-  const [a, b] = edges[edgeIdx];
-  const pa = nodes[a].pos.clone();
-  const pb = nodes[b].pos.clone();
-  // Create a line of points for the pulse to travel along
-  const segments = 20;
-  const positions = new Float32Array(segments * 3);
-  const alphas = new Float32Array(segments);
-  for (let s = 0; s < segments; s++) {
-    const t = s / (segments - 1);
-    positions[s * 3] = pa.x + (pb.x - pa.x) * t;
-    positions[s * 3 + 1] = pa.y + (pb.y - pa.y) * t;
-    positions[s * 3 + 2] = pa.z + (pb.z - pa.z) * t;
-    alphas[s] = 0;
-  }
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-  const color = COLORS[nodes[a].layer].clone().lerp(COLORS[nodes[b].layer], 0.5);
-  const mat = new THREE.PointsMaterial({
-    size: 0.015,
-    color: color,
-    transparent: true,
-    opacity: 0.8,
-    sizeAttenuation: true,
-  });
-  const points = new THREE.Points(geo, mat);
-  scene.add(points);
-  pulseEdges.push({
-    points,
-    segments,
-    speed: 0.3 + Math.random() * 0.5,
-    phase: Math.random() * Math.PI * 2,
-    pa, pb,
-  });
-}
-
-// ── CONCENTRIC GRID RINGS ──
-const ringCount = 4;
-for (let r = 1; r <= ringCount; r++) {
-  const radius = r * 1.3;
-  const ringPoints = [];
-  const ringSegments = 64;
-  for (let s = 0; s <= ringSegments; s++) {
-    const angle = (s / ringSegments) * Math.PI * 2;
-    ringPoints.push(new THREE.Vector3(
-      Math.cos(angle) * radius,
-      -0.5,
-      Math.sin(angle) * radius
-    ));
-  }
-  const ringGeo = new THREE.BufferGeometry().setFromPoints(ringPoints);
-  const ringMat = new THREE.LineBasicMaterial({
-    color: 0xffffff,
-    transparent: true,
-    opacity: 0.03 + (ringCount - r) * 0.01,
-  });
-  scene.add(new THREE.Line(ringGeo, ringMat));
-}
-
-// ── RESIZE ──
-function resize() {
-  const vv = window.visualViewport;
-  const w = vv ? vv.width : window.innerWidth;
-  const h = vv ? vv.height : window.innerHeight;
-  renderer.setSize(w, h);
-  camera.aspect = w / h;
-  camera.updateProjectionMatrix();
-}
-resize();
-window.addEventListener('resize', resize);
-if (window.visualViewport) {
-  window.visualViewport.addEventListener('resize', resize);
-  window.visualViewport.addEventListener('scroll', resize);
-}
-
-// ── REDUCED MOTION CHECK ──
-const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-// ── ANIMATION LOOP ──
-const clock = new THREE.Clock();
-function animate() {
-  requestAnimationFrame(animate);
-  const elapsed = clock.getElapsedTime();
-  const delta = Math.min(clock.getDelta(), 0.05);
-
-  if (!prefersReducedMotion) {
-    // Slow drifting pan through the network
-    const t1 = elapsed * 0.04;
-    const t2 = elapsed * 0.03;
-    const t3 = elapsed * 0.025;
-    camera.position.x = Math.sin(t1) * 4.5 + Math.cos(t2 * 1.3) * 1.5;
-    camera.position.z = Math.cos(t1) * 4.5 + Math.sin(t3 * 0.9) * 1.5;
-    camera.position.y = 1.8 + Math.sin(t2) * 1.0 + Math.cos(t3 * 0.7) * 0.5;
-    // Look at a slowly drifting target (not fixed on center)
-    const lookX = Math.sin(t3 * 1.1) * 1.2;
-    const lookY = Math.sin(t2 * 0.8) * 0.4;
-    const lookZ = Math.cos(t3 * 0.6) * 1.2;
-    camera.lookAt(lookX, lookY, lookZ);
-
-    // Animate pulse particles
-    for (const pe of pulseEdges) {
-      const t = ((elapsed * pe.speed + pe.phase) % 1);
-      // Create a gaussian pulse traveling along the edge
-      const posAttr = pe.points.geometry.attributes.position;
-      for (let s = 0; s < pe.segments; s++) {
-        const st = s / (pe.segments - 1);
-        const dist = Math.abs(st - t);
-        const brightness = Math.exp(-(dist * dist) / 0.008);
-        // Scale point size based on brightness
-        posAttr.array[s * 3] = pe.pa.x + (pe.pb.x - pe.pa.x) * st;
-        posAttr.array[s * 3 + 1] = pe.pa.y + (pe.pb.y - pe.pa.y) * st;
-        posAttr.array[s * 3 + 2] = pe.pa.z + (pe.pb.z - pe.pa.z) * st;
-      }
-      pe.points.material.opacity = 0.6;
-      posAttr.needsUpdate = true;
-    }
-
-    // Gentle node float
-    for (let layer = 1; layer < LAYERS; layer++) {
-      const mesh = instancedMeshes[layer];
-      const start = layerStartIndex[layer];
-      for (let i = 0; i < LAYER_COUNTS[layer]; i++) {
-        const n = nodes[start + i];
-        dummy.position.set(
-          n.pos.x + Math.sin(elapsed * 0.4 + i * 1.3) * 0.02,
-          n.pos.y + Math.sin(elapsed * 0.5 + i * 0.7) * 0.03,
-          n.pos.z + Math.cos(elapsed * 0.3 + i * 1.1) * 0.02
-        );
-        const s = SIZES[layer];
-        dummy.scale.set(s, s, s);
-        dummy.updateMatrix();
-        mesh.setMatrixAt(i, dummy.matrix);
-      }
-      mesh.instanceMatrix.needsUpdate = true;
-    }
-  }
-
-  renderer.render(scene, camera);
-}
-animate();
-</script>
 </body>
 </html>

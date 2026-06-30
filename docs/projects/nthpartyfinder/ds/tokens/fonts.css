@@ -1,0 +1,67 @@
+/* ============================================================
+   FONTS — GRC Engineering · self-hosted @font-face
+   Four roles, all screened against the "AI-default" font basket:
+     • Display  → General Sans   (variable grotesque; versatile display/heading face)
+     • Body     → Satoshi        (variable geometric sans; body prose)
+     • UI sans  → Archivo        (variable; industrial grotesque for chrome/labels)
+     • Mono     → Martian Mono   (variable; instrument-grade "as-code" voice)
+   ------------------------------------------------------------
+   Binaries live in /assets/fonts (paths relative to THIS file).
+   Self-hosted (no CDN dependency) so the system works offline and
+   ships its own webfonts to consumers. font-display: swap.
+   ============================================================ */
+
+/* ---- General Sans — variable display/heading (400–700) ---- */
+@font-face {
+  font-family: "General Sans";
+  src: url("../assets/fonts/general-sans-vf.woff2") format("woff2");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---- Satoshi — variable body sans (300–900, + italics) ---- */
+@font-face {
+  font-family: "Satoshi";
+  src: url("../assets/fonts/satoshi-vf.woff2") format("woff2");
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("../assets/fonts/satoshi-vf-italic.woff2") format("woff2");
+  font-weight: 300 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ---- Archivo — variable UI sans (400–800) ---- */
+@font-face {
+  font-family: "Archivo";
+  src: url("../assets/fonts/archivo-vf.woff2") format("woff2");
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---- Martian Mono — variable mono (400–700) ---- */
+@font-face {
+  font-family: "Martian Mono";
+  src: url("../assets/fonts/martian-mono-vf.woff2") format("woff2");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---- NeonLux — retro-arcade display · SPECIAL USE ----
+   The Nth Party Finder hero "neon sign" face. Reserved for the LavaTitle
+   component (the NPF supply-chain "party" identity) — not a general heading
+   face. Lazy: font-display swap means it only fetches when LavaTitle renders. */
+@font-face {
+  font-family: "NeonLux";
+  src: url("../assets/fonts/NeonLux.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}

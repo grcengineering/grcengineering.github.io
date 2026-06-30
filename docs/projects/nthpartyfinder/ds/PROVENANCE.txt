@@ -1,0 +1,5 @@
+GRCE Design System vendored copy
+Source project: GRC Engineering Design System (73c32b48-9855-4a18-ab4b-101e72dd50e0)
+Source repo commit: 0c979ea
+Vendored: 2026-06-30
+Link ds/styles.css only; do not hand-edit — re-copy from the DS mirror.
