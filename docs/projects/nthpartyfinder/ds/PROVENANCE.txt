@@ -3,3 +3,10 @@ Source project: GRC Engineering Design System (73c32b48-9855-4a18-ab4b-101e72dd5
 Source repo commit: 0c979ea
 Vendored: 2026-06-30
 Link ds/styles.css only; do not hand-edit — re-copy from the DS mirror.
+Engine update 2026-07-05: ds/node-graph.js regenerated from the Claude Design
+canvas NodeGraphBackground.jsx (project 73c32b48…, pulled via DesignSync
+2026-07-05) — adds the energy-pulse cascade + theme-aware rendering. NOTE: the
+GitHub mirror's components/backgrounds/NodeGraphBackground.jsx was stale at
+sync time; the canvas is the source of truth for this port.
+Canvas source archived: ~/.claude/PAI/MEMORY/WORK/npf-spheres-glassy-hero/canvas-NodeGraphBackground-2026-07-05.jsx
+sha256 4e7f1d445ea92f7d8c5755604d3a18e03e273ceb6052cfdd95d10a5d92b856b0 (34,982 bytes, 711 lines)

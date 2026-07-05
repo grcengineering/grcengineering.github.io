@@ -181,7 +181,7 @@ a:hover { color: var(--brand-accent-strong); }
 @keyframes np-pulse { 0%,100% { opacity: 1; box-shadow: 0 0 8px var(--grc-orange-400); } 50% { opacity: .5; box-shadow: 0 0 18px var(--grc-orange-400); } }
 .np-hero__title { margin: 0 0 var(--space-4); }
 .np-hero__tagline { font-family: var(--font-mono); font-size: var(--text-md); color: var(--grc-orange-300); margin-bottom: var(--space-5); }
-.np-hero__desc { font-size: var(--text-md); line-height: var(--leading-relaxed); color: var(--text-on-ink-muted); max-width: 56ch; margin: 0 auto var(--space-8); }
+.np-hero__desc { font-size: var(--text-md); line-height: var(--leading-relaxed); color: var(--text-on-ink); max-width: 56ch; margin: 0 auto var(--space-8); }
 .np-hero__ctas { display: flex; gap: var(--space-3); flex-wrap: wrap; justify-content: center; }
 .np-hero__badges { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-top: var(--space-8); justify-content: center; }
 .np-chip {
@@ -190,6 +190,26 @@ a:hover { color: var(--brand-accent-strong); }
   background: rgba(255,255,255,0.05); border: 1px solid var(--border-ink); color: var(--text-on-ink-muted);
 }
 .np-chip .material-symbols-outlined { font-size: 15px; }
+
+/* ════════ HERO GLASS PANEL — the hero copy lives in a frosted-glass card
+   over the constellation (DS "node-graph + glass" idiom, Card variant=glass).
+   Always dark glass: the hero band is theme-fixed ink, so the panel is too. */
+.np-hero__glass {
+  position: relative; border-radius: var(--radius-xl);
+  padding: var(--space-12) var(--space-8) var(--space-10);
+  background: color-mix(in srgb, #0C1117 74%, transparent); /* 74% = .np-term parity; keeps AA when bright spheres pass behind */
+  -webkit-backdrop-filter: blur(var(--blur-md)) saturate(1.2);
+          backdrop-filter: blur(var(--blur-md)) saturate(1.2);
+  box-shadow: var(--glass-highlight), var(--glass-shadow);
+}
+.np-hero__glass::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  padding: 1px; background: var(--glass-border);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  pointer-events: none; z-index: 1;
+}
+.np-hero__glass > * { position: relative; z-index: 2; }
 
 /* ════════ BUTTONS ════════ */
 .np-btn {
@@ -309,6 +329,7 @@ a:hover { color: var(--brand-accent-strong); }
 @media (max-width: 640px) {
   .np-nav__links { display: none; }
   .np-hamburger { display: inline-flex; }
+  .np-hero__glass { padding: var(--space-8) var(--space-4); border-radius: var(--radius-lg); }
   .np-hero__ctas, .np-cta__ctas { flex-direction: column; align-items: stretch; }
   .np-btn { justify-content: center; }
   .grc-lava-title { font-size: clamp(2.2rem, 12vw, 3.8rem); letter-spacing: 3px; }
@@ -352,12 +373,12 @@ a:hover { color: var(--brand-accent-strong); }
 
 <!-- HERO -->
 <header class="np-hero" id="top">
-  <div class="grc-nodegraph" data-grc-nodegraph data-palette="spectrum" data-max-nodes="90" data-speed="1" aria-hidden="true"></div>
+  <div class="grc-nodegraph" data-grc-nodegraph data-palette="spectrum" data-density="0.6" data-max-nodes="48" data-link-opacity="0.9" data-speed="1" data-theme="dark" aria-hidden="true"></div>
   <div class="np-hero__glow"></div>
   <div class="np-hero__grid"></div>
   <div class="np-container">
     <div class="np-hero__inner">
-      <div class="np-hero__copy">
+      <div class="np-hero__copy np-hero__glass">
         <span class="np-hero__eyebrow"><span class="np-hero__dot"></span>// Nth-Party Supply-Chain Mapping</span>
         <h1 class="np-hero__title">
           <span class="grc-lava-title">
