@@ -376,8 +376,13 @@ void main(){
          height. Clamps to 1 on desktop (cloud already overfills). Y-stretch survives
          the yaw orbit (XZ rotation); spheres are stationary in the WebGL path. */
       const vStretch = Math.max(1, 0.85 * (Math.tan(22.5 * Math.PI / 180) * camZ) / R);
-      nodes = []; const rad = new Float32Array(N); const col = new Float32Array(N * 3);
-      for (let i = 0; i < N; i++) {
+      /* The node budget is per WORLD VOLUME, not per canvas: stretching the cloud over a
+         tall hero must not thin it out — scale the count with the stretch so every
+         viewport-sized slice of the hero keeps the same sphere presence. Desktop
+         (vStretch 1) is untouched; hard safety cap well below any perf ceiling. */
+      const NS = Math.min(220, Math.round(N * vStretch));
+      nodes = []; const rad = new Float32Array(NS); const col = new Float32Array(NS * 3);
+      for (let i = 0; i < NS; i++) {
         // uniform-ish point inside sphere of radius R
         let x, y, z;
         do { x = rand(-1,1); y = rand(-1,1); z = rand(-1,1); } while (x*x + y*y + z*z > 1);
@@ -391,8 +396,8 @@ void main(){
         col[i*3] = c[0]; col[i*3+1] = c[1]; col[i*3+2] = c[2];
       }
       radii = rad; colors = col;
-      charge = new Float32Array(N); pulses = [];
-      visited = new Uint8Array(N); reserved = new Uint8Array(N);
+      charge = new Float32Array(NS); pulses = [];
+      visited = new Uint8Array(NS); reserved = new Uint8Array(NS);
       casc = { phase: "waiting", wait: 900 };
 
       gl.bindBuffer(gl.ARRAY_BUFFER, chargeBuf); gl.bufferData(gl.ARRAY_BUFFER, charge, gl.DYNAMIC_DRAW);
