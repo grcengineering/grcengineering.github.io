@@ -17,6 +17,16 @@
    shaders and math are unchanged; only the React shell is replaced with a
    vanilla auto-mount controller.
 
+   DELIBERATE DEVIATIONS from the upstream component (2026-07-05, mobile fixes;
+   shaders and cascade math untouched — candidates to upstream to the DS):
+     • resize() viewport-only path + width-guarded controller rebuild — iOS
+       Safari URL-bar resize events no longer regenerate ("reset") the cloud
+     • aspect-adaptive camera distance — portrait viewports pull back toward
+       fitting the cloud horizontally (plus optional data-zoom override)
+     • data-min-nodes floor — small viewports keep a visible web
+     • even frame pacing (overshoot-remainder throttle) — kills 30fps-on-60Hz
+       judder; per-frame allocs removed (pooled pulse buffer, cached projection)
+
    Usage:
      <div class="grc-nodegraph" data-grc-nodegraph
           data-palette="spectrum" data-density="0.6" data-max-nodes="48"
@@ -311,7 +321,10 @@ void main(){
     const pulseInstBuf = gl.createBuffer(); // traveling-pulse instances (dynamic)
 
     const R = 2.9;                       // cloud radius (overfills the frustum so spheres clip off-edge)
-    const camZ = 3.7;
+    const BASE_CAM_Z = 3.7;
+    let camZ = BASE_CAM_Z;               // adaptive: pulled back on narrow (portrait) viewports so the web stays visible
+    let projM = null;                    // cached projection matrix (recomputed only when the viewport changes)
+    let pulseArr = new Float32Array(0);  // pooled traveling-pulse instance buffer (no per-frame allocation)
     let nodes = [];
     let radii, colors, lineVerts, lineCount = 0;
     let charge = new Float32Array(0);   // per-sphere energy (0..~1.2), decays over time
@@ -325,15 +338,36 @@ void main(){
 
     function rand(a, b) { return a + Math.random() * (b - a); }
 
-    function build() {
+    function sizeViewport() {
       const rect = wrap.getBoundingClientRect();
-      W = Math.max(1, rect.width); H = Math.max(1, rect.height);
-      dpr = Math.min(window.devicePixelRatio || 1, opts.dprCap);
+      const w = Math.max(1, rect.width), h = Math.max(1, rect.height);
+      const d = Math.min(window.devicePixelRatio || 1, opts.dprCap);
+      // no-op guard: reassigning canvas.width clears the canvas even when unchanged,
+      // so a resize event that didn't actually change our box must touch nothing
+      if (projM && w === W && h === H && d === dpr) return false;
+      W = w; H = h; dpr = d;
       canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
       gl.viewport(0, 0, canvas.width, canvas.height);
+      /* Adaptive camera: the 45° FOV is vertical, so narrow (portrait) viewports crop the
+         cloud hard horizontally — on phones almost no spheres stayed in frame. Pull the
+         camera back toward the distance where the cloud fits the horizontal frustum. */
+      const aspect = W / H;
+      const fitZ = R / (Math.tan(22.5 * Math.PI / 180) * Math.max(aspect, 0.05));
+      camZ = Math.max(BASE_CAM_Z, 0.6 * fitZ) / (opts.zoom || 1);
+      camZ = Math.min(camZ, 100 - R - 0.1);   // keep the whole cloud inside the far plane at extreme zoom-out
+      projM = mPerspective(45 * Math.PI / 180, W / H, 0.1, 100);
+      return true;
+    }
+    /* resize-only path: re-fit the viewport but KEEP the constellation (nodes/links/charges).
+       iOS Safari fires resize on URL-bar collapse during scroll; regenerating there made the
+       web visibly "reset". Only a real width change warrants a new cloud (see controller).
+       Returns false when the box was actually unchanged (nothing touched). */
+    function resize() { return sizeViewport(); }
 
+    function build() {
+      sizeViewport();
       const target = Math.min(opts.maxNodes, Math.round((W * H) / 16000 * opts.density));
-      const N = Math.max(8, target);
+      const N = Math.max(Math.min(opts.minNodes, opts.maxNodes) || 8, target);
       const pal = resolvePalette(opts.palette);
       nodes = []; const rad = new Float32Array(N); const col = new Float32Array(N * 3);
       for (let i = 0; i < N; i++) {
@@ -366,7 +400,6 @@ void main(){
       gl.bindBuffer(gl.ARRAY_BUFFER, lineBuf); gl.bufferData(gl.ARRAY_BUFFER, lineVerts, gl.STATIC_DRAW);
     }
 
-    const proj = () => mPerspective(45 * Math.PI / 180, W / H, 0.1, 100);
     const threshold = 0.7 * R * (opts.linkDistance / 250); // world-space link radius (scales with cloud size)
     const offArr = () => { const a = new Float32Array(nodes.length * 3); for (let i = 0; i < nodes.length; i++) { a[i*3] = nodes[i].x; a[i*3+1] = nodes[i].y; a[i*3+2] = nodes[i].z; } return a; };
 
@@ -459,7 +492,9 @@ void main(){
       if (!pulses.length) return;
       const TAIL = 6, GAP = 0.032;                 // head + 5 trailing samples → a short directional comet tail
       const total = pulses.length * TAIL;
-      const arr = new Float32Array(total * 8);     // offset(3) color(3) intensity(1) scale(1)
+      const need = total * 8;                      // offset(3) color(3) intensity(1) scale(1)
+      if (pulseArr.length < need) pulseArr = new Float32Array(need);
+      const arr = pulseArr;                        // pooled — avoids per-frame allocation/GC hitches
       let o = 0;
       for (let k = 0; k < pulses.length; k++) {
         const p = pulses[k], a = nodes[p.a], b = nodes[p.b], tt = Math.min(1, p.t);
@@ -480,7 +515,7 @@ void main(){
       gl.useProgram(pulseProg);
       gl.bindBuffer(gl.ARRAY_BUFFER, quad);
       gl.enableVertexAttribArray(PL.aCorner); gl.vertexAttribPointer(PL.aCorner, 2, gl.FLOAT, false, 0, 0); divisor(PL.aCorner, 0);
-      gl.bindBuffer(gl.ARRAY_BUFFER, pulseInstBuf); gl.bufferData(gl.ARRAY_BUFFER, arr, gl.DYNAMIC_DRAW);
+      gl.bindBuffer(gl.ARRAY_BUFFER, pulseInstBuf); gl.bufferData(gl.ARRAY_BUFFER, arr.subarray(0, need), gl.DYNAMIC_DRAW);
       gl.enableVertexAttribArray(PL.aOffset); gl.vertexAttribPointer(PL.aOffset, 3, gl.FLOAT, false, 32, 0); divisor(PL.aOffset, 1);
       gl.enableVertexAttribArray(PL.aColor); gl.vertexAttribPointer(PL.aColor, 3, gl.FLOAT, false, 32, 12); divisor(PL.aColor, 1);
       gl.enableVertexAttribArray(PL.aIntensity); gl.vertexAttribPointer(PL.aIntensity, 1, gl.FLOAT, false, 32, 24); divisor(PL.aIntensity, 1);
@@ -496,7 +531,7 @@ void main(){
 
     function render(yaw, pitch) {
       const mv = mMul(mTranslate(0,0,-camZ), mMul(mRotX(pitch), mRotY(yaw)));
-      const pj = proj();
+      const pj = projM;
       gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
       gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LEQUAL);
@@ -558,7 +593,7 @@ void main(){
     }
 
     build();
-    return { build, drift, render, step };
+    return { build, resize, drift, render, step, get camZ() { return camZ; } };
   }
 
   /* ===================== 2D fallback (no WebGL) ===================== */
@@ -588,7 +623,7 @@ void main(){
       canvas.width = Math.round(W*dpr); canvas.height = Math.round(H*dpr); ctx.setTransform(dpr,0,0,dpr,0,0);
       sprites = COLORS2D.map(c => sprite(c, baseSpriteR));
       const target = Math.min(opts.maxNodes, Math.round((W*H)/26000*opts.density));
-      nodes = new Array(Math.max(6,target)).fill(0).map(() => {
+      nodes = new Array(Math.max(Math.min(opts.minNodes, opts.maxNodes) || 6, target)).fill(0).map(() => {
         const z = 0.32+Math.random()*0.68, big = Math.random()<0.18;
         return { x:Math.random()*W, y:Math.random()*H, z,
           r:(big?9+Math.random()*7:1.5+Math.random()*4.5)*(0.6+z*0.4),
@@ -609,15 +644,26 @@ void main(){
       for (const n of nodes){ const s=sprites[n.ci], sc=n.r/s.baseR, dh=s.half*sc; ctx.globalAlpha=0.55+n.z*0.45;
         ctx.drawImage(s.canvas, n.x-dh, n.y-dh, s.half*2*sc, s.half*2*sc); } ctx.globalAlpha=1;
     }
+    /* resize-only: re-fit the canvas, keep the sprite field (no regeneration on scroll chrome) */
+    function resize() {
+      const rect = wrap.getBoundingClientRect();
+      const w = Math.max(1,rect.width), h = Math.max(1,rect.height);
+      const d = Math.min(window.devicePixelRatio||1, opts.dprCap);
+      if (w === W && h === H && d === dpr) return false;
+      W = w; H = h; dpr = d;
+      canvas.width = Math.round(W*dpr); canvas.height = Math.round(H*dpr); ctx.setTransform(dpr,0,0,dpr,0,0);
+      return true;
+    }
     build();
-    return { build, drift, render, is2D:true };
+    return { build, resize, drift, render, is2D:true };
   }
 
   /* ===================== auto-mount controller (replaces the React shell) ===================== */
   const DEFAULTS = {
-    density: 1, maxNodes: 90, fps: 30, dprCap: 1.5,
+    density: 1, maxNodes: 90, minNodes: 8, fps: 30, dprCap: 1.5,
     linkDistance: 250, linkOpacity: 1, palette: "spectrum", speed: 1,
     theme: "dark", bg: null, lineColor: null, pulse: true, pulseRate: 1,
+    zoom: 1,   // >1 zooms in, <1 zooms out (divides the adaptive camera distance)
   };
   function attrNum(el, name, fallback) {
     const v = el.getAttribute(name); if (v === null || v === "") return fallback;
@@ -651,6 +697,8 @@ void main(){
     const opts = {
       density: attrNum(wrap, "data-density", DEFAULTS.density),
       maxNodes: attrNum(wrap, "data-max-nodes", DEFAULTS.maxNodes),
+      minNodes: attrNum(wrap, "data-min-nodes", DEFAULTS.minNodes),
+      zoom: attrNum(wrap, "data-zoom", DEFAULTS.zoom),
       fps: attrNum(wrap, "data-fps", DEFAULTS.fps),
       dprCap: attrNum(wrap, "data-dpr-cap", DEFAULTS.dprCap),
       linkDistance: attrNum(wrap, "data-link-distance", DEFAULTS.linkDistance),
@@ -676,14 +724,29 @@ void main(){
     }
     if (!engine) return;
 
-    let raf = 0, lastT = 0, running = false, t = 0;
-    const frameInterval = 1000 / opts.fps;
+    let raf = 0, lastT = 0, lastRender = 0, running = false, t = 0;
+    const frameInterval = 1000 / Math.max(1, opts.fps || DEFAULTS.fps); // clamp: data-fps="0" must degrade, not freeze
+    const stats = { builds: 1, resizes: 0, frames: 0 };
 
     function frame(now) {
       if (!running) return;
       raf = requestAnimationFrame(frame);
-      if (now - lastT < frameInterval) return;
-      const dt = lastT ? (now - lastT) : frameInterval; lastT = now; t += dt;
+      const first = !lastT;
+      const elapsed = now - lastT;
+      /* Even pacing: the naive `lastT = now` throttle makes 30fps-on-60Hz alternate
+         33ms/50ms frames (visible judder). Carry the overshoot remainder instead, and
+         allow a half-ms tolerance so a vsync tick just under the interval isn't skipped. */
+      if (!first && elapsed < frameInterval - 0.5) return;
+      // carry the overshoot remainder — but a tolerance render (elapsed just under the
+      // interval) carries 0, else `elapsed % interval` equals elapsed and poisons lastT
+      lastT = first ? now : now - (elapsed >= frameInterval ? (elapsed % frameInterval) : 0);
+      // dt = real wall time between RENDERED frames (separate clock from the pacing
+      // anchor — measuring dt off carried-back lastT double-counts the remainder and
+      // runs the animation fast under rAF jitter)
+      const dt = lastRender ? Math.min(now - lastRender, 100) : frameInterval; // clamp tab-return gaps
+      lastRender = now;
+      t += dt;
+      stats.frames++;
       if (engine.step) engine.step(dt);   // advance energy pulses + charge decay (WebGL only)
       if (engine.is2D) {
         engine.drift();   // 2D fallback has no camera; gentle node drift instead
@@ -700,7 +763,7 @@ void main(){
       else engine.render(0.6, 0.22); // a pleasant fixed 3/4 view
     }
     // RAF runs even at speed 0 so the faint glow keeps pulsing; the camera stays fixed.
-    function start() { if (running || reduce) return; running = true; lastT = 0; raf = requestAnimationFrame(frame); }
+    function start() { if (running || reduce) return; running = true; lastT = 0; lastRender = 0; raf = requestAnimationFrame(frame); }
     function stop() { running = false; if (raf) cancelAnimationFrame(raf); }
 
     paintStatic(); // immediate first paint (also the reduced-motion result)
@@ -714,11 +777,37 @@ void main(){
     const onVis = () => (document.hidden ? stop() : start());
     document.addEventListener("visibilitychange", onVis);
 
-    let rt = 0;
-    const onResize = () => { clearTimeout(rt); rt = setTimeout(() => { engine.build(); paintStatic(); }, 180); };
+    /* Width-guarded resize: iOS Safari fires resize when the URL bar collapses/expands
+       during scroll, but the hero's WIDTH is unchanged — regenerating the cloud there
+       made the web visibly "reset" mid-scroll. Only a real width change (orientation,
+       window resize) regenerates; anything else just re-fits the viewport. */
+    /* repaint at the CURRENT camera — paintStatic()'s fixed 3/4 view would flash a
+       one-frame rotation snap when a resize settles while the graph is animating */
+    function repaint() {
+      if (running && !engine.is2D && speed !== 0) {
+        engine.render(t * 0.00003 * speed, 0.16 * Math.sin(t * 0.000022 * speed));
+      } else {
+        paintStatic();
+      }
+    }
+    let rt = 0, lastW = wrap.getBoundingClientRect().width;
+    const onResize = () => {
+      clearTimeout(rt);
+      rt = setTimeout(() => {
+        const w = wrap.getBoundingClientRect().width;
+        if (Math.abs(w - lastW) > 8) {
+          lastW = w; engine.build(); stats.builds++; repaint();
+        } else if (engine.resize && engine.resize() !== false) {
+          stats.resizes++; repaint();
+        }
+        // no-op resize (box unchanged — the common iOS URL-bar case): touch nothing
+      }, 180);
+    };
     window.addEventListener("resize", onResize);
 
     wrap.__grcNodeGraph = {
+      stats: stats,
+      camZ: function () { return engine.camZ !== undefined ? engine.camZ : null; },
       destroy: function () {
         stop(); if (io) io.disconnect();
         document.removeEventListener("visibilitychange", onVis);
