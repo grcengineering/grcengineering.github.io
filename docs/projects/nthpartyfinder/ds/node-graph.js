@@ -369,6 +369,13 @@ void main(){
       const target = Math.min(opts.maxNodes, Math.round((W * H) / 16000 * opts.density));
       const N = Math.max(Math.min(opts.minNodes, opts.maxNodes) || 8, target);
       const pal = resolvePalette(opts.palette);
+      /* Tall-canvas fill: the cloud is a sphere, so on a tall narrow hero (phone) it
+         bunches into the vertical middle — behind the hero content — leaving the visible
+         margins empty. When the pulled-back camera sees more vertical world than the
+         cloud spans, stretch the node distribution's Y to fill ~85% of the frustum
+         height. Clamps to 1 on desktop (cloud already overfills). Y-stretch survives
+         the yaw orbit (XZ rotation); spheres are stationary in the WebGL path. */
+      const vStretch = Math.max(1, 0.85 * (Math.tan(22.5 * Math.PI / 180) * camZ) / R);
       nodes = []; const rad = new Float32Array(N); const col = new Float32Array(N * 3);
       for (let i = 0; i < N; i++) {
         // uniform-ish point inside sphere of radius R
@@ -376,7 +383,7 @@ void main(){
         do { x = rand(-1,1); y = rand(-1,1); z = rand(-1,1); } while (x*x + y*y + z*z > 1);
         const big = Math.random() < 0.16;
         nodes.push({
-          x: x*R, y: y*R, z: z*R,
+          x: x*R, y: y*R*vStretch, z: z*R,
           vx: rand(-1,1), vy: rand(-1,1), vz: rand(-1,1),
         });
         rad[i] = big ? rand(0.085, 0.14) : rand(0.032, 0.066);
