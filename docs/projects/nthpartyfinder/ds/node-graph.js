@@ -383,18 +383,26 @@ void main(){
          so the silhouette is rotation-invariant and coverage never "breathes" as the
          cloud spins). Both clamp to 1, so the DS default close-camera look is untouched. */
       const tanF = Math.tan(22.5 * Math.PI / 180);
-      const vStretch = Math.max(1, 0.85 * (tanF * camZ) / R);
-      const hStretch = Math.max(1, 0.85 * (tanF * camZ * (W / H)) / R);
+      /* 1.08 = slight OVERfill: a uniform ball is sparse at its rim, so filling to
+         exactly the frame edge still reads as empty margins — push the extents just
+         past the frame and let the rim sparsity land the visible boundary on it. */
+      const FILL = 1.08;
+      const vStretch = Math.max(1, FILL * (tanF * camZ) / R);
+      const hStretch = Math.max(1, FILL * (tanF * camZ * (W / H)) / R);
       cloudDepth = R * hStretch;   // fog must track the deeper (Z-stretched) cloud
       /* The node budget is per WORLD VOLUME, not per canvas: a stretched cloud must not
          thin out — scale the count with the stretched volume so every region of the
          frame keeps the same sphere presence. Hard cap well below any perf ceiling. */
-      const NS = Math.min(220, Math.round(N * hStretch * hStretch * vStretch));
+      const NS = Math.min(280, Math.round(N * hStretch * hStretch * vStretch));
       nodes = []; const rad = new Float32Array(NS); const col = new Float32Array(NS * 3);
       for (let i = 0; i < NS; i++) {
-        // uniform-ish point inside sphere of radius R
+        // uniform-ish point inside sphere of radius R…
         let x, y, z;
         do { x = rand(-1,1); y = rand(-1,1); z = rand(-1,1); } while (x*x + y*y + z*z > 1);
+        // …then bias the radius outward (r → r^0.7): a uniform ball projects dense-center /
+        // empty-rim, which reads as bare frame edges and corners; this flattens coverage
+        const m = Math.hypot(x, y, z);
+        if (m > 1e-4) { const k = Math.pow(m, -0.3); x *= k; y *= k; z *= k; }
         const big = Math.random() < 0.16;
         nodes.push({
           x: x*R*hStretch, y: y*R*vStretch, z: z*R*hStretch,
