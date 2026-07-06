@@ -335,6 +335,7 @@ void main(){
     let reserved = new Uint8Array(0);   // spheres a pulse is already heading toward (no double-targeting)
     let casc = { phase: "waiting", wait: 900 };   // cascade lifecycle: brief intro → flood ⇄ 5s rest
     let W = 1, H = 1, dpr = 1;
+    let cloudDepth = R;                 // Z half-extent of the (possibly stretched) cloud — drives fog range
 
     function rand(a, b) { return a + Math.random() * (b - a); }
 
@@ -375,12 +376,20 @@ void main(){
          cloud spans, stretch the node distribution's Y to fill ~85% of the frustum
          height. Clamps to 1 on desktop (cloud already overfills). Y-stretch survives
          the yaw orbit (XZ rotation); spheres are stationary in the WebGL path. */
-      const vStretch = Math.max(1, 0.85 * (Math.tan(22.5 * Math.PI / 180) * camZ) / R);
-      /* The node budget is per WORLD VOLUME, not per canvas: stretching the cloud over a
-         tall hero must not thin it out — scale the count with the stretch so every
-         viewport-sized slice of the hero keeps the same sphere presence. Desktop
-         (vStretch 1) is untouched; hard safety cap well below any perf ceiling. */
-      const NS = Math.min(220, Math.round(N * vStretch));
+      /* Frustum-fill: the cloud is a sphere, the frame is a rectangle — once the camera
+         is far enough to see the whole ball, the frame's edges sit consistently empty.
+         Stretch the distribution toward filling the visible frustum at cloud depth:
+         vertically (Y — safe under the yaw orbit) AND horizontally (X and Z TOGETHER,
+         so the silhouette is rotation-invariant and coverage never "breathes" as the
+         cloud spins). Both clamp to 1, so the DS default close-camera look is untouched. */
+      const tanF = Math.tan(22.5 * Math.PI / 180);
+      const vStretch = Math.max(1, 0.85 * (tanF * camZ) / R);
+      const hStretch = Math.max(1, 0.85 * (tanF * camZ * (W / H)) / R);
+      cloudDepth = R * hStretch;   // fog must track the deeper (Z-stretched) cloud
+      /* The node budget is per WORLD VOLUME, not per canvas: a stretched cloud must not
+         thin out — scale the count with the stretched volume so every region of the
+         frame keeps the same sphere presence. Hard cap well below any perf ceiling. */
+      const NS = Math.min(220, Math.round(N * hStretch * hStretch * vStretch));
       nodes = []; const rad = new Float32Array(NS); const col = new Float32Array(NS * 3);
       for (let i = 0; i < NS; i++) {
         // uniform-ish point inside sphere of radius R
@@ -388,7 +397,7 @@ void main(){
         do { x = rand(-1,1); y = rand(-1,1); z = rand(-1,1); } while (x*x + y*y + z*z > 1);
         const big = Math.random() < 0.16;
         nodes.push({
-          x: x*R, y: y*R*vStretch, z: z*R,
+          x: x*R*hStretch, y: y*R*vStretch, z: z*R*hStretch,
           vx: rand(-1,1), vy: rand(-1,1), vz: rand(-1,1),
         });
         rad[i] = big ? rand(0.085, 0.14) : rand(0.032, 0.066);
@@ -556,7 +565,7 @@ void main(){
         gl.enableVertexAttribArray(LL.aAlpha); gl.vertexAttribPointer(LL.aAlpha, 1, gl.FLOAT, false, 16, 12); divisor(LL.aAlpha, 0);
         gl.uniformMatrix4fv(LL.uMV, false, mv); gl.uniformMatrix4fv(LL.uProj, false, pj);
         gl.uniform3fv(LL.uBg, opts.bgRGB); gl.uniform3fv(LL.uLine, opts.lineRGB);
-        gl.uniform1f(LL.uFogNear, camZ - R); gl.uniform1f(LL.uFogFar, camZ + R);
+        gl.uniform1f(LL.uFogNear, camZ - cloudDepth); gl.uniform1f(LL.uFogFar, camZ + cloudDepth);
         gl.uniform1f(LL.uBoost, opts.haloMode >= 0.5 ? 1.5 : 1.0);
         gl.uniform1f(LL.uFogMix, opts.haloMode >= 0.5 ? 0.32 : 0.5);
         gl.drawArrays(gl.LINES, 0, lineCount);
@@ -579,7 +588,7 @@ void main(){
       gl.uniformMatrix4fv(SL.uMV, false, mv); gl.uniformMatrix4fv(SL.uProj, false, pj);
       gl.uniform1f(SL.uPad, 1.08);
       gl.uniform3fv(SL.uBg, opts.bgRGB);
-      gl.uniform1f(SL.uFogNear, camZ - R); gl.uniform1f(SL.uFogFar, camZ + R);
+      gl.uniform1f(SL.uFogNear, camZ - cloudDepth); gl.uniform1f(SL.uFogFar, camZ + cloudDepth);
       gl.uniform1f(SL.uGlowPass, 0.0);
       drawInst(gl.TRIANGLE_STRIP, 0, 4, nodes.length);
 
