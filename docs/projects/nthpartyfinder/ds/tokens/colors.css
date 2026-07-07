@@ -35,7 +35,7 @@
   --gradient-ink-glow: radial-gradient(120% 120% at 0% 0%, rgba(255,168,79,0.12) 0%, transparent 42%), radial-gradient(120% 120% at 100% 0%, rgba(27,149,193,0.14) 0%, transparent 46%); /* @kind color */
   /* Tool-lockup fill — the literal OCEAN pill: clean 2-stop orange→blue diagonal.
      Exact brand hues, no muddy mid-stops (the teal blend is the natural mix). */
-  --gradient-ocean: linear-gradient(115deg, #FFA84F 0%, #1B95C1 100%); /* @kind color */
+  --gradient-ocean: linear-gradient(135deg, #FFA84F 0%, #1B95C1 100%); /* @kind color */
 
   /* ---- Neutrals: cool slate (engineering ink) ---- */
   --slate-0:   #FFFFFF;

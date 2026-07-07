@@ -834,9 +834,26 @@ void main(){
     };
     window.addEventListener("resize", onResize);
 
+    /* Live theme switch: node positions/links are theme-independent, and bgRGB/
+       lineRGB/haloMode are read fresh every render(), so switching themes only
+       mutates those three opts fields + repaints — no cloud regen, no WebGL
+       re-init, the in-flight cascade is preserved. */
+    function applyTheme(themeName) {
+      const t = themeName === "light" ? "light" : "dark";
+      const def = t === "light"
+        ? { bgRGB: BG_LIGHT, lineRGB: LINE_LIGHT, haloMode: 1 }
+        : { bgRGB: BG_DARK,  lineRGB: LINE_DARK,  haloMode: 0 };
+      opts.bgRGB = parseRGB01(attrStr(wrap, "data-bg", DEFAULTS.bg)) || def.bgRGB;
+      opts.lineRGB = parseRGB01(attrStr(wrap, "data-line-color", DEFAULTS.lineColor)) || def.lineRGB;
+      opts.haloMode = def.haloMode;
+      wrap.setAttribute("data-theme", t);
+      repaint();
+    }
+
     wrap.__grcNodeGraph = {
       stats: stats,
       camZ: function () { return engine.camZ !== undefined ? engine.camZ : null; },
+      setTheme: applyTheme,
       destroy: function () {
         stop(); if (io) io.disconnect();
         document.removeEventListener("visibilitychange", onVis);
@@ -851,7 +868,15 @@ void main(){
     document.querySelectorAll("[data-grc-nodegraph]").forEach(mountOne);
   }
   // public API preserved from the previous port (programmatic mounting)
-  window.GRCNodeGraph = { mount: mountOne, mountAll: mountAll };
+  window.GRCNodeGraph = {
+    mount: mountOne,
+    mountAll: mountAll,
+    setTheme: function (themeName) {
+      document.querySelectorAll("[data-grc-nodegraph]").forEach(function (w) {
+        if (w.__grcNodeGraph && w.__grcNodeGraph.setTheme) w.__grcNodeGraph.setTheme(themeName);
+      });
+    }
+  };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mountAll);
   else mountAll();
 })();

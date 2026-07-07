@@ -46,6 +46,13 @@
   font-weight: 400; font-style: normal; font-display: swap;
 }
 
+/* Unbounded — the OCEAN ToolLockup wordmark face (variable 200–900, Latin subset ~57KB) */
+@font-face {
+  font-family: 'Unbounded';
+  src: url('fonts/unbounded-vf.woff2') format('woff2');
+  font-weight: 200 900; font-style: normal; font-display: swap;
+}
+
 *, *::before, *::after { margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body {
@@ -62,36 +69,63 @@ body {
 a { color: var(--text-link); text-decoration: none; transition: var(--transition-control); }
 a:hover { color: var(--brand-accent-strong); }
 
-/* ════════ SIGNATURE 1 — ToolLockup (orange→blue pill, travelling glow) ════════ */
+/* ════════ SIGNATURE 1 — ToolLockup (Unbounded pill, travelling white arc) ════════
+   1:1 with the latest GRCE Design System ToolLockup (grc.engineering/OCEAN .nav-logo-mark):
+   Unbounded 700 · 135° orange→blue · thin white arc rotating at 110°/s.
+   DS drives the angle via JS; here the page's @property keyframe does it (110°/s = 3.273s/rev). */
 @property --grc-lockup-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
 .grc-lockup {
-  --grc-lockup-fs: 30px; --grc-lockup-ring: 2px;
-  position: relative; display: inline-flex; align-items: center; justify-content: center;
-  box-sizing: border-box; font-size: var(--grc-lockup-fs);
-  padding: 0.46em 0.92em 0.5em; border-radius: 0.5em; text-decoration: none; isolation: isolate;
-  background: var(--gradient-ocean, linear-gradient(115deg, #FFA84F 0%, #1B95C1 100%));
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), inset 0 0 0 1px rgba(255,255,255,0.32),
-              0 1px 2px rgba(0,0,0,0.25), 0 16px 34px -12px rgba(0,0,0,0.55);
+  /* size drivers — md defaults match the OCEAN nav mark exactly */
+  --lk-h: 36px; --lk-pad: 14px; --lk-fs: 0.9rem; --lk-r: 8px;
+  --grc-lockup-angle: 0deg;
+  position: relative;
+  box-sizing: border-box;
+  height: var(--lk-h);
+  padding: 0 var(--lk-pad);
+  background: linear-gradient(135deg, #FFA84F, #1B95C1);
+  border-radius: var(--lk-r);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: "Unbounded", sans-serif;
+  font-weight: 700;
+  font-size: var(--lk-fs);
+  letter-spacing: 0.06em;
+  color: #000;
+  box-shadow: 0 0 20px rgba(255, 168, 79, 0.18);
+  white-space: nowrap;
+  z-index: 1;
+  text-decoration: none;
 }
+/* thin rotating white arc, peeking 1px beyond the pill */
+.grc-lockup::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: calc(var(--lk-r) + 1px);
+  background: conic-gradient(
+    from var(--grc-lockup-angle, 0deg),
+    transparent 5%,
+    #FFFFFF 20%,
+    transparent 35%
+  );
+  z-index: -1;
+  animation: grc-lockup-spin 3.273s linear infinite;
+}
+/* interior cover (the pill face) so the ring reads as a rim, not a wash */
 .grc-lockup::after {
-  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: var(--grc-lockup-ring);
-  background: conic-gradient(from var(--grc-lockup-angle),
-    rgba(255,255,255,0.14) 0deg, rgba(255,255,255,0.14) 275deg, rgba(255,255,255,0.55) 312deg,
-    rgba(255,255,255,1) 330deg, rgba(255,255,255,0.55) 348deg, rgba(255,255,255,0.14) 360deg);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor; mask-composite: exclude;
-  filter: drop-shadow(0 0 3px rgba(255,255,255,0.55));
-  animation: grc-lockup-spin 3.2s linear infinite; pointer-events: none; z-index: 1;
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: calc(var(--lk-r) - 1px);
+  background: linear-gradient(135deg, #FFA84F, #1B95C1);
+  z-index: -1;
 }
-.grc-lockup__text {
-  position: relative; z-index: 2; font-family: "Satoshi", "General Sans", system-ui, sans-serif;
-  font-weight: 900; letter-spacing: 0.005em; line-height: 1; color: #0A0D12; white-space: nowrap;
-}
+.grc-lockup__text { position: relative; }
 @keyframes grc-lockup-spin { to { --grc-lockup-angle: 360deg; } }
-.grc-lockup--sm { --grc-lockup-fs: 16px; --grc-lockup-ring: 1.5px; }
-.grc-lockup--md { --grc-lockup-fs: 30px; }
-.grc-lockup--lg { --grc-lockup-fs: 44px; --grc-lockup-ring: 2.5px; }
-@media (prefers-reduced-motion: reduce) { .grc-lockup::after { animation: none; } }
+/* sizes — sm = nav (compact wide-face fit); md = DS nav spec (36px); lg = hero (56px) */
+.grc-lockup--sm { --lk-h: 28px; --lk-pad: 10px; --lk-fs: 0.7rem; }
+.grc-lockup--md { }
+.grc-lockup--lg { --lk-h: 56px; --lk-pad: 22px; --lk-fs: 1.4rem; --lk-r: 12px; }
+@media (prefers-reduced-motion: reduce) { .grc-lockup::before { animation: none; } }
 
 /* ════════ SIGNATURE 2 — LavaTitle (neon flowing wordmark) ════════ */
 .grc-lava-title {
@@ -210,6 +244,35 @@ a:hover { color: var(--brand-accent-strong); }
   pointer-events: none; z-index: 1;
 }
 .np-hero__glass > * { position: relative; z-index: 2; }
+
+/* ── Light-theme hero: pale band + light "strong" glass so the light-mode
+      web-of-spheres reads. The engine renders slate-700 links + dark-shadow
+      halos + saturated-red pulses on a pale field; the hero must be pale too or
+      the light spheres are invisible behind the always-dark ink band. ── */
+[data-theme="light"] .np-hero {
+  background:
+    radial-gradient(560px circle at 12% 14%, rgba(255,168,79,0.10), transparent 60%),
+    radial-gradient(620px circle at 88% 86%, rgba(27,149,193,0.12), transparent 60%),
+    var(--surface-page);
+  color: var(--text-body);
+  border-bottom: 1px solid var(--border-subtle);
+}
+[data-theme="light"] .np-hero__glow { display: none; }                       /* ink glow is dark-on-dark */
+[data-theme="light"] .np-hero__grid {                                         /* white dots vanish on pale → dark dots */
+  background-image: radial-gradient(rgba(10,14,22,0.05) 1px, transparent 1px);
+}
+[data-theme="light"] .np-hero__glass {
+  background: color-mix(in srgb, #FFFFFF 82%, transparent);                   /* "strong" glass — stable AA over a live cascade */
+  color: var(--text-body);
+}
+[data-theme="light"] .np-hero__desc { color: var(--text-body); }
+[data-theme="light"] .np-hero__eyebrow,
+[data-theme="light"] .np-hero__tagline { color: var(--grc-orange-800); }      /* orange-300 washes out on white → deep brand orange, safe AA (6.8:1) on light glass */
+[data-theme="light"] .np-chip {
+  background: color-mix(in srgb, var(--surface-card) 55%, transparent);
+  border-color: var(--border-default);
+  color: var(--text-muted);
+}
 
 /* ════════ BUTTONS ════════ */
 .np-btn {
@@ -595,6 +658,14 @@ cargo build --release</code></pre>
     html.setAttribute('data-theme-choice', c);
     var dark = (c === 'dark') || (c === 'system' && mq.matches);
     html.setAttribute('data-theme', dark ? 'dark' : 'light');
+    /* Feed the resolved theme to the web-of-spheres engine. At init the deferred
+       node-graph.js hasn't mounted yet (GRCNodeGraph undefined → guarded no-op),
+       but the mount's data-theme attribute is set so it mounts in the right theme;
+       every later click / OS change switches the spheres live (no cloud rebuild). */
+    var _theme = dark ? 'dark' : 'light';
+    var _graphs = document.querySelectorAll('[data-grc-nodegraph]');
+    for (var _i = 0; _i < _graphs.length; _i++) _graphs[_i].setAttribute('data-theme', _theme);
+    if (window.GRCNodeGraph && window.GRCNodeGraph.setTheme) window.GRCNodeGraph.setTheme(_theme);
     if (icon) icon.textContent = c === 'system' ? 'brightness_auto' : (c === 'dark' ? 'dark_mode' : 'light_mode');
     if (btn) btn.setAttribute('aria-label', 'Theme: ' + c + ' — click to change');
   }
