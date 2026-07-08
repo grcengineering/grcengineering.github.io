@@ -132,21 +132,34 @@ attribute vec3 aColor;
 attribute float aCharge;
 uniform mat4 uMV, uProj;
 uniform float uPad;
+uniform float uViewportH;    // drawing-buffer height in DEVICE px (canvas.height) — for analytic edge AA
 varying vec2 vCoord; varying vec3 vColor; varying float vViewZ; varying float vPhase; varying float vCharge;
+varying float vFeather;      // half-feather in vCoord units, screen-locked to ~0.6 device px (distance-independent AA)
 void main(){
   vec4 vp = uMV * vec4(aOffset, 1.0);
-  vp.xy += aCorner * aRadius * uPad;   // camera-facing billboard
+  vp.xy += aCorner * aRadius * uPad;   // camera-facing billboard (view-space rim extent = aRadius)
   vViewZ = vp.z;
   vColor = aColor;
   vCharge = aCharge;
   vPhase = aOffset.x * 1.7 + aOffset.y * 2.3 + aOffset.z * 1.1;   // per-sphere glow phase
   vCoord = aCorner * uPad;
   gl_Position = uProj * vp;
+  // ---- analytic edge AA, NO derivatives: project the rim extent (aRadius) to device px ----
+  float pxRadius = aRadius * (uProj[1][1] / max(gl_Position.w, 1.0e-4)) * 0.5 * uViewportH;
+  // 0.6 device-px half-feather (~1.2px total) at ANY on-screen size. Inward-biased in the FS
+  // (feather lives at r in [1-2f,1]), so it never writes fragments past the silhouette — the
+  // depth-write footprint matches the pre-AA build (no new inter-sphere occlusion fringe).
+  vFeather = clamp(0.6 / max(pxRadius, 1.0e-3), 0.0, 0.5);
 }`;
 
   const SPHERE_FS = `
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
 precision mediump float;
+#endif
 varying vec2 vCoord; varying vec3 vColor; varying float vViewZ; varying float vPhase; varying float vCharge;
+varying float vFeather;      // screen-locked half-feather (device-px) for distance-independent AA
 uniform vec3 uBg; uniform float uFogNear, uFogFar;
 uniform float uGlowPass, uTime, uGlowMax, uGlow, uHaloMode;
 uniform vec3 uChargeCol;
@@ -155,9 +168,10 @@ void main(){
   float r = sqrt(r2);
   float fog = clamp((-vViewZ - uFogNear) / (uFogFar - uFogNear), 0.0, 1.0);
   if (uGlowPass < 0.5) {
-    // ---- solid sphere body ----
-    if (r2 > 1.0) discard;                       // outside the disc → not this sphere
-    float z = sqrt(1.0 - r2);
+    // ---- solid sphere body: distance-independent ~1 device-pixel analytic rim (inward-biased) ----
+    float f = max(vFeather, 8.0e-4);             // floor guards mediump degeneracy on huge near spheres
+    if (r2 > 1.0) discard;                        // silhouette clip (no fragments past r=1 → no new depth-writers)
+    float z = sqrt(max(1.0 - r2, 0.0));          // NaN-safe normal (r2 can graze 1.0)
     vec3 n = vec3(vCoord, z);                     // analytic sphere normal
     vec3 L = normalize(vec3(-0.35, 0.45, 0.85));
     float diff = max(dot(n, L), 0.0);
@@ -167,7 +181,7 @@ void main(){
     col = mix(col, uBg, fog * 0.6);               // far spheres recede
     col += uChargeCol * vCharge * 0.7;            // an arriving pulse charges the sphere — it flares red
     col = mix(col, vec3(1.0), clamp(vCharge, 0.0, 1.0) * 0.10);   // brief hot core at peak charge
-    float aa = smoothstep(1.0, 0.88, r2);         // antialiased rim
+    float aa = 1.0 - smoothstep(1.0 - 2.0 * f, 1.0, r);   // ~1px inward feather; alpha=0 exactly at r=1
     gl_FragColor = vec4(col, aa);
   } else {
     // ---- halo pass (annulus around the body) ----
@@ -223,31 +237,42 @@ attribute vec3 aColor;
 attribute float aIntensity;
 attribute float aScale;
 uniform mat4 uMV, uProj; uniform float uR;
+uniform float uViewportH;    // drawing-buffer height in DEVICE px — for analytic edge AA
 varying vec2 vCoord; varying vec3 vCol; varying float vI;
+varying float vFeather;
 void main(){
   vec4 vp = uMV * vec4(aOffset, 1.0);
   vp.xy += aCorner * uR * aScale;
   vCoord = aCorner; vCol = aColor; vI = aIntensity;
   gl_Position = uProj * vp;
+  float pxRadius = (uR * aScale) * (uProj[1][1] / max(gl_Position.w, 1.0e-4)) * 0.5 * uViewportH;
+  vFeather = clamp(0.6 / max(pxRadius, 1.0e-3), 0.0, 0.5);   // inward feather (quad has no margin)
 }`;
 
   const PULSE_FS = `
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
 precision mediump float;
+#endif
 varying vec2 vCoord; varying vec3 vCol; varying float vI;
+varying float vFeather;
 uniform float uLight;
 void main(){
   float d = length(vCoord);
   if (d > 1.0) discard;
+  float f = max(vFeather, 1.6e-3);
+  float edge = 1.0 - smoothstep(1.0 - 2.0 * f, 1.0, d);   // ~1px inward rim regardless of on-screen size
   float core = smoothstep(0.45, 0.0, d);
   float glow = pow(1.0 - d, 2.2);
   if (uLight < 0.5) {
     // dark: red bead with a hot center (additive)
     vec3 col = mix(vCol, vec3(1.0), 0.30);
-    gl_FragColor = vec4(col, (core + glow * 0.5) * vI);
+    gl_FragColor = vec4(col, (core + glow * 0.5) * vI * edge);
   } else {
     // light: saturated red dot (normal blend reads on a pale surface)
     vec3 col = mix(vCol, vec3(1.0), 0.05);
-    gl_FragColor = vec4(col, (core * 0.95 + glow * 0.4) * vI);
+    gl_FragColor = vec4(col, (core * 0.95 + glow * 0.4) * vI * edge);
   }
 }`;
 
@@ -283,6 +308,7 @@ void main(){
       uGlow: gl.getUniformLocation(sphereProg, "uGlow"),
       uHaloMode: gl.getUniformLocation(sphereProg, "uHaloMode"),
       uChargeCol: gl.getUniformLocation(sphereProg, "uChargeCol"),
+      uViewportH: gl.getUniformLocation(sphereProg, "uViewportH"),
     };
     const LL = {
       aPos: gl.getAttribLocation(lineProg, "aPos"),
@@ -306,6 +332,7 @@ void main(){
       uProj: gl.getUniformLocation(pulseProg, "uProj"),
       uR: gl.getUniformLocation(pulseProg, "uR"),
       uLight: gl.getUniformLocation(pulseProg, "uLight"),
+      uViewportH: gl.getUniformLocation(pulseProg, "uViewportH"),
     };
 
     // quad (triangle strip) shared by every sphere instance
@@ -342,7 +369,9 @@ void main(){
     function sizeViewport() {
       const rect = wrap.getBoundingClientRect();
       const w = Math.max(1, rect.width), h = Math.max(1, rect.height);
-      const d = Math.min(window.devicePixelRatio || 1, opts.dprCap);
+      const raw = window.devicePixelRatio || 1;
+      const budget = Math.sqrt(6.0e6 / Math.max(1, w * h));   // hold backing store <= ~6 MP (bounds desktop fill)
+      const d = Math.max(1, Math.min(raw, opts.dprCap, budget));
       // no-op guard: reassigning canvas.width clears the canvas even when unchanged,
       // so a resize event that didn't actually change our box must touch nothing
       if (projM && w === W && h === H && d === dpr) return false;
@@ -550,7 +579,7 @@ void main(){
       gl.enableVertexAttribArray(PL.aIntensity); gl.vertexAttribPointer(PL.aIntensity, 1, gl.FLOAT, false, 32, 24); divisor(PL.aIntensity, 1);
       gl.enableVertexAttribArray(PL.aScale); gl.vertexAttribPointer(PL.aScale, 1, gl.FLOAT, false, 32, 28); divisor(PL.aScale, 1);
       gl.uniformMatrix4fv(PL.uMV, false, mv); gl.uniformMatrix4fv(PL.uProj, false, pj);
-      gl.uniform1f(PL.uR, 0.058); gl.uniform1f(PL.uLight, light ? 1.0 : 0.0);
+      gl.uniform1f(PL.uR, 0.058); gl.uniform1f(PL.uLight, light ? 1.0 : 0.0); gl.uniform1f(PL.uViewportH, canvas.height);
       gl.depthMask(false);
       gl.blendFunc(gl.SRC_ALPHA, light ? gl.ONE_MINUS_SRC_ALPHA : gl.ONE);
       drawInst(gl.TRIANGLE_STRIP, 0, 4, total);
@@ -594,7 +623,8 @@ void main(){
       gl.enableVertexAttribArray(SL.aCharge); gl.vertexAttribPointer(SL.aCharge, 1, gl.FLOAT, false, 0, 0); divisor(SL.aCharge, 1);
 
       gl.uniformMatrix4fv(SL.uMV, false, mv); gl.uniformMatrix4fv(SL.uProj, false, pj);
-      gl.uniform1f(SL.uPad, 1.08);
+      gl.uniform1f(SL.uViewportH, canvas.height);   // device-px height for analytic edge AA
+      gl.uniform1f(SL.uPad, 1.08);                   // disc fits with margin; inward feather needs no extra pad
       gl.uniform3fv(SL.uBg, opts.bgRGB);
       gl.uniform1f(SL.uFogNear, camZ - cloudDepth); gl.uniform1f(SL.uFogFar, camZ + cloudDepth);
       gl.uniform1f(SL.uGlowPass, 0.0);
@@ -689,7 +719,7 @@ void main(){
 
   /* ===================== auto-mount controller (replaces the React shell) ===================== */
   const DEFAULTS = {
-    density: 1, maxNodes: 90, minNodes: 8, fps: 30, dprCap: 1.5,
+    density: 1, maxNodes: 90, minNodes: 8, fps: 30, dprCap: 2,
     linkDistance: 250, linkOpacity: 1, palette: "spectrum", speed: 1,
     theme: "dark", bg: null, lineColor: null, pulse: true, pulseRate: 1,
     zoom: 1,   // >1 zooms in, <1 zooms out (divides the adaptive camera distance)

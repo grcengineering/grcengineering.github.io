@@ -9,10 +9,15 @@
 <!-- No-flash theme resolver: set data-theme before first paint -->
 <script>
 (function () {
+  /* Owner override 2026-07-08: render DARK-ONLY. All light-mode CSS, the engine's
+     light render branch, and the light/dark/system toggle remain in place —
+     flip FORCE_DARK to false to restore light/system theming. */
+  var FORCE_DARK = true;
+  window.__NPF_FORCE_DARK = FORCE_DARK;
   try {
     var k = 'npf-theme';
     var c = localStorage.getItem(k) || 'system';
-    var dark = (c === 'dark') || (c === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    var dark = FORCE_DARK || (c === 'dark') || (c === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
     var el = document.documentElement;
     el.setAttribute('data-theme', dark ? 'dark' : 'light');
     el.setAttribute('data-theme-choice', c);
@@ -651,12 +656,17 @@ cargo build --release</code></pre>
   var html = document.documentElement, KEY = 'npf-theme';
   var btn = document.getElementById('theme-toggle');
   var icon = document.getElementById('theme-icon');
+  /* Dark-only lock: hide the (inert) toggle so we don't show a control that does nothing.
+     It stays in the DOM + all theming code intact; flipping FORCE_DARK to false restores it. */
+  if (window.__NPF_FORCE_DARK && btn) btn.style.display = 'none';
   var mq = window.matchMedia('(prefers-color-scheme: dark)');
   function choice() { return html.getAttribute('data-theme-choice') || 'system'; }
   function apply(c) {
     try { localStorage.setItem(KEY, c); } catch (e) {}
     html.setAttribute('data-theme-choice', c);
-    var dark = (c === 'dark') || (c === 'system' && mq.matches);
+    /* FORCE_DARK (set in the head no-flash script) pins the RESOLVED theme to dark while
+       leaving the choice-cycling, localStorage, light CSS + engine light branch intact. */
+    var dark = window.__NPF_FORCE_DARK || (c === 'dark') || (c === 'system' && mq.matches);
     html.setAttribute('data-theme', dark ? 'dark' : 'light');
     /* Feed the resolved theme to the web-of-spheres engine. At init the deferred
        node-graph.js hasn't mounted yet (GRCNodeGraph undefined → guarded no-op),
@@ -666,7 +676,7 @@ cargo build --release</code></pre>
     var _graphs = document.querySelectorAll('[data-grc-nodegraph]');
     for (var _i = 0; _i < _graphs.length; _i++) _graphs[_i].setAttribute('data-theme', _theme);
     if (window.GRCNodeGraph && window.GRCNodeGraph.setTheme) window.GRCNodeGraph.setTheme(_theme);
-    if (icon) icon.textContent = c === 'system' ? 'brightness_auto' : (c === 'dark' ? 'dark_mode' : 'light_mode');
+    if (icon) icon.textContent = window.__NPF_FORCE_DARK ? 'dark_mode' : (c === 'system' ? 'brightness_auto' : (c === 'dark' ? 'dark_mode' : 'light_mode'));
     if (btn) btn.setAttribute('aria-label', 'Theme: ' + c + ' — click to change');
   }
   if (btn) {
