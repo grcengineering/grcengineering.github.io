@@ -76,7 +76,8 @@ a:hover { color: var(--brand-accent-strong); }
 
 /* ════════ SIGNATURE 1 — ToolLockup (Unbounded pill, travelling white arc) ════════
    1:1 with the latest GRCE Design System ToolLockup (grc.engineering/OCEAN .nav-logo-mark):
-   Unbounded 700 · 135° orange→blue · thin white arc rotating at 110°/s.
+   Unbounded 700 · 135° orange→blue · 1.5px single-white arc on a conic ring sitting
+   flush against the pill edge (zero overlap), rotating at 110°/s.
    DS drives the angle via JS; here the page's @property keyframe does it (110°/s = 3.273s/rev). */
 @property --grc-lockup-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
 .grc-lockup {
@@ -100,12 +101,12 @@ a:hover { color: var(--brand-accent-strong); }
   z-index: 1;
   text-decoration: none;
 }
-/* thin rotating white arc, peeking 1px beyond the pill */
+/* 1.5px rotating white arc, entirely outside the pill edge (zero overlap) */
 .grc-lockup::before {
   content: "";
   position: absolute;
-  inset: -1px;
-  border-radius: calc(var(--lk-r) + 1px);
+  inset: -1.5px;
+  border-radius: calc(var(--lk-r) + 1.5px);
   background: conic-gradient(
     from var(--grc-lockup-angle, 0deg),
     transparent 5%,
@@ -115,12 +116,12 @@ a:hover { color: var(--brand-accent-strong); }
   z-index: -1;
   animation: grc-lockup-spin 3.273s linear infinite;
 }
-/* interior cover (the pill face) so the ring reads as a rim, not a wash */
+/* full-face cover so the ring reads as a rim flush against the pill edge */
 .grc-lockup::after {
   content: "";
   position: absolute;
-  inset: 1px;
-  border-radius: calc(var(--lk-r) - 1px);
+  inset: 0;
+  border-radius: var(--lk-r);
   background: linear-gradient(135deg, #FFA84F, #1B95C1);
   z-index: -1;
 }

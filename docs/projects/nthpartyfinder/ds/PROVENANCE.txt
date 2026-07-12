@@ -10,3 +10,18 @@ GitHub mirror's components/backgrounds/NodeGraphBackground.jsx was stale at
 sync time; the canvas is the source of truth for this port.
 Canvas source archived: ~/.claude/PAI/MEMORY/WORK/npf-spheres-glassy-hero/canvas-NodeGraphBackground-2026-07-05.jsx
 sha256 4e7f1d445ea92f7d8c5755604d3a18e03e273ceb6052cfdd95d10a5d92b856b0 (34,982 bytes, 711 lines)
+
+ToolLockup resync 2026-07-12: after the grce-design-system repo re-synced from
+the Claude Design canvas (commits a655a80+d5b08f6), index.html's inline
+.grc-lockup ring CSS was updated to match the current
+components/brand/ToolLockup.jsx (1.5px flush arc, zero overlap — was a 1px
+overhang arc). Full audit task: ~/.claude/PAI/MEMORY/WORK/npf-ds-resync-audit/ISA.md.
+
+NodeGraphBackground audited-and-KEPT 2026-07-12 (not re-pulled): this page's
+ds/node-graph.js sphere/pulse antialiasing (shipped 2026-07-08) and
+frustum-fill tuning (FILL=1.08 overfill, rim-bias sampling, 280-node cap,
+sqrt DPR area budget, no-op resize guard) are more refined than the DS
+canvas's own 2026-07-11 antialiasing fix and its still-partial frustum-fill
+catch-up (FILL=0.85, no rim-bias, 220-node cap, no DPR area budget, no
+pulse-edge AA). Re-vendoring from the canvas at this point would be a
+regression. See the audit ISA above for the full line-by-line comparison.
