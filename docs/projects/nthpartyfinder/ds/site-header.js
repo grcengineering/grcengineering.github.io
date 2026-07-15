@@ -25,7 +25,7 @@
    future nav-link edit stays correct without touching a hardcoded breakpoint.
 
    Usage:
-     <header class="grc-siteheader" data-grc-siteheader data-scroll-distance="88" data-contained-width="1180">
+     <header class="grc-siteheader" data-grc-siteheader data-scroll-distance="24" data-contained-width="1180">
        <div class="grc-siteheader__bar">
          <div class="grc-siteheader__rule"></div>
          <div class="grc-siteheader__inner">
@@ -39,7 +39,7 @@
    Auto-mounts every [data-grc-siteheader] on DOMContentLoaded. Options via
    data-* attributes: data-contained-width (1180 — the floating pill width;
    set noticeably wider than the page's content container so the pill reads as
-   wider than the glass boxes below it), data-scroll-distance (88 — the
+   wider than the glass boxes below it), data-scroll-distance (24 — the
    threshold in px at which the header snaps to floating), data-gap (14),
    data-side (22), data-height (64), data-blur (14), data-radius (999),
    data-collapse-at (px, forces a fixed breakpoint instead of auto-measuring).
@@ -52,32 +52,39 @@
 ".grc-siteheader {\n" +
 "  position: fixed; top: 0; left: 0; right: 0; z-index: 50;\n" +
 "  display: flex; justify-content: center;\n" +
-"  padding: 0;\n" +
+"  padding: 0;\n" +      /* NEVER animated — layout-transitioning a fixed wrapper's padding re-lays-out
+                            every frame under the backdrop-filter (visible micro-stutter on iOS) */
 "  pointer-events: none;\n" +
 "  font-family: var(--ui-family);\n" +
-"  transition: padding var(--grc-sh-dur, 320ms) var(--grc-sh-ease, cubic-bezier(0.2,0.8,0.2,1));\n" +
 "}\n" +
-".grc-siteheader--floating {\n" +
-"  padding-top: var(--grc-sh-gap, 14px);\n" +
-"  padding-left: var(--grc-sh-side, 22px);\n" +
-"  padding-right: var(--grc-sh-side, 22px);\n" +
-"}\n" +
+/* The morph animates exactly three things on the bar itself:
+     width         — 100% ⇄ min(contained, 100% - 2·side). Interpolates through
+                     VISIBLE values the whole way. (The previous 6000px docked
+                     max-width sentinel interpolated invisibly above the viewport
+                     for most of the transition, compressing the visible width
+                     change into the tail — a late \"kick\" that read as a stutter.)
+     transform     — translateY(gap) for the detach. Compositor-only (cocoindex
+                     does the same); no per-frame layout for the vertical motion.
+     border-radius + box-shadow — paint-level.
+   The ::after ring and __rule hairline cross-fade via opacity. */
 ".grc-siteheader__bar {\n" +
 "  position: relative; pointer-events: auto; box-sizing: border-box;\n" +
 "  width: 100%;\n" +
-"  max-width: var(--grc-sh-maxw-docked, 6000px);\n" +
 "  height: var(--grc-sh-h, 64px);\n" +
 "  display: flex; justify-content: center;\n" +
 "  border-radius: 0;\n" +
 "  isolation: isolate;\n" +
+"  transform: translateY(0);\n" +
 "  box-shadow: 0 0 0 0 rgba(0,0,0,0);\n" +
 "  transition:\n" +
-"    max-width var(--grc-sh-dur, 320ms) var(--grc-sh-ease, cubic-bezier(0.2,0.8,0.2,1)),\n" +
+"    width var(--grc-sh-dur, 320ms) var(--grc-sh-ease, cubic-bezier(0.2,0.8,0.2,1)),\n" +
+"    transform var(--grc-sh-dur, 320ms) var(--grc-sh-ease, cubic-bezier(0.2,0.8,0.2,1)),\n" +
 "    border-radius var(--grc-sh-dur, 320ms) var(--grc-sh-ease, cubic-bezier(0.2,0.8,0.2,1)),\n" +
 "    box-shadow var(--grc-sh-dur, 320ms) var(--grc-sh-ease, cubic-bezier(0.2,0.8,0.2,1));\n" +
 "}\n" +
 ".grc-siteheader--floating .grc-siteheader__bar {\n" +
-"  max-width: var(--grc-sh-contained, 1180px);\n" +
+"  width: min(var(--grc-sh-contained, 1180px), calc(100% - 2 * var(--grc-sh-side, 22px)));\n" +
+"  transform: translateY(var(--grc-sh-gap, 14px));\n" +
 "  border-radius: var(--grc-sh-radius, 999px);\n" +
 "  box-shadow: var(--shadow-xl);\n" +
 "}\n" +
@@ -186,7 +193,7 @@
 
     var opts = {
       containedWidth: attrNum(wrap, "data-contained-width", 1180),
-      scrollDistance: attrNum(wrap, "data-scroll-distance", 88),
+      scrollDistance: attrNum(wrap, "data-scroll-distance", 24),
       gap: attrNum(wrap, "data-gap", 14),
       side: attrNum(wrap, "data-side", 22),
       height: attrNum(wrap, "data-height", 64),
@@ -204,11 +211,16 @@
     wrap.style.setProperty("--grc-sh-ease", "var(--ease-out, cubic-bezier(0.2,0.8,0.2,1))");
 
     var compact = false, open = false, panel = null;
-    // Threshold-triggered floating state with a small hysteresis band so the
-    // snap doesn't flicker when the user parks the scroll right at the edge.
+    // Threshold-triggered floating state. The threshold is SMALL (cocoindex
+    // toggles at scrollY > 24): the morph belongs to "leaving the top", so one
+    // scroll gesture produces exactly one morph. A large threshold (the old 88px)
+    // sat right in the band where a reader's thumb hovers over the hero, firing
+    // full lurching morphs in sync with every small scroll wiggle. A small
+    // hysteresis band (exit below ~1/3 of enter) still guards against scroll
+    // jitter parking exactly on the boundary.
     var floating = false, raf = 0;
     var enterAt = Math.max(1, opts.scrollDistance);
-    var exitAt = Math.max(0, opts.scrollDistance - Math.min(24, opts.scrollDistance * 0.35));
+    var exitAt = Math.max(0, Math.min(opts.scrollDistance - 1, opts.scrollDistance * 0.34));
 
     function applyScroll() {
       raf = 0;

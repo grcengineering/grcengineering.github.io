@@ -95,3 +95,27 @@ machine unit-checked (binary snap + hysteresis, not continuous); CSS
 invariants asserted. Rendered-pixel confirmation deferred to the live site —
 both browser-automation paths (Interceptor, claude-in-chrome) were
 unreachable in this background session.
+
+Stutter/twitch fix 2026-07-15 (owner iPhone screen recording, diagnosed by
+extracting 60fps frames via AVFoundation and tracking the lockup edge
+trajectory per frame): each individual morph was smooth and monotone — the
+"twitching" was (a) FREQUENCY: the 88px enter / 64px exit thresholds sat
+exactly in the band where a reader's thumb hovers over the hero, producing
+FIVE full lurching morphs in ~11s of gentle scrolling (t≈2.1/4.3/6.0/7.9/10.8
+in the recording) — the morph fired in sync with small scroll wiggles; and
+(b) a real transition defect: the docked bar used a 6000px max-width sentinel,
+so the 6000px→1180px interpolation was invisible (above the viewport clamp)
+for most of the transition, compressing the visible width change into the
+tail (a late "kick"), while on iPhone the width change came only from the
+wrapper's animated padding — a LAYOUT property re-laid-out every frame under
+the backdrop-filter. Fixes, matching cocoindex.io's actual implementation
+(their JS: classList.toggle("is-floating", scrollY > 24); their detach uses
+transform: translateY on the inner element): (1) scroll threshold 88 → 24
+(hysteresis exit ~8) — the morph now belongs to "leaving the top": one
+gesture, one morph; hovering at any y > 24 can never flip state; (2) the bar
+animates width 100% <-> min(contained, 100% - 2*side) — visible interpolation
+the whole way, no sentinel; (3) the detach gap is transform: translateY(gap)
+on the bar (compositor-only), wrapper padding is never animated. Verified:
+node --check clean, state machine unit-checked (hover zone 60-90px = zero
+flips), CSS invariants asserted. Rendered-pixel confirmation deferred to the
+live site (browser automation unreachable in this background session).
