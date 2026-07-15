@@ -50,3 +50,27 @@ float`. Factored a shared `PRECISION_HEADER` const (matching the canvas)
 and applied it to SPHERE_FS/PULSE_FS/LINE_FS uniformly — closes the one
 real drift found; the frustum-fill/AA tuning superiority documented above
 is unchanged and was NOT touched.
+
+SiteHeader morph reworked 2026-07-15 (owner feedback from live iPhone
+screenshots): the first port drove the docked→floating morph off a
+continuous `--p = scrollY/scrollDistance` variable, which caused three
+defects — (1) the glass fill/blur was tied to `opacity: var(--p)` so it was
+GONE when docked at the top; (2) the shape interpolated per-scroll-pixel, so
+the transition looked seamy and stepped in sync with the wheel instead of
+snapping; (3) no drop shadow under the pill; (4) the pill matched the page's
+1080px content width so it didn't read as wider. Rebuilt to the cocoindex.io
+model: a single `.grc-siteheader--floating` class toggles once a scroll
+THRESHOLD (data-scroll-distance, 88px) is crossed — with a hysteresis band
+(enter 88 / exit 64) to prevent boundary flicker — and every visual property
+(max-width, border-radius, box-shadow, gap padding, ring/rule opacity)
+carries a CSS `transition` (--dur-slow 320ms / --ease-out) so the whole chrome
+morphs FULLY in one shot. Docked = full-bleed frosted bar (glass ALWAYS
+present, square corners, bottom hairline rule). Floating = contained glass
+pill (full corners, gradient hairline ring, --shadow-xl drop shadow).
+data-contained-width raised 1080 → 1180 so the pill is noticeably wider than
+the page's --container-lg (1080px) glass boxes. Auto-collapse/measure and
+menu-panel logic unchanged. Verified: node --check clean; threshold state
+machine unit-checked (binary snap + hysteresis, not continuous); CSS
+invariants asserted. Rendered-pixel confirmation deferred to the live site —
+both browser-automation paths (Interceptor, claude-in-chrome) were
+unreachable in this background session.

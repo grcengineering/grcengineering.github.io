@@ -1,23 +1,31 @@
 /* ============================================================
    GRC Engineering — SiteHeader (vanilla port, 2026-07-15)
-   Scroll-aware header: a flush, full-bleed bar at the top of the page that
-   morphs — continuously, driven by scroll position — into a centered,
-   floating glass pill. The chrome shrinks from edge-to-edge to a contained
-   width, corners round to a full pill, it detaches from the top with a
-   small gap, and a translucent frosted fill + backdrop blur + drop shadow +
-   the brand's orange→blue gradient hairline fade in. The content row stays
-   at a constant container width so the logo/links never jump.
+   Scroll-aware header with TWO discrete states, morphing between them in a
+   single seamless CSS transition once a scroll threshold is crossed
+   (cocoindex.io model — NOT a continuous scroll-linked interpolation):
 
-   Ported verbatim from the DS React component
-   (components/navigation/SiteHeader.jsx, project 73c32b48) — CSS and scroll
-   math unchanged; only the React shell is replaced with a vanilla auto-mount
+     • Docked (at the top of the page): a flush, full-bleed frosted bar. The
+       translucent glass fill + backdrop blur are PRESENT here, with a bottom
+       hairline rule and square corners.
+     • Floating (scrolled past the threshold): a centered, contained glass
+       pill — full pill corners, a detached gap from the top, a gradient
+       hairline ring, and a soft drop shadow beneath it.
+
+   Crossing the threshold toggles a single `.grc-siteheader--floating` class;
+   every visual property (width, corner radius, gap, shadow, ring/rule
+   opacity) carries a CSS `transition`, so the whole chrome animates fully and
+   at once — no per-pixel seams, no step-by-step sync with the scroll wheel. A
+   small hysteresis band keeps the toggle from flickering at the boundary.
+
+   Ported from the DS React component (components/navigation/SiteHeader.jsx,
+   project 73c32b48) — the React shell is replaced with a vanilla auto-mount
    controller (same shape as ds/node-graph.js). The component's auto-collapse
    behavior (measures the real layout against the floating pill width, and
    switches to a menu button whenever it wouldn't fit) is preserved so any
    future nav-link edit stays correct without touching a hardcoded breakpoint.
 
    Usage:
-     <header class="grc-siteheader" data-grc-siteheader data-scroll-distance="88">
+     <header class="grc-siteheader" data-grc-siteheader data-scroll-distance="88" data-contained-width="1180">
        <div class="grc-siteheader__bar">
          <div class="grc-siteheader__rule"></div>
          <div class="grc-siteheader__inner">
@@ -29,10 +37,12 @@
        </div>
      </header>
    Auto-mounts every [data-grc-siteheader] on DOMContentLoaded. Options via
-   data-* attributes: data-contained-width (1120), data-scroll-distance (88),
-   data-gap (14), data-side (22), data-height (64), data-blur (14),
-   data-radius (999), data-collapse-at (px, forces a fixed breakpoint instead
-   of auto-measuring).
+   data-* attributes: data-contained-width (1180 — the floating pill width;
+   set noticeably wider than the page's content container so the pill reads as
+   wider than the glass boxes below it), data-scroll-distance (88 — the
+   threshold in px at which the header snaps to floating), data-gap (14),
+   data-side (22), data-height (64), data-blur (14), data-radius (999),
+   data-collapse-at (px, forces a fixed breakpoint instead of auto-measuring).
    ============================================================ */
 (function () {
   "use strict";
@@ -42,28 +52,42 @@
 ".grc-siteheader {\n" +
 "  position: fixed; top: 0; left: 0; right: 0; z-index: 50;\n" +
 "  display: flex; justify-content: center;\n" +
-"  --p: 0;\n" +
-"  padding-top: calc(var(--p) * var(--grc-sh-gap, 14px));\n" +
-"  padding-left: calc(var(--p) * var(--grc-sh-side, 22px));\n" +
-"  padding-right: calc(var(--p) * var(--grc-sh-side, 22px));\n" +
+"  padding: 0;\n" +
 "  pointer-events: none;\n" +
 "  font-family: var(--ui-family);\n" +
+"  transition: padding var(--grc-sh-dur, 320ms) var(--grc-sh-ease, cubic-bezier(0.2,0.8,0.2,1));\n" +
+"}\n" +
+".grc-siteheader--floating {\n" +
+"  padding-top: var(--grc-sh-gap, 14px);\n" +
+"  padding-left: var(--grc-sh-side, 22px);\n" +
+"  padding-right: var(--grc-sh-side, 22px);\n" +
 "}\n" +
 ".grc-siteheader__bar {\n" +
 "  position: relative; pointer-events: auto; box-sizing: border-box;\n" +
 "  width: 100%;\n" +
+"  max-width: var(--grc-sh-maxw-docked, 6000px);\n" +
 "  height: var(--grc-sh-h, 64px);\n" +
 "  display: flex; justify-content: center;\n" +
-"  border-radius: calc(var(--p) * var(--grc-sh-radius, 999px));\n" +
+"  border-radius: 0;\n" +
 "  isolation: isolate;\n" +
+"  box-shadow: 0 0 0 0 rgba(0,0,0,0);\n" +
+"  transition:\n" +
+"    max-width var(--grc-sh-dur, 320ms) var(--grc-sh-ease, cubic-bezier(0.2,0.8,0.2,1)),\n" +
+"    border-radius var(--grc-sh-dur, 320ms) var(--grc-sh-ease, cubic-bezier(0.2,0.8,0.2,1)),\n" +
+"    box-shadow var(--grc-sh-dur, 320ms) var(--grc-sh-ease, cubic-bezier(0.2,0.8,0.2,1));\n" +
+"}\n" +
+".grc-siteheader--floating .grc-siteheader__bar {\n" +
+"  max-width: var(--grc-sh-contained, 1180px);\n" +
+"  border-radius: var(--grc-sh-radius, 999px);\n" +
+"  box-shadow: var(--shadow-xl);\n" +
 "}\n" +
 ".grc-siteheader__bar::before {\n" +
 "  content: \"\"; position: absolute; inset: 0; border-radius: inherit;\n" +
 "  background: var(--glass-fill-strong);\n" +
 "  -webkit-backdrop-filter: blur(var(--grc-sh-blur, 14px)) saturate(1.3);\n" +
 "          backdrop-filter: blur(var(--grc-sh-blur, 14px)) saturate(1.3);\n" +
-"  box-shadow: var(--glass-highlight), var(--shadow-lg);\n" +
-"  opacity: var(--p); pointer-events: none; z-index: 0;\n" +
+"  box-shadow: var(--glass-highlight);\n" +
+"  pointer-events: none; z-index: 0;\n" +
 "}\n" +
 "@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {\n" +
 "  .grc-siteheader__bar::before { background: var(--surface-card); }\n" +
@@ -73,16 +97,20 @@
 "  padding: 1px; background: var(--glass-border);\n" +
 "  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);\n" +
 "  -webkit-mask-composite: xor; mask-composite: exclude;\n" +
-"  opacity: var(--p); pointer-events: none; z-index: 1;\n" +
+"  opacity: 0; pointer-events: none; z-index: 1;\n" +
+"  transition: opacity var(--grc-sh-dur, 320ms) var(--grc-sh-ease, cubic-bezier(0.2,0.8,0.2,1));\n" +
 "}\n" +
+".grc-siteheader--floating .grc-siteheader__bar::after { opacity: 1; }\n" +
 ".grc-siteheader__rule {\n" +
 "  position: absolute; left: 0; right: 0; bottom: 0; height: 1px;\n" +
-"  background: var(--border-default); opacity: calc(1 - var(--p));\n" +
+"  background: var(--border-default); opacity: 1;\n" +
 "  pointer-events: none; z-index: 1;\n" +
+"  transition: opacity var(--grc-sh-dur, 320ms) var(--grc-sh-ease, cubic-bezier(0.2,0.8,0.2,1));\n" +
 "}\n" +
+".grc-siteheader--floating .grc-siteheader__rule { opacity: 0; }\n" +
 ".grc-siteheader__inner {\n" +
 "  position: relative; z-index: 2; width: 100%;\n" +
-"  max-width: var(--grc-sh-contained, 1120px); height: 100%;\n" +
+"  max-width: var(--grc-sh-contained, 1180px); height: 100%;\n" +
 "  display: flex; align-items: center; gap: var(--space-5);\n" +
 "  padding: 0 var(--space-7);\n" +
 "}\n" +
@@ -127,7 +155,9 @@
 ".grc-siteheader[data-measuring=\"1\"] .grc-siteheader__nav { display: flex !important; flex: none !important; }\n" +
 ".grc-siteheader[data-measuring=\"1\"] .grc-siteheader__inner > .grc-siteheader__actions { display: flex !important; }\n" +
 ".grc-siteheader[data-measuring=\"1\"] .grc-siteheader__menu-btn { display: none !important; }\n" +
+".grc-siteheader[data-measuring=\"1\"] .grc-siteheader__bar { transition: none !important; }\n" +
 "@media (prefers-reduced-motion: reduce) {\n" +
+"  .grc-siteheader, .grc-siteheader__bar, .grc-siteheader__bar::after, .grc-siteheader__rule { transition: none; }\n" +
 "  .grc-siteheader__panel { animation: none; }\n" +
 "}\n";
   if (!document.getElementById("grc-siteheader-css")) {
@@ -145,8 +175,6 @@
     return isFinite(n) ? n : fallback;
   }
 
-  function smooth(t) { return t * t * (3 - 2 * t); }
-
   function mountOne(wrap) {
     if (wrap.__grcSiteHeader) return;
     var bar = wrap.querySelector(".grc-siteheader__bar");
@@ -157,7 +185,7 @@
     if (!bar || !inner) return;
 
     var opts = {
-      containedWidth: attrNum(wrap, "data-contained-width", 1120),
+      containedWidth: attrNum(wrap, "data-contained-width", 1180),
       scrollDistance: attrNum(wrap, "data-scroll-distance", 88),
       gap: attrNum(wrap, "data-gap", 14),
       side: attrNum(wrap, "data-side", 22),
@@ -172,19 +200,24 @@
     wrap.style.setProperty("--grc-sh-h", opts.height + "px");
     wrap.style.setProperty("--grc-sh-blur", opts.blur + "px");
     wrap.style.setProperty("--grc-sh-radius", opts.radius + "px");
+    wrap.style.setProperty("--grc-sh-dur", "var(--dur-slow, 320ms)");
+    wrap.style.setProperty("--grc-sh-ease", "var(--ease-out, cubic-bezier(0.2,0.8,0.2,1))");
 
     var compact = false, open = false, panel = null;
-    var lastP = -1, lastW = -1, raf = 0;
+    // Threshold-triggered floating state with a small hysteresis band so the
+    // snap doesn't flicker when the user parks the scroll right at the edge.
+    var floating = false, raf = 0;
+    var enterAt = Math.max(1, opts.scrollDistance);
+    var exitAt = Math.max(0, opts.scrollDistance - Math.min(24, opts.scrollDistance * 0.35));
 
     function applyScroll() {
       raf = 0;
       var y = window.scrollY || window.pageYOffset || 0;
-      var p = opts.scrollDistance > 0 ? Math.min(Math.max(y / opts.scrollDistance, 0), 1) : (y > 0 ? 1 : 0);
-      p = smooth(p);
-      var vw = document.documentElement.clientWidth || window.innerWidth;
-      var maxw = Math.round(vw + (opts.containedWidth - vw) * p);
-      if (Math.abs(p - lastP) > 0.001) { wrap.style.setProperty("--p", p.toFixed(4)); lastP = p; }
-      if (maxw !== lastW) { bar.style.maxWidth = maxw + "px"; lastW = maxw; }
+      var next = floating ? (y > exitAt) : (y >= enterAt);
+      if (next !== floating) {
+        floating = next;
+        wrap.classList.toggle("grc-siteheader--floating", floating);
+      }
     }
     function onScroll() { if (!raf) raf = requestAnimationFrame(applyScroll); }
 
