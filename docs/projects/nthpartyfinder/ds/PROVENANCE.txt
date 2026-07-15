@@ -25,3 +25,28 @@ canvas's own 2026-07-11 antialiasing fix and its still-partial frustum-fill
 catch-up (FILL=0.85, no rim-bias, 220-node cap, no DPR area budget, no
 pulse-edge AA). Re-vendoring from the canvas at this point would be a
 regression. See the audit ISA above for the full line-by-line comparison.
+
+SiteHeader adopted 2026-07-15: the nav (previously a page-local `.np-nav`,
+position:sticky bar) is now `ds/site-header.js` — a vanilla auto-mount port
+of the DS `SiteHeader.jsx` (grce-design-system re-synced from the Claude
+Design canvas this session; SiteHeader itself was byte-identical to the
+mirror, no drift). CSS/scroll math ported verbatim; only the React shell is
+replaced (same pattern as node-graph.js). `.grc-siteheader` is `position:
+fixed`, so `.np-hero` gained `padding-top: 64px` to reserve space under it.
+Content-width aligned to the page's own `--container-lg` (1080px) via
+`data-contained-width="1080"` rather than the component's 1120px default.
+The auto-collapse behavior (JS-measures the real nav+actions width against
+the floating pill width, switches to a menu-button dropdown when it
+wouldn't fit) is ported faithfully rather than hardcoded to a fixed
+breakpoint, so it stays correct if the nav links ever change. Old
+`.np-nav`/`.np-mobile`/`.np-hamburger` CSS removed; `.np-icon-btn` (the
+theme-toggle button) kept and reused inside `.grc-siteheader__actions`.
+
+NodeGraphBackground precision parity fix 2026-07-15: re-syncing the DS
+mirror surfaced one genuine functional gap versus the canvas — the canvas's
+LINE_FS applies the highp-conditional precision header (same as the sphere
+and pulse shaders), while this page's LINE_FS hardcoded `precision mediump
+float`. Factored a shared `PRECISION_HEADER` const (matching the canvas)
+and applied it to SPHERE_FS/PULSE_FS/LINE_FS uniformly — closes the one
+real drift found; the frustum-fill/AA tuning superiority documented above
+is unchanged and was NOT touched.

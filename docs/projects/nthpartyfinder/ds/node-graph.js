@@ -124,6 +124,13 @@
     return p;
   }
 
+  /* Fragment precision: request fp32 where the GPU offers it. On Apple GPUs (every
+     iPhone/iPad/M-series Mac) mediump is GENUINE fp16 — quantizes interpolated fog/rim
+     math into visible banding. highp is universally available on those same GPUs and
+     costs nothing measurable at this workload. Shared by every fragment shader below
+     (sphere body/halo, pulse, AND lines — the line shader previously hardcoded mediump). */
+  const PRECISION_HEADER = "\n#ifdef GL_FRAGMENT_PRECISION_HIGH\nprecision highp float;\n#else\nprecision mediump float;\n#endif\n";
+
   const SPHERE_VS = `
 attribute vec2 aCorner;     // quad corner -1..1
 attribute vec3 aOffset;     // instance center (model space)
@@ -152,12 +159,7 @@ void main(){
   vFeather = clamp(0.6 / max(pxRadius, 1.0e-3), 0.0, 0.5);
 }`;
 
-  const SPHERE_FS = `
-#ifdef GL_FRAGMENT_PRECISION_HIGH
-precision highp float;
-#else
-precision mediump float;
-#endif
+  const SPHERE_FS = PRECISION_HEADER + `
 varying vec2 vCoord; varying vec3 vColor; varying float vViewZ; varying float vPhase; varying float vCharge;
 varying float vFeather;      // screen-locked half-feather (device-px) for distance-independent AA
 uniform vec3 uBg; uniform float uFogNear, uFogFar;
@@ -219,8 +221,7 @@ void main(){
   gl_Position = uProj * vp;
 }`;
 
-  const LINE_FS = `
-precision mediump float;
+  const LINE_FS = PRECISION_HEADER + `
 varying float vAlpha; varying float vViewZ;
 uniform vec3 uBg, uLine; uniform float uFogNear, uFogFar, uBoost, uFogMix;
 void main(){
@@ -249,12 +250,7 @@ void main(){
   vFeather = clamp(0.6 / max(pxRadius, 1.0e-3), 0.0, 0.5);   // inward feather (quad has no margin)
 }`;
 
-  const PULSE_FS = `
-#ifdef GL_FRAGMENT_PRECISION_HIGH
-precision highp float;
-#else
-precision mediump float;
-#endif
+  const PULSE_FS = PRECISION_HEADER + `
 varying vec2 vCoord; varying vec3 vCol; varying float vI;
 varying float vFeather;
 uniform float uLight;

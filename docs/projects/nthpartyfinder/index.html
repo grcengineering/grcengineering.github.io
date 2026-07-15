@@ -171,24 +171,11 @@ a:hover { color: var(--brand-accent-strong); }
 .grc-nodegraph { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; z-index: 0; background: transparent; }
 .grc-nodegraph__canvas { width: 100%; height: 100%; display: block; }
 
-/* ════════ NAV ════════ */
-.np-nav {
-  position: sticky; top: 0; z-index: 100;
-  background: color-mix(in srgb, var(--surface-page) 80%, transparent);
-  backdrop-filter: blur(var(--blur-md)) saturate(1.3);
-  -webkit-backdrop-filter: blur(var(--blur-md)) saturate(1.3);
-  border-bottom: 1px solid var(--border-subtle);
-}
-.np-nav__inner { display: flex; align-items: center; gap: var(--space-7); height: 64px; }
-.np-nav__brand { display: inline-flex; align-items: center; }
-.np-nav__spacer { flex: 1; }
-.np-nav__links { display: flex; gap: var(--space-1); }
-.np-nav__links a {
-  font-family: var(--ui-family); font-size: var(--text-sm); font-weight: var(--fw-medium);
-  color: var(--text-body); padding: 7px 12px; border-radius: var(--radius-sm); letter-spacing: 0.01em;
-}
-.np-nav__links a:hover { background: var(--surface-inset); color: var(--text-strong); }
-.np-nav__right { display: flex; align-items: center; gap: var(--space-2); }
+/* ════════ NAV — GRC Engineering SiteHeader (scroll-morph: flush bar → floating glass pill) ════════
+   Component CSS (.grc-siteheader*) is injected by ds/site-header.js — a verbatim vanilla port of
+   the DS SiteHeader.jsx (see PROVENANCE.txt). This block only carries the page-local pieces that
+   live inside it: the theme-toggle icon button (reused from the old nav) and the mobile-panel
+   action button placement. */
 .np-icon-btn {
   display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px;
   border-radius: var(--radius-md); border: 1px solid var(--border-default); background: transparent;
@@ -196,17 +183,13 @@ a:hover { color: var(--brand-accent-strong); }
 }
 .np-icon-btn:hover { background: var(--surface-inset); color: var(--text-strong); border-color: var(--border-strong); }
 .np-icon-btn .material-symbols-outlined { font-size: 20px; }
-.np-hamburger { display: none; }
-.np-mobile { display: none; border-bottom: 1px solid var(--border-subtle); background: var(--surface-card); }
-.np-mobile.open { display: block; }
-.np-mobile a { display: block; padding: 13px var(--space-7); font-family: var(--ui-family); font-size: var(--text-base); font-weight: var(--fw-medium); color: var(--text-body); }
-.np-mobile a:hover { background: var(--surface-inset); color: var(--text-strong); }
 
 /* ════════ HERO — dark ink band + constellation (always dark, the signature) ════════ */
 .np-hero {
   position: relative; overflow: hidden;
   background: var(--surface-ink); color: var(--text-on-ink);
   border-bottom: 1px solid var(--border-ink);
+  padding-top: 64px; /* reserves space under the now-fixed/floating SiteHeader (--grc-sh-h default) */
 }
 .np-hero__glow { position: absolute; inset: 0; background: var(--gradient-ink-glow); pointer-events: none; z-index: 1; }
 .np-hero__grid { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px); background-size: 24px 24px; pointer-events: none; z-index: 1; }
@@ -396,8 +379,6 @@ a:hover { color: var(--brand-accent-strong); }
   .grc-lava-title { letter-spacing: 4px; }
 }
 @media (max-width: 640px) {
-  .np-nav__links { display: none; }
-  .np-hamburger { display: inline-flex; }
   .np-hero__glass { padding: var(--space-8) var(--space-4); border-radius: var(--radius-lg); }
   .np-hero__ctas, .np-cta__ctas { flex-direction: column; align-items: stretch; }
   .np-btn { justify-content: center; }
@@ -407,38 +388,29 @@ a:hover { color: var(--brand-accent-strong); }
 </head>
 <body>
 
-<!-- NAV -->
-<nav class="np-nav">
-  <div class="np-container np-nav__inner">
-    <a href="#top" class="np-nav__brand" aria-label="Nth Party Finder">
-      <span class="grc-lockup grc-lockup--sm" role="img" aria-label="Nth Party Finder"><span class="grc-lockup__text">NTH PARTY FINDER</span></span>
-    </a>
-    <div class="np-nav__spacer"></div>
-    <div class="np-nav__links">
-      <a href="#features">Features</a>
-      <a href="#how-it-works">How It Works</a>
-      <a href="#install">Install</a>
-      <a href="https://github.com/grcengineering/nthpartyfinder" target="_blank" rel="noopener">GitHub</a>
-    </div>
-    <div class="np-nav__right">
-      <button id="theme-toggle" class="np-icon-btn" type="button" aria-label="Toggle theme">
-        <span id="theme-icon" class="material-symbols-outlined">brightness_auto</span>
-      </button>
-      <button class="np-icon-btn np-hamburger" type="button" aria-label="Menu" aria-expanded="false"
-              onclick="var m=document.getElementById('np-mobile');var o=m.classList.toggle('open');this.setAttribute('aria-expanded',o);">
-        <span class="material-symbols-outlined">menu</span>
-      </button>
-    </div>
-  </div>
-  <div class="np-mobile" id="np-mobile">
-    <div class="np-container">
-      <a href="#features" onclick="document.getElementById('np-mobile').classList.remove('open')">Features</a>
-      <a href="#how-it-works" onclick="document.getElementById('np-mobile').classList.remove('open')">How It Works</a>
-      <a href="#install" onclick="document.getElementById('np-mobile').classList.remove('open')">Install</a>
-      <a href="https://github.com/grcengineering/nthpartyfinder" target="_blank" rel="noopener">GitHub</a>
+<!-- NAV — GRC Engineering SiteHeader (scroll-morph: flush bar → floating glass pill on scroll) -->
+<header class="grc-siteheader" data-grc-siteheader data-scroll-distance="88" data-contained-width="1080">
+  <div class="grc-siteheader__bar">
+    <div class="grc-siteheader__rule"></div>
+    <div class="grc-siteheader__inner">
+      <a href="#top" class="grc-siteheader__brand" aria-label="Nth Party Finder — home">
+        <span class="grc-lockup grc-lockup--sm" role="img" aria-label="Nth Party Finder"><span class="grc-lockup__text">NTH PARTY FINDER</span></span>
+      </a>
+      <nav class="grc-siteheader__nav" aria-label="Primary">
+        <a class="grc-siteheader__link" href="#features">Features</a>
+        <a class="grc-siteheader__link" href="#how-it-works">How It Works</a>
+        <a class="grc-siteheader__link" href="#install">Install</a>
+        <a class="grc-siteheader__link" href="https://github.com/grcengineering/nthpartyfinder" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+      <div class="grc-siteheader__actions">
+        <button id="theme-toggle" class="np-icon-btn" type="button" aria-label="Toggle theme">
+          <span id="theme-icon" class="material-symbols-outlined">brightness_auto</span>
+        </button>
+      </div>
+      <button type="button" class="grc-siteheader__menu-btn" aria-label="Open menu" aria-expanded="false"></button>
     </div>
   </div>
-</nav>
+</header>
 
 <!-- HERO -->
 <header class="np-hero" id="top">
@@ -693,6 +665,9 @@ cargo build --release</code></pre>
 
 <!-- Constellation backdrop (vanilla, auto-mounts; replaces three.js) -->
 <script src="ds/node-graph.js" defer></script>
+
+<!-- Scroll-morph site header (vanilla, auto-mounts; DS SiteHeader port) -->
+<script src="ds/site-header.js" defer></script>
 
 </body>
 </html>
