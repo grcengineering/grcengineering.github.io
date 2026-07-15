@@ -140,3 +140,13 @@ the killer, the width leg would snap. JS now sets explicit px widths for BOTH
 states (viewport px ⇄ pill px; re-applied on real resizes), so the width
 transition is always px→px, which interpolates in every engine. Threshold
 semantics, transform detach, radius/shadow/ring cross-fades all unchanged.
+
+DS-upstream loop opened 2026-07-15: a Claude Design upgrade prompt covering
+all three field-tested SiteHeader fixes (threshold toggle + both-states glass,
+JS-owned px→px width, width-guarded resize, compositor-transform detach) was
+delivered to the owner for pasting into the DS canvas (project 73c32b48…) —
+same pattern as the earlier node-graph engine-deviation prompt. The DS canvas
+SiteHeader.jsx still carries the continuous --p mechanism until that prompt is
+applied; this page's ds/site-header.js is the field-tested source of truth for
+the threshold morph in the meantime. Once the canvas adopts it (and the mirror
+re-syncs), this page can re-vendor SiteHeader plainly.
