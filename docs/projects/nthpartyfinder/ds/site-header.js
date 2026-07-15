@@ -58,11 +58,14 @@
 "  font-family: var(--ui-family);\n" +
 "}\n" +
 /* The morph animates exactly three things on the bar itself:
-     width         — 100% ⇄ min(contained, 100% - 2·side). Interpolates through
-                     VISIBLE values the whole way. (The previous 6000px docked
-                     max-width sentinel interpolated invisibly above the viewport
-                     for most of the transition, compressing the visible width
-                     change into the tail — a late \"kick\" that read as a stutter.)
+     width         — explicit PX values set by JS (viewport px ⇄ pill px).
+                     px→px interpolates in every engine. iOS Safari does NOT
+                     reliably interpolate a `100%` ⇄ `min(px, calc(% - px))`
+                     pair — the width SNAPS instead of gliding, which killed
+                     the whole morph animation on iPhone. (And the earlier
+                     6000px docked max-width sentinel interpolated invisibly
+                     above the viewport for most of the transition — a late
+                     \"kick\". Explicit px avoids both failure modes.)
      transform     — translateY(gap) for the detach. Compositor-only (cocoindex
                      does the same); no per-frame layout for the vertical motion.
      border-radius + box-shadow — paint-level.
@@ -82,8 +85,10 @@
 "    border-radius var(--grc-sh-dur, 320ms) var(--grc-sh-ease, cubic-bezier(0.2,0.8,0.2,1)),\n" +
 "    box-shadow var(--grc-sh-dur, 320ms) var(--grc-sh-ease, cubic-bezier(0.2,0.8,0.2,1));\n" +
 "}\n" +
+/* NOTE: no width rule here — JS sets explicit px widths for BOTH states (see
+   applyWidth) so the width transition is always px→px and actually animates
+   on iOS Safari. */
 ".grc-siteheader--floating .grc-siteheader__bar {\n" +
-"  width: min(var(--grc-sh-contained, 1180px), calc(100% - 2 * var(--grc-sh-side, 22px)));\n" +
 "  transform: translateY(var(--grc-sh-gap, 14px));\n" +
 "  border-radius: var(--grc-sh-radius, 999px);\n" +
 "  box-shadow: var(--shadow-xl);\n" +
@@ -222,6 +227,15 @@
     var enterAt = Math.max(1, opts.scrollDistance);
     var exitAt = Math.max(0, Math.min(opts.scrollDistance - 1, opts.scrollDistance * 0.34));
 
+    // Explicit px widths for both states: iOS Safari does not reliably
+    // interpolate a percentage ⇄ min()/calc() width pair (it snaps), and px→px
+    // interpolates everywhere. JS owns the bar width; CSS owns everything else.
+    function applyWidth() {
+      var vw = wrap.getBoundingClientRect().width || document.documentElement.clientWidth || window.innerWidth;
+      var w = floating ? Math.max(0, Math.min(opts.containedWidth, vw - 2 * opts.side)) : vw;
+      bar.style.width = Math.round(w) + "px";
+    }
+
     function applyScroll() {
       raf = 0;
       var y = window.scrollY || window.pageYOffset || 0;
@@ -229,6 +243,7 @@
       if (next !== floating) {
         floating = next;
         wrap.classList.toggle("grc-siteheader--floating", floating);
+        applyWidth();
       }
     }
     function onScroll() { if (!raf) raf = requestAnimationFrame(applyScroll); }
@@ -306,9 +321,29 @@
     }
 
     applyScroll();
+    applyWidth();
     measure();
+    // WIDTH-GUARDED resize (the iOS transition-killer fix): iOS Safari fires a
+    // resize event when the URL bar collapses — in the first few px of any
+    // scroll, i.e. the SAME frame the 24px threshold crosses. Running measure()
+    // there set data-measuring (whose CSS applies transition:none !important to
+    // the bar) and forced a synchronous reflow while the freshly-toggled
+    // floating geometry was pending — committing the whole morph WITHOUT its
+    // transition: an instant snap on every mobile scroll-from-top. URL-bar
+    // wobble only changes the viewport HEIGHT, so gate all resize work on a
+    // real WIDTH change (same guard ds/node-graph.js uses for the same iOS
+    // behavior). Rotation/desktop resizes still re-measure and re-fit.
+    var lastVW = wrap.getBoundingClientRect().width || 0;
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", function () { onScroll(); scheduleMeasure(); });
+    window.addEventListener("resize", function () {
+      onScroll();
+      var w = wrap.getBoundingClientRect().width || 0;
+      if (Math.abs(w - lastVW) > 1) {
+        lastVW = w;
+        applyWidth();
+        scheduleMeasure();
+      }
+    });
 
     wrap.__grcSiteHeader = {
       destroy: function () {

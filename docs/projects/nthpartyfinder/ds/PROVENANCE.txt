@@ -119,3 +119,24 @@ on the bar (compositor-only), wrapper padding is never animated. Verified:
 node --check clean, state machine unit-checked (hover zone 60-90px = zero
 flips), CSS invariants asserted. Rendered-pixel confirmation deferred to the
 live site (browser automation unreachable in this background session).
+
+Mobile snap fix 2026-07-15, round 2 (owner's second iPhone recording): 60fps
+frame tracking showed the morph now completed in ONE 16.7ms frame — zero
+intermediate values (the previous glide had nine) — i.e. the CSS transition
+was not running AT ALL on iPhone. Two causes, both fixed: (1) THE
+TRANSITION-KILLER — iOS Safari fires a resize event when the URL bar
+collapses, which happens in the first few px of any scroll: exactly the frame
+the new 24px threshold crosses. The resize handler ran measure(), which sets
+data-measuring (whose CSS rule applies transition:none !important to the bar)
+and forces a synchronous reflow — committing the freshly-toggled floating
+geometry with transitions disabled: an instant snap on every mobile
+scroll-from-top. (The old 88px threshold fired ~80px after the URL-bar
+resize, in a different frame — which is why the first recording glided and
+the second snapped.) Fix: all resize work is now gated on a real viewport
+WIDTH change (URL-bar wobble is height-only) — the same guard ds/node-graph.js
+uses for the same iOS behavior. (2) width interpolation: iOS Safari does not
+reliably interpolate `width: 100%` ⇄ `min(px, calc(% - px))` — even absent
+the killer, the width leg would snap. JS now sets explicit px widths for BOTH
+states (viewport px ⇄ pill px; re-applied on real resizes), so the width
+transition is always px→px, which interpolates in every engine. Threshold
+semantics, transform detach, radius/shadow/ring cross-fades all unchanged.
