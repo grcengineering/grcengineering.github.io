@@ -187,10 +187,23 @@ void main(){
     gl_FragColor = vec4(col, aa);
   } else {
     // ---- halo pass (annulus around the body) ----
-    if (r < 1.0 || r > uGlowMax) discard;
+    // Ramp the halo up UNDER the body's rim feather — its exact complement — so the
+    // body fade and halo rise cross-fade into continuous light at the edge. A halo
+    // that starts at r=1 leaves the body's ~1px feather band (which fades to alpha 0
+    // by r=1) unlit, showing the dark page through as a seam ring around every sphere
+    // (glaring when it flares red). Matches the GRCE Design System NodeGraphBackground
+    // antialiasing fix (halo ramps up under the rim feather).
+    float f = max(vFeather, 8.0e-4);
+    float inner = 1.0 - 2.0 * f;                                 // == body feather start ([inner,1])
+    if (r < inner || r > uGlowMax) discard;
     float pulse = 0.5 + 0.5 * sin(uTime * 0.0020944 + vPhase);   // per-sphere phase
-    float halo = 1.0 - smoothstep(1.0, uGlowMax, r);             // strong at rim → 0 at edge
-    halo = pow(halo, 2.2);
+    float halo;
+    if (r < 1.0) {
+      halo = smoothstep(inner, 1.0, r);                          // rises under the rim feather (complements body fade)
+    } else {
+      halo = 1.0 - smoothstep(1.0, uGlowMax, r);                 // strong at rim → 0 at edge
+      halo = pow(halo, 2.2);
+    }
     float ch = clamp(vCharge, 0.0, 1.0);
     if (uHaloMode < 0.5) {
       // dark theme: additive glow; flares RED when an energy pulse arrives

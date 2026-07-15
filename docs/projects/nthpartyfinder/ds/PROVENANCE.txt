@@ -26,6 +26,27 @@ catch-up (FILL=0.85, no rim-bias, 220-node cap, no DPR area budget, no
 pulse-edge AA). Re-vendoring from the canvas at this point would be a
 regression. See the audit ISA above for the full line-by-line comparison.
 
+Halo-under-rim cross-fade AA ported 2026-07-15 (owner reported a dark seam
+ring around every sphere on the live page vs the DS canvas): the DS canvas
+NodeGraphBackground has since gained a genuine antialiasing improvement this
+page lacked — the glow-halo pass used to start exactly at the sphere edge
+(discard r<1.0) while the body's rim feather fades to alpha 0 by r=1, leaving
+the ~1px feather band lit by NEITHER body nor halo → the dark page shows
+through as a 1-2px seam ring (glaring when the halo flares red). Ported the
+fix SURGICALLY: only the SPHERE_FS halo pass changed — it now ramps the halo
+up from `inner = 1 - 2*vFeather` (the body feather start) so body-fade and
+halo-rise are exact complements and cross-fade into continuous light. Expressed
+in THIS page's own vFeather varying (not the canvas's vPixelRadius/featherR
+scheme) so the complement is exact against this page's crisper ~1.2px body
+feather, and so the page's superior frustum-fill/AA tuning documented above is
+preserved untouched — the ONLY change is the halo annulus inner edge. The
+grce-design-system mirror already carried the canvas fix (synced earlier this
+session, commit 8d08367), so no mirror update was needed. Verified: node
+--check clean; halo inner edge now r>=inner not r>=1.0. Rendered-pixel
+confirmation deferred to the live site — browser automation was unreachable
+this background session (and WebGL scenes don't composite into plain
+screenshots regardless).
+
 SiteHeader adopted 2026-07-15: the nav (previously a page-local `.np-nav`,
 position:sticky bar) is now `ds/site-header.js` — a vanilla auto-mount port
 of the DS `SiteHeader.jsx` (grce-design-system re-synced from the Claude
