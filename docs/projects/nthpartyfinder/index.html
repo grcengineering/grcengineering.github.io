@@ -176,6 +176,22 @@ a:hover { color: var(--brand-accent-strong); }
    the DS SiteHeader.jsx (see PROVENANCE.txt). This block only carries the page-local pieces that
    live inside it: the theme-toggle icon button (reused from the old nav) and the mobile-panel
    action button placement. */
+/* Lockup positioning = Cocoindex's logo, literally: docked left inset = their
+   --nav-gutter clamp(1.25rem, 4vw, 3rem); floating pill inset = their
+   `nav.top.is-floating .nav-in` padding 0 1.1rem; padding rides the morph
+   transition exactly as their .nav-in does. (Vendored component keeps its
+   0 var(--space-7) default — this is a page-level override.) */
+.grc-siteheader .grc-siteheader__inner {
+  /* Cocoindex's docked .nav-in is max-width:100% (logo hugs the viewport gutter,
+     not a centered container). The bar's JS-owned px width already implements the
+     floating clamp, so the inner just fills the bar in both states. */
+  max-width: none;
+  padding: 0 clamp(1.25rem, 4vw, 3rem);
+  transition: padding var(--grc-sh-dur, 320ms) var(--grc-sh-ease, cubic-bezier(0.2,0.8,0.2,1));
+}
+.grc-siteheader.grc-siteheader--floating .grc-siteheader__inner { padding: 0 1.1rem; }
+@media (prefers-reduced-motion: reduce) { .grc-siteheader .grc-siteheader__inner { transition: none; } }
+
 .np-icon-btn {
   display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px;
   border-radius: var(--radius-md); border: 1px solid var(--border-default); background: transparent;
