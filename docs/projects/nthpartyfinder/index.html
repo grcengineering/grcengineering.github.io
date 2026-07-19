@@ -389,7 +389,8 @@ a:hover { color: var(--brand-accent-strong); }
 <body>
 
 <!-- NAV — GRC Engineering SiteHeader (scroll-morph: flush bar → floating glass pill on scroll) -->
-<header class="grc-siteheader" data-grc-siteheader data-scroll-distance="24" data-contained-width="1180">
+<!-- Pill width = Cocoindex's literal spec: min(64rem, calc(100% - 1.5rem)) → 1024px cap, 12px sides -->
+<header class="grc-siteheader" data-grc-siteheader data-scroll-distance="24" data-contained-width="1024" data-side="12">
   <div class="grc-siteheader__bar">
     <div class="grc-siteheader__rule"></div>
     <div class="grc-siteheader__inner">
