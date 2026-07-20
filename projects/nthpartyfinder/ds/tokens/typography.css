@@ -1,0 +1,72 @@
+/* ============================================================
+   TYPOGRAPHY — GRC Engineering
+   General Sans (display) · Satoshi (body sans) ·
+   Archivo (UI sans / chrome) · Martian Mono (code, eyebrows, data)
+   ============================================================ */
+
+:root {
+  /* Families */
+  --font-display: "General Sans", "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Satoshi", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: var(--font-body);            /* back-compat alias */
+  --font-sans: "Archivo", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Martian Mono", ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+
+  /* Weights */
+  --fw-light: 300;     /* @kind font */
+  --fw-regular: 400;   /* @kind font */
+  --fw-medium: 500;    /* @kind font */
+  --fw-semibold: 600;  /* @kind font */
+  --fw-bold: 700;      /* @kind font */
+  --fw-black: 800;     /* @kind font */
+
+  /* Type scale (1.250 major-third-ish, tuned) */
+  --text-2xs: 0.6875rem;  /* 11px — mono micro labels */
+  --text-xs:  0.75rem;    /* 12px */
+  --text-sm:  0.8125rem;  /* 13px */
+  --text-base: 0.9375rem; /* 15px — body default */
+  --text-md:  1.0625rem;  /* 17px */
+  --text-lg:  1.25rem;    /* 20px */
+  --text-xl:  1.5rem;     /* 24px */
+  --text-2xl: 1.9375rem;  /* 31px */
+  --text-3xl: 2.5rem;     /* 40px */
+  --text-4xl: 3.25rem;    /* 52px */
+  --text-5xl: 4.25rem;    /* 68px */
+  --text-6xl: 5.5rem;     /* 88px */
+
+  /* Line heights */
+  --leading-none: 1;
+  --leading-tight: 1.12;
+  --leading-snug: 1.28;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.65;
+
+  /* Letter spacing */
+  --tracking-tighter: -0.03em;  /* large display */
+  --tracking-tight: -0.015em;   /* headings */
+  --tracking-normal: 0;
+  --tracking-wide: 0.04em;
+  --tracking-wider: 0.12em;     /* mono eyebrows / labels */
+  --tracking-widest: 0.18em;
+
+  /* ---- Semantic roles ---- */
+  --display-family: var(--font-display);
+  --display-weight: var(--fw-semibold);      /* General Sans display — 600, lighter presence */
+  --display-tracking: var(--tracking-tighter);
+  --display-leading: var(--leading-tight);
+
+  --heading-weight: var(--fw-medium);
+  --heading-tracking: var(--tracking-tight);
+
+  /* Body is Satoshi; UI chrome stays on --font-sans (Archivo) */
+  --body-family: var(--font-body);
+  --body-size: var(--text-base);
+  --body-leading: var(--leading-relaxed);
+
+  --ui-family: var(--font-sans);             /* buttons, inputs, nav, badges */
+
+  --eyebrow-family: var(--font-mono);
+  --eyebrow-size: var(--text-2xs);
+  --eyebrow-weight: var(--fw-medium);
+  --eyebrow-tracking: var(--tracking-wider);
+}

@@ -1,0 +1,177 @@
+/* ============================================================
+   COLORS — GRC Engineering
+   Legacy-GRC orange + Engineering blue, fused.
+   ============================================================ */
+
+:root {
+  /* ---- Brand: Legacy GRC (orange) ---- */
+  --grc-orange-50:  #FFF4E6;
+  --grc-orange-100: #FFE6CC;
+  --grc-orange-200: #FFD3A6;
+  --grc-orange-300: #FFBE7B;
+  --grc-orange-400: #FFA84F; /* core — rgb(255,168,79) "Legacy GRC" */
+  --grc-orange-500: #F8932F;
+  --grc-orange-600: #E07C18;
+  --grc-orange-700: #B5610F;
+  --grc-orange-800: #8A490C;
+  --grc-orange-900: #5E320A;
+
+  /* ---- Brand: Engineering (blue) ---- */
+  --eng-blue-50:  #E9F6FB;
+  --eng-blue-100: #CDEAF4;
+  --eng-blue-200: #9DD6EA;
+  --eng-blue-300: #63BEDC;
+  --eng-blue-400: #2FA6CF;
+  --eng-blue-500: #1B95C1; /* core — rgb(27,149,193) "Engineering" */
+  --eng-blue-600: #157AA1;
+  --eng-blue-700: #126181;
+  --eng-blue-800: #114E67;
+  --eng-blue-900: #0E3A4C;
+
+  /* ---- Brand: GRC Engineering fusion gradient ---- */
+  --gradient-fusion: linear-gradient(100deg, var(--grc-orange-400) 0%, #E58A56 38%, #6FA9C2 64%, var(--eng-blue-500) 100%);
+  --gradient-fusion-soft: linear-gradient(100deg, rgba(255,168,79,0.16) 0%, rgba(27,149,193,0.16) 100%); /* @kind color */
+  --gradient-fusion-text: linear-gradient(96deg, var(--grc-orange-500) 0%, var(--eng-blue-500) 92%); /* @kind color */
+  --gradient-ink-glow: radial-gradient(120% 120% at 0% 0%, rgba(255,168,79,0.12) 0%, transparent 42%), radial-gradient(120% 120% at 100% 0%, rgba(27,149,193,0.14) 0%, transparent 46%); /* @kind color */
+  /* Tool-lockup fill — the literal OCEAN pill: clean 2-stop orange→blue diagonal.
+     Exact brand hues, no muddy mid-stops (the teal blend is the natural mix). */
+  --gradient-ocean: linear-gradient(135deg, #FFA84F 0%, #1B95C1 100%); /* @kind color */
+
+  /* ---- Neutrals: cool slate (engineering ink) ---- */
+  --slate-0:   #FFFFFF;
+  --slate-25:  #FBFCFD;
+  --slate-50:  #F6F8FA;
+  --slate-100: #EEF1F4;
+  --slate-150: #E3E8ED;
+  --slate-200: #D6DDE4;
+  --slate-300: #BAC4CE;
+  --slate-400: #94A2AF;
+  --slate-500: #6B7A88;
+  --slate-600: #4F5D6A;
+  --slate-700: #394550;
+  --slate-800: #232D36;
+  --slate-900: #161D24;
+  --slate-950: #0C1117; /* engineering ink */
+  --ink:       #0B0F14; /* deepest canvas */
+
+  /* ---- Semantic status ---- */
+  --green-100: #D6F1E3;
+  --green-500: #1F9D6B; /* pass / compliant */
+  --green-600: #16855A;
+  --green-700: #0F6B49;
+
+  --red-100: #FBDFE0;
+  --red-500: #E5484D; /* fail / non-compliant */
+  --red-600: #CC2F36;
+  --red-700: #A8262D;
+
+  --amber-100: #FCEFD0;
+  --amber-500: #E8A317; /* at-risk / drift (distinct from brand orange) */
+  --amber-600: #C9890C;
+
+  /* =========================================================
+     SEMANTIC ALIASES — reference these in components
+     ========================================================= */
+
+  /* Brand */
+  --brand-grc: var(--grc-orange-400);
+  --brand-eng: var(--eng-blue-500);
+  --brand-accent: var(--eng-blue-500);          /* default interactive accent */
+  --brand-accent-strong: var(--eng-blue-600);
+
+  /* Surfaces (light) */
+  --surface-page:    var(--slate-25);
+  --surface-card:    var(--slate-0);
+  --surface-sunken:  var(--slate-50);
+  --surface-raised:  var(--slate-0);
+  --surface-inset:   var(--slate-100);
+  --surface-ink:     var(--slate-950);          /* dark engineering panels */
+  --surface-ink-2:   var(--slate-900);
+
+  /* Text */
+  --text-strong:  var(--slate-900);
+  --text-body:    var(--slate-700);
+  --text-muted:   var(--slate-500);
+  --text-faint:   var(--slate-400);
+  --text-on-ink:  #E7EDF2;
+  --text-on-ink-muted: #93A2AE;
+  --text-on-accent: #FFFFFF;
+  --text-link:    var(--eng-blue-600);
+
+  /* Borders */
+  --border-subtle: var(--slate-150);
+  --border-default: var(--slate-200);
+  --border-strong: var(--slate-300);
+  --border-ink:    rgba(255,255,255,0.10);
+  --border-accent: var(--eng-blue-500);
+
+  /* Status semantics */
+  --status-pass-fg: var(--green-700);
+  --status-pass-bg: var(--green-100);
+  --status-fail-fg: var(--red-700);
+  --status-fail-bg: var(--red-100);
+  --status-risk-fg: var(--amber-600);
+  --status-risk-bg: var(--amber-100);
+  --status-info-fg: var(--eng-blue-700);
+  --status-info-bg: var(--eng-blue-50);
+  --status-legacy-fg: var(--grc-orange-700);
+  --status-legacy-bg: var(--grc-orange-100);
+
+  /* Focus ring */
+  --focus-ring: 0 0 0 3px rgba(27,149,193,0.35);
+
+  /* Tell the UA which scheme form controls / scrollbars should use */
+  color-scheme: light;
+}
+
+/* =========================================================
+   DARK THEME
+   The token layer exposes exactly two scopes:
+     :root              → light values (default)
+     [data-theme="dark"]→ dark values
+   "system" is not a CSS state: the ThemeToggle + no-flash head
+   script resolve the user's choice (light / dark / system) to a
+   concrete `data-theme="light|dark"` on <html> before paint, and
+   re-resolve on OS-scheme changes. This keeps the token CSS clean
+   (no media-query duplication) while system mode still follows the OS.
+   Brand hues (orange/blue/gradient) are theme-independent — only
+   surfaces, text, borders, and status tints flip.
+   ========================================================= */
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --brand-accent:        var(--eng-blue-400);
+  --brand-accent-strong: var(--eng-blue-300);
+
+  /* Surfaces — deep engineering navy (matches shipped tools) */
+  --surface-page:    #0A0E16;
+  --surface-card:    #111722;
+  --surface-sunken:  #0C111B;
+  --surface-raised:  #161E2B;
+  --surface-inset:   #1A2330;
+  --surface-ink:     #060910;
+  --surface-ink-2:   #0C121B;
+
+  /* Text */
+  --text-strong:  #F1F5F9;
+  --text-body:    #C4CDD8;
+  --text-muted:   #8B97A4;
+  --text-faint:   #5E6B78;
+  --text-link:    var(--eng-blue-300);
+
+  /* Borders — light hairlines on dark */
+  --border-subtle:  rgba(255,255,255,0.07);
+  --border-default: rgba(255,255,255,0.11);
+  --border-strong:  rgba(255,255,255,0.17);
+  --border-accent:  var(--eng-blue-400);
+
+  /* Status — brighter fg, translucent tints */
+  --status-pass-fg: #4FD396; --status-pass-bg: rgba(31,157,107,0.16);
+  --status-fail-fg: #FF7E82; --status-fail-bg: rgba(229,72,77,0.18);
+  --status-risk-fg: #F2C14E; --status-risk-bg: rgba(232,163,23,0.17);
+  --status-info-fg: #63BEDC; --status-info-bg: rgba(27,149,193,0.16);
+  --status-legacy-fg: #FFBE7B; --status-legacy-bg: rgba(255,168,79,0.15);
+
+  --focus-ring: 0 0 0 3px rgba(99,190,220,0.45);
+}

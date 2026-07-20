@@ -1,0 +1,115 @@
+a {
+  transition: color 500ms !important;
+  transition-behavior: normal !important;
+  transition-duration: 500ms !important;
+  transition-timing-function: ease !important;
+  transition-delay: 0s !important;
+  transition-property: color !important; 
+}
+
+/* Add this in after adding additional columns for Summary + GRC Engineering Relevancy
+<!--Set max column width for "Title" column-->
+th:nth-child(1), 
+td:nth-child(1) { 
+    max-width: 350px; 
+}
+<!--Set max column width for "Author(s)" column-->
+th:nth-child(2), 
+td:nth-child(2) {
+    max-width: 200px; 
+}
+*/
+
+.md-typeset h1 {
+  font-weight: bolder;
+  font-size: 2em;
+  margin: 0 0 0em;
+  font-family: 'SF Pro Display', -apple-system, system-ui, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+}
+
+.md-typeset h2 {
+  font-weight: 600;
+  font-size: 1.5em;
+  font-family: 'SF Pro Display', -apple-system, system-ui, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+}
+
+.md-nav__title {
+  font-weight: 600;
+  font-size: 1.5em;
+}
+
+.md-header {
+  background-image: linear-gradient(to left, #1b95c1ff, #ffa84fff);
+}
+
+[data-md-color-scheme="grcengineering-light"] {
+    --md-primary-fg-color:        #ffa84fff;
+    --md-primary-fg-color--dark:  rgb(188, 102, 16);
+    --md-default-bg-color: #ffffff;
+    --md-primary-bg-color: #ffffff;
+    --md-typeset-a-color: #1b95c1ff;
+    --md-accent-fg-color: #ffa84fff;
+    .md-typeset table th[role=columnheader] {
+      background-color: #1b95c12b;
+    }
+}
+
+[data-md-color-scheme="grcengineering-dark"] {
+    --md-primary-fg-color:        #1b95c1ff;
+    --md-primary-fg-color--dark:  rgb(2, 98, 133);
+    --md-default-bg-color: #000000;
+    --md-typeset-color: #ffffff;
+    --md-default-fg-color--light: #ffffffcb;
+    --md-primary-bg-color: #000000;
+    --md-typeset-a-color: #ffa84fff;
+    --md-typeset-table-color: #ffffff40;
+    --md-default-fg-color--lightest: #ffffff40;
+    --md-accent-fg-color: #1b95c1ff;
+    --md-admonition-bg-color:  #000000;
+    --md-admonition-fg-color:  #ffffff;
+    --md-shadow-z2: 0 0.2rem 0.5rem #ffffff33, 0 0 0.05rem #ffffff66;
+    .md-typeset .grid.cards>ol>li:focus-within, .md-typeset .grid.cards>ol>li:hover, .md-typeset .grid.cards>ul>li:focus-within, .md-typeset .grid.cards>ul>li:hover, .md-typeset .grid>.card:focus-within, .md-typeset .grid>.card:hover {
+      border-color: #0000;
+    }
+    .md-typeset table th[role=columnheader] {
+      background-color: #ffa74f4b;
+    }
+}
+
+.md-typeset .warning>.admonition-title, .md-typeset .warning>summary {
+  background-color: rgba(255, 167, 79, 0.25);
+}
+
+.md-typeset .admonition.warning, .md-typeset details.warning {
+  border-color: #db7d00;
+}
+
+.md-typeset .warning>.admonition-title:before, .md-typeset .warning>summary:before {
+  background-color: #ffa84fff;
+}
+
+.md-typeset .warning>.admonition-title:after, .md-typeset .warning>summary:after {
+  color: #ffa84fff;
+}
+
+.md-typeset .success>.admonition-title, .md-typeset .success>summary {
+  background-color: rgba(27, 149, 193, 0.25);
+}
+
+.md-typeset .admonition.warning, .md-typeset details.success {
+  border-color: #1b95c1ff;
+}
+
+.md-typeset .warning>.admonition-title:before, .md-typeset .success>summary:before {
+  background-color: #1b95c1ff;
+}
+
+.md-typeset .warning>.admonition-title:after, .md-typeset .success>summary:after {
+  color: #1b95c1ff;
+}
+
+.md-typeset .admonition, .md-typeset details {
+  box-shadow: var(--md-shadow-z1);
+  color: var(--md-admonition-fg-color);
+  transition: box-shadow 500ms;
+}

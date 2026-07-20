@@ -1,0 +1,13 @@
+/* ============================================================
+   GRC ENGINEERING — Design System
+   Global entry point. Consumers link THIS file only.
+   (Import list only — no rules live here.)
+   ============================================================ */
+
+@import url("tokens/fonts.css");
+@import url("tokens/colors.css");
+@import url("tokens/typography.css");
+@import url("tokens/spacing.css");
+@import url("tokens/effects.css");
+@import url("tokens/motion.css");
+@import url("tokens/base.css");
