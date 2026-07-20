@@ -63,7 +63,10 @@ html { scroll-behavior: smooth; }
 body {
   background: var(--surface-page);
   color: var(--text-body);
-  overflow-x: hidden;
+  /* clip, not hidden: overflow-x:hidden on body makes the viewport a scroll
+     container and silently breaks smooth scrolling / fragment navigation in
+     Chrome (same fix as OCEAN's site, commit 7d2744c there). */
+  overflow-x: clip;
 }
 
 .np-container { max-width: var(--container-lg); margin: 0 auto; padding: 0 var(--space-7); }
@@ -296,7 +299,7 @@ a:hover { color: var(--brand-accent-strong); }
 /* ════════ HERO TERMINAL — glass card over the constellation (signature) ════════ */
 .np-term {
   position: relative; border-radius: var(--radius-xl); overflow: hidden;
-  max-width: 720px; margin: var(--space-12) auto 0; text-align: left;
+  max-width: 880px; margin: var(--space-12) auto 0; text-align: left;
   /* always dark glass — the terminal lives in the always-dark hero, over the constellation */
   background: color-mix(in srgb, #0C1117 74%, transparent); backdrop-filter: blur(var(--blur-md)); -webkit-backdrop-filter: blur(var(--blur-md));
   box-shadow: var(--glass-shadow), var(--glass-highlight);
@@ -312,6 +315,65 @@ a:hover { color: var(--brand-accent-strong); }
 .t-prompt { color: var(--grc-orange-400); } .t-cmd { color: var(--text-on-ink); } .t-flag { color: var(--eng-blue-300); }
 .t-val { color: #4FD396; } .t-out { color: var(--text-on-ink-muted); } .t-ok { color: #4FD396; }
 .t-num { color: var(--grc-orange-300); } .t-accent { color: var(--grc-orange-400); }
+
+/* Terminal view tabs — terminal / results.json / report.html */
+.np-term__tabs { display: flex; gap: 4px; padding: 8px 12px 0; border-bottom: 1px solid var(--border-ink); overflow-x: auto; scrollbar-width: none; }
+.np-term__tabs::-webkit-scrollbar { display: none; }
+.np-term__tab {
+  appearance: none; background: transparent; border: 1px solid transparent; border-bottom: none;
+  border-radius: 8px 8px 0 0; padding: 7px 14px; cursor: pointer; white-space: nowrap;
+  font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: var(--tracking-wide);
+  color: var(--text-on-ink-muted); transition: color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
+}
+.np-term__tab:hover { color: var(--text-on-ink); }
+.np-term__tab--active {
+  color: var(--text-on-ink); background: rgba(255,255,255,0.06);
+  border-color: var(--border-ink); position: relative; top: 1px;
+}
+.np-term__tab:focus-visible { outline: 2px solid var(--eng-blue-300); outline-offset: -2px; }
+.np-term__pane[hidden] { display: none; }
+.np-term__json { margin: 0; font: inherit; line-height: 1.75; font-size: var(--text-xs); white-space: pre; }
+@media (max-width: 640px) { .np-term__json { white-space: pre-wrap; word-break: break-word; } }
+.j-key { color: var(--eng-blue-300); } .j-str { color: #4FD396; }
+
+/* report.html pane — stylized mini of the interactive layered vendor graph */
+.np-report { font-family: var(--font-body); }
+.np-report__head { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; justify-content: space-between; margin-bottom: var(--space-4); }
+.np-report__title { font-family: var(--font-display); font-weight: var(--fw-semibold); color: var(--text-on-ink); font-size: var(--text-md); }
+.np-report__stats { font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--text-on-ink-muted); }
+.np-report__stats b { color: var(--grc-orange-300); font-weight: var(--fw-semibold); }
+.np-report__band { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 12px; border: 1px dashed rgba(255,255,255,0.14); border-radius: var(--radius-md); margin-bottom: 8px; }
+.np-report__band--root { border-style: solid; border-color: rgba(255,168,79,0.35); }
+.np-report__label { flex: 0 0 100%; font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: var(--tracking-wider); text-transform: uppercase; color: var(--text-on-ink-muted); }
+.np-report__node {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px;
+  font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--text-on-ink);
+  background: rgba(27,149,193,0.16); border: 1px solid rgba(99,190,220,0.35);
+}
+.np-report__node::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--eng-blue-300); }
+.np-report__node--root { background: rgba(255,168,79,0.18); border-color: rgba(255,168,79,0.45); }
+.np-report__node--root::before { background: var(--grc-orange-400); }
+.np-report__node--more { background: transparent; border-style: dashed; color: var(--text-on-ink-muted); }
+.np-report__node--more::before { display: none; }
+.np-report__note { margin: var(--space-3) 0 0; font-size: var(--text-xs); color: var(--text-on-ink-muted); }
+
+/* Install tab menu — OS-aware */
+.np-install-tabs { max-width: 880px; }
+.np-tabbar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: var(--space-6); }
+.np-tabbar__tab {
+  appearance: none; cursor: pointer; padding: 9px 16px; border-radius: 999px;
+  font-family: var(--ui-family); font-size: var(--text-sm); font-weight: var(--fw-medium);
+  color: var(--text-body); background: var(--surface-card); border: 1px solid var(--border-subtle);
+  transition: var(--transition-control); white-space: nowrap;
+}
+.np-tabbar__tab:hover { border-color: var(--border-strong); color: var(--text-strong); }
+.np-tabbar__tab--active { color: #0B0F14; background: var(--gradient-fusion); border-color: transparent; font-weight: var(--fw-semibold); }
+.np-tabbar__tab:focus-visible { outline: 2px solid var(--eng-blue-400); outline-offset: 2px; }
+.np-install-pane[hidden] { display: none; }
+.np-install-pane .np-code { margin-top: var(--space-4); }
+.np-install-pane__note { font-size: var(--text-sm); color: var(--text-muted); margin-top: var(--space-3); }
+.np-detected { font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: var(--tracking-wide); color: var(--brand-eng); text-transform: uppercase; }
+#install { scroll-margin-top: 84px; }
 
 /* ════════ SECTIONS ════════ */
 .np-section { padding: var(--space-24) 0; }
@@ -437,7 +499,6 @@ a:hover { color: var(--brand-accent-strong); }
   <div class="np-container">
     <div class="np-hero__inner">
       <div class="np-hero__copy np-hero__glass">
-        <span class="np-hero__eyebrow"><span class="np-hero__dot"></span>// Nth-Party Supply-Chain Mapping</span>
         <h1 class="np-hero__title">
           <span class="grc-lava-title">
             <span class="grc-lava-text"><span class="grc-lava-letter grc-lava-letter--flicker" style="--i:0" data-letter="N">N</span><span class="grc-lava-letter grc-lava-letter--flicker grc-lava-letter--sm" style="--i:1" data-letter="t">t</span><span class="grc-lava-letter grc-lava-letter--flicker grc-lava-letter--sm" style="--i:2" data-letter="h">h</span><span class="grc-lava-letter" style="--i:3" data-letter=" ">&nbsp;</span><span class="grc-lava-letter" style="--i:4" data-letter="P">P</span><span class="grc-lava-letter" style="--i:5" data-letter="a">a</span><span class="grc-lava-letter" style="--i:6" data-letter="r">r</span><span class="grc-lava-letter" style="--i:7" data-letter="t">t</span><span class="grc-lava-letter" style="--i:8" data-letter="y">y</span></span><br>
@@ -449,7 +510,7 @@ a:hover { color: var(--brand-accent-strong); }
           A high-performance CLI that maps your entire vendor party guest list — from third parties to the Nth degree — through DNS analysis. Built in Rust for speed, safety, and serious party-finding power.
         </p>
         <div class="np-hero__ctas">
-          <a href="https://github.com/grcengineering/nthpartyfinder" class="np-btn np-btn--primary" target="_blank" rel="noopener">Get the Party Started</a>
+          <a href="#install" class="np-btn np-btn--primary">Get the Party Started</a>
           <a href="https://github.com/grcengineering/nthpartyfinder/releases" class="np-btn np-btn--ghost" target="_blank" rel="noopener"><span class="material-symbols-outlined">download</span> Download</a>
         </div>
         <div class="np-hero__badges">
@@ -460,26 +521,86 @@ a:hover { color: var(--brand-accent-strong); }
         </div>
       </div>
 
-      <div class="np-term" aria-hidden="true">
+      <div class="np-term">
         <div class="np-term__bar">
           <span class="np-term__dot" style="background:var(--grc-orange-400)"></span>
           <span class="np-term__dot" style="background:var(--grc-orange-300)"></span>
           <span class="np-term__dot" style="background:#4FD396"></span>
-          <span class="np-term__title">party-terminal</span>
+          <span class="np-term__title">terminal</span>
         </div>
-        <div class="np-term__body">
-<span class="t-prompt">$</span> <span class="t-cmd">nthpartyfinder</span> <span class="t-flag">--domain</span> <span class="t-val">acme.com</span> <span class="t-flag">--depth</span> <span class="t-val">3</span> <span class="t-flag">-f</span> <span class="t-val">json</span>
-<br><br>
-<span class="t-accent">=== Party Analysis Summary ===</span><br>
-<span class="t-out">Total vendor relationships found:</span> <span class="t-num">12</span><br>
-<span class="t-out">Maximum depth reached:</span> <span class="t-num">3 layers</span><br>
-<span class="t-out">Unique vendor domains:</span> <span class="t-num">8</span><br>
-<span class="t-out">Unique vendor organizations:</span> <span class="t-num">6</span><br>
-<span class="t-out">&nbsp;&nbsp;Layer 1 (3rd party):</span> <span class="t-val">4 vendors</span><br>
-<span class="t-out">&nbsp;&nbsp;Layer 2 (4th party):</span> <span class="t-val">5 vendors</span><br>
-<span class="t-out">&nbsp;&nbsp;Layer 3 (5th party):</span> <span class="t-val">3 vendors</span><br>
+        <div class="np-term__tabs" role="tablist" aria-label="Scan output views">
+          <button class="np-term__tab np-term__tab--active" role="tab" aria-selected="true" aria-controls="term-pane-run" id="term-tab-run">terminal</button>
+          <button class="np-term__tab" role="tab" aria-selected="false" aria-controls="term-pane-json" id="term-tab-json">results.json</button>
+          <button class="np-term__tab" role="tab" aria-selected="false" aria-controls="term-pane-html" id="term-tab-html">report.html</button>
+        </div>
+        <div class="np-term__body np-term__pane np-term__pane--active" id="term-pane-run" role="tabpanel" aria-labelledby="term-tab-run">
+<span class="t-prompt">$</span> <span class="t-cmd">nthpartyfinder</span> <span class="t-flag">-d</span> <span class="t-val">acme.com</span> <span class="t-flag">--depth</span> <span class="t-val">2</span> <span class="t-flag">-f</span> <span class="t-val">json</span> <span class="t-flag">-o</span> <span class="t-val">acme_vendors.json</span><br>
+<span class="t-out">nthpartyfinder v1.3.0</span><br>
+<span class="t-out">Analyzing domain: acme.com at depth 1</span><br>
+<span class="t-out">Running SaaS tenant discovery for acme.com...</span><br>
+<span class="t-out">Analyzing 8 vendor domains (WHOIS + org lookup)</span><br>
+<span class="t-out">Analyzing vendors (8/8) &mdash; 23 relationships found</span><br>
 <br>
-<span class="t-ok"><span class="material-symbols-outlined" style="color:#4FD396;font-size:15px;">check_circle</span> Party mapped! Results &rarr; acme_vendors.json</span>
+<span class="t-accent">=== Analysis Summary ===</span><br>
+<span class="t-out">Total vendor relationships found:</span> <span class="t-num">23</span><br>
+<span class="t-out">Maximum depth reached:</span> <span class="t-num">2 layers</span><br>
+<span class="t-out">Unique vendor domains:</span> <span class="t-num">14</span><br>
+<span class="t-out">Unique vendor organizations:</span> <span class="t-num">11</span><br>
+<span class="t-out">&nbsp;&nbsp;Layer 1 vendors:</span> <span class="t-val">8</span><br>
+<span class="t-out">&nbsp;&nbsp;Layer 2 vendors:</span> <span class="t-val">6</span><br>
+<span class="t-accent">========================</span><br>
+<br>
+<span class="t-ok"><span class="material-symbols-outlined" style="color:#4FD396;font-size:15px;">check_circle</span> Exported 23 relationships &rarr; acme_vendors.json</span>
+        </div>
+        <div class="np-term__body np-term__pane" id="term-pane-json" role="tabpanel" aria-labelledby="term-tab-json" hidden>
+<pre class="np-term__json">{
+  <span class="j-key">"summary"</span>: {
+    <span class="j-key">"total_relationships"</span>: <span class="t-num">23</span>,
+    <span class="j-key">"max_depth"</span>: <span class="t-num">2</span>,
+    <span class="j-key">"unique_domains"</span>: <span class="t-num">14</span>,
+    <span class="j-key">"unique_organizations"</span>: <span class="t-num">11</span>
+  },
+  <span class="j-key">"relationships"</span>: [
+    {
+      <span class="j-key">"nth_party_domain"</span>: <span class="j-str">"sendgrid.net"</span>,
+      <span class="j-key">"nth_party_organization"</span>: <span class="j-str">"Twilio SendGrid"</span>,
+      <span class="j-key">"nth_party_layer"</span>: <span class="t-num">1</span>,
+      <span class="j-key">"nth_party_customer_domain"</span>: <span class="j-str">"acme.com"</span>,
+      <span class="j-key">"nth_party_record_type"</span>: <span class="j-str">"DNS::TXT::SPF"</span>,
+      <span class="j-key">"root_customer_domain"</span>: <span class="j-str">"acme.com"</span>,
+      <span class="j-key">"evidence"</span>: <span class="j-str">"v=spf1 include:sendgrid.net ~all"</span>
+    },
+    {
+      <span class="j-key">"nth_party_domain"</span>: <span class="j-str">"okta.com"</span>,
+      <span class="j-key">"nth_party_organization"</span>: <span class="j-str">"Okta"</span>,
+      <span class="j-key">"nth_party_layer"</span>: <span class="t-num">1</span>,
+      <span class="j-key">"nth_party_record_type"</span>: <span class="j-str">"DISCOVERY::SAAS_TENANT"</span>,
+      <span class="j-key">"evidence"</span>: <span class="j-str">"acme.okta.com resolves (tenant probe)"</span>
+    },
+    <span class="t-out">&hellip; 21 more &mdash; every edge carries its evidence</span>
+  ]
+}</pre>
+        </div>
+        <div class="np-term__body np-term__pane" id="term-pane-html" role="tabpanel" aria-labelledby="term-tab-html" hidden>
+          <div class="np-report">
+            <div class="np-report__head">
+              <span class="np-report__title">Nth Party Analysis for acme.com</span>
+              <span class="np-report__stats"><b>23</b> relationships · <b>14</b> domains · depth <b>2</b></span>
+            </div>
+            <div class="np-report__band np-report__band--root">
+              <span class="np-report__label">Root</span>
+              <span class="np-report__node np-report__node--root">acme.com</span>
+            </div>
+            <div class="np-report__band">
+              <span class="np-report__label">Layer 1 · 3rd parties</span>
+              <span class="np-report__node">sendgrid.net</span><span class="np-report__node">okta.com</span><span class="np-report__node">stripe.com</span><span class="np-report__node np-report__node--more">+5</span>
+            </div>
+            <div class="np-report__band">
+              <span class="np-report__label">Layer 2 · 4th parties</span>
+              <span class="np-report__node">twilio.com</span><span class="np-report__node">auth0.com</span><span class="np-report__node np-report__node--more">+4</span>
+            </div>
+            <p class="np-report__note">Interactive, zoomable vendor graph &mdash; generated with <span class="t-flag">-f html</span></p>
+          </div>
         </div>
       </div>
     </div>
@@ -498,32 +619,42 @@ a:hover { color: var(--brand-accent-strong); }
       <div class="np-card">
         <span class="np-card__icon" style="color:var(--brand-grc)"><span class="material-symbols-outlined">search</span></span>
         <h3>Comprehensive DNS Analysis</h3>
-        <p>Analyzes DNS TXT records — SPF entries, domain verification strings, and more — to uncover vendor relationships hiding in plain sight.</p>
+        <p>SPF, DMARC, DKIM, MX, NS, CNAME, and domain-verification TXT records — the vendor fingerprints hiding in plain sight. Always on.</p>
       </div>
       <div class="np-card">
-        <span class="np-card__icon" style="color:var(--brand-eng)"><span class="material-symbols-outlined">sync</span></span>
-        <h3>Recursive Discovery</h3>
-        <p>The party doesn't stop at the 3rd. Configurable depth analysis or automatic discovery until it hits common denominators.</p>
+        <span class="np-card__icon" style="color:var(--brand-eng)"><span class="material-symbols-outlined">verified_user</span></span>
+        <h3>Trust-Center Subprocessors</h3>
+        <p>Finds and parses the vendor/subprocessor lists companies publish on their own trust centers — their guest list, in their words.</p>
+      </div>
+      <div class="np-card">
+        <span class="np-card__icon" style="color:var(--brand-eng)"><span class="material-symbols-outlined">travel_explore</span></span>
+        <h3>Runtime Web Traffic</h3>
+        <p>Loads the site in headless Chrome and watches who it actually calls — third-party SDKs in page source plus live network requests.</p>
+      </div>
+      <div class="np-card">
+        <span class="np-card__icon" style="color:var(--brand-grc)"><span class="material-symbols-outlined">workspace_premium</span></span>
+        <h3>Certificate Transparency</h3>
+        <p>CT-log discovery round-robined across crt.sh and Cert Spotter (plus MerkleMap and Censys with free keys), with automatic failover.</p>
+      </div>
+      <div class="np-card">
+        <span class="np-card__icon" style="color:var(--brand-eng)"><span class="material-symbols-outlined">apartment</span></span>
+        <h3>SaaS Tenants &amp; Subdomains</h3>
+        <p>Probes tenant subdomains (think <code class="np-inline-code">acme.slack.com</code>) and enumerates subdomains via CNAME discovery to catch what DNS records alone miss.</p>
       </div>
       <div class="np-card">
         <span class="np-card__icon" style="color:var(--neon-purple,#b388ff)"><span class="material-symbols-outlined">psychology</span></span>
-        <h3>Embedded NER</h3>
-        <p>Optional GLiNER model for intelligent organization name extraction. Works completely offline — no API keys, no external services.</p>
+        <h3>Offline Org Attribution</h3>
+        <p>WHOIS/RDAP, a curated known-vendor dataset, and an embedded GLiNER NER model resolve domains to real organizations — no API keys, fully offline.</p>
       </div>
       <div class="np-card">
-        <span class="np-card__icon" style="color:var(--brand-eng)"><span class="material-symbols-outlined">language</span></span>
-        <h3>Cross-Platform</h3>
-        <p>Runs on Windows, macOS (Intel + Apple Silicon), and Linux. Docker image available for containerized workflows.</p>
-      </div>
-      <div class="np-card">
-        <span class="np-card__icon" style="color:var(--brand-grc)"><span class="material-symbols-outlined">bar_chart</span></span>
-        <h3>Multiple Export Formats</h3>
-        <p>CSV, JSON, Markdown, and HTML output with detailed relationship mapping. Your data, your format.</p>
+        <span class="np-card__icon" style="color:var(--brand-grc)"><span class="material-symbols-outlined">fact_check</span></span>
+        <h3>Evidence on Every Edge</h3>
+        <p>Each relationship carries the raw record, request, or URL it was inferred from — findings are auditable, not asserted.</p>
       </div>
       <div class="np-card">
         <span class="np-card__icon" style="color:var(--brand-grc)"><span class="material-symbols-outlined">bolt</span></span>
-        <h3>High Performance</h3>
-        <p>Built in Rust with async processing, intelligent caching, and configurable parallelism. Finds parties fast.</p>
+        <h3>Fast &amp; Polite</h3>
+        <p>Rust, async, cached, with batch scanning — and always-on DNS/HTTP/WHOIS rate limiters so a deep scan stays a good network citizen.</p>
       </div>
     </div>
   </div>
@@ -540,76 +671,101 @@ a:hover { color: var(--brand-accent-strong); }
     <div class="np-steps">
       <div class="np-step">
         <div class="np-step__num">01</div>
-        <div class="np-step__c"><h3>Send the Invites</h3><p>Point it at a domain. DNS TXT records get queried for SPF includes, domain verification tokens, and other vendor fingerprints.</p></div>
+        <div class="np-step__c"><h3>Send the Invites</h3><p>Point it at a domain. DNS analysis runs first, every time — SPF includes, DMARC/DKIM, MX, NS, CNAME, and domain-verification tokens.</p></div>
       </div>
       <div class="np-step">
         <div class="np-step__num">02</div>
-        <div class="np-step__c"><h3>Check the Guest List</h3><p>Parses discovered records to identify vendor domains. WHOIS lookups resolve organizations. The NER model catches names that regex would miss.</p></div>
+        <div class="np-step__c"><h3>Sweep the Venue</h3><p>Flip on the extended methods: trust-center subprocessor lists, Certificate Transparency logs, runtime web traffic in headless Chrome, SaaS tenant probes, and subdomain enumeration.</p></div>
       </div>
       <div class="np-step">
         <div class="np-step__num">03</div>
-        <div class="np-step__c"><h3>Follow the Plus-Ones</h3><p>Each discovered vendor gets the same treatment. Their DNS records reveal their vendors — mapping the full party tree to the Nth degree.</p></div>
+        <div class="np-step__c"><h3>Check the Guest List</h3><p>Every discovered domain resolves to a real organization: WHOIS/RDAP first, then a curated known-vendor dataset, then the offline NER model — with provenance tracked per attribution.</p></div>
       </div>
       <div class="np-step">
         <div class="np-step__num">04</div>
-        <div class="np-step__c"><h3>Bounce the Party Crashers</h3><p>Common infrastructure providers (AWS, Azure, Cloudflare) are flagged — everyone uses them, so recursion stops to keep results meaningful.</p></div>
+        <div class="np-step__c"><h3>Follow the Plus-Ones</h3><p>Each vendor gets the same treatment, recursively, to your chosen depth — and common infrastructure (AWS, Azure, Cloudflare) is bounced at the door so the graph stays meaningful instead of runaway.</p></div>
       </div>
       <div class="np-step">
         <div class="np-step__num">05</div>
-        <div class="np-step__c"><h3>Hand Out Party Favors</h3><p>Generates a comprehensive relationship map in CSV, JSON, Markdown, or HTML.</p></div>
+        <div class="np-step__c"><h3>Hand Out Party Favors</h3><p>Export CSV, JSON, Markdown, or an interactive layered HTML vendor graph — with the raw evidence attached to every relationship.</p></div>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- PARTY CRASHERS -->
-<section class="np-section">
-  <div class="np-container">
-    <div class="np-head">
-      <div class="np-eyebrow">// Uninvited</div>
-      <h2 class="np-title">Party Crashers Detected</h2>
-      <p class="np-lead">These common infrastructure vendors show up at everyone's party — recursion stops here to keep results meaningful.</p>
-    </div>
-    <div class="np-tags">
-      <span class="np-tag">AWS</span>
-      <span class="np-tag">Azure</span>
-      <span class="np-tag">Google Cloud</span>
-      <span class="np-tag">Cloudflare</span>
-      <span class="np-tag">Fastly</span>
-      <span class="np-tag">Akamai</span>
     </div>
   </div>
 </section>
 
 <!-- INSTALL -->
-<section class="np-section np-section--sunken" id="install">
+<section class="np-section" id="install">
   <div class="np-container">
     <div class="np-head">
       <div class="np-eyebrow">// RSVP</div>
       <h2 class="np-title">Get the Party Started</h2>
-      <p class="np-lead">Three ways to join — pick your vibe.</p>
+      <p class="np-lead">Pick your platform — we've pre-selected yours. <span class="np-detected" id="install-detected"></span></p>
     </div>
-    <div class="np-install">
-      <div class="np-card">
+    <div class="np-install-tabs">
+      <div class="np-tabbar" role="tablist" aria-label="Install options">
+        <button class="np-tabbar__tab" role="tab" id="install-tab-macos" aria-controls="install-pane-macos" aria-selected="false">macOS</button>
+        <button class="np-tabbar__tab" role="tab" id="install-tab-linux" aria-controls="install-pane-linux" aria-selected="false">Linux</button>
+        <button class="np-tabbar__tab" role="tab" id="install-tab-windows" aria-controls="install-pane-windows" aria-selected="false">Windows</button>
+        <button class="np-tabbar__tab" role="tab" id="install-tab-docker" aria-controls="install-pane-docker" aria-selected="false">Docker</button>
+        <button class="np-tabbar__tab" role="tab" id="install-tab-source" aria-controls="install-pane-source" aria-selected="false">From source</button>
+        <button class="np-tabbar__tab" role="tab" id="install-tab-github" aria-controls="install-pane-github" aria-selected="false">GitHub release</button>
+      </div>
+
+      <div class="np-card np-install-pane" id="install-pane-macos" role="tabpanel" aria-labelledby="install-tab-macos" hidden>
+        <div class="np-install__head"><span class="material-symbols-outlined" style="color:var(--brand-grc)">laptop_mac</span><h3>macOS</h3></div>
+        <p>Grab the self-contained binary (embedded NER — works offline) for your chip and run it.</p>
+        <p style="margin-top:var(--space-4)"><strong>Apple Silicon</strong></p>
+        <pre class="np-code"><code>curl -L -o nthpartyfinder.tgz \
+  https://github.com/grcengineering/nthpartyfinder/releases/latest/download/nthpartyfinder-aarch64-apple-darwin.tgz
+tar -xzf nthpartyfinder.tgz &amp;&amp; ./nthpartyfinder --help</code></pre>
+        <p style="margin-top:var(--space-4)"><strong>Intel</strong></p>
+        <pre class="np-code"><code>curl -L -o nthpartyfinder.tgz \
+  https://github.com/grcengineering/nthpartyfinder/releases/latest/download/nthpartyfinder-x86_64-apple-darwin.tgz
+tar -xzf nthpartyfinder.tgz &amp;&amp; ./nthpartyfinder --help</code></pre>
+        <p class="np-install-pane__note">Every release ships a <code class="np-inline-code">.sha256</code> checksum and signed SLSA build provenance. macOS includes the required <code class="np-inline-code">whois</code> client out of the box.</p>
+      </div>
+
+      <div class="np-card np-install-pane" id="install-pane-linux" role="tabpanel" aria-labelledby="install-tab-linux" hidden>
+        <div class="np-install__head"><span class="material-symbols-outlined" style="color:var(--brand-eng)">terminal</span><h3>Linux (x86-64)</h3></div>
+        <p>Self-contained binary with embedded NER — no runtime dependencies beyond a <code class="np-inline-code">whois</code> client.</p>
+        <pre class="np-code"><code>curl -L -o nthpartyfinder.tgz \
+  https://github.com/grcengineering/nthpartyfinder/releases/latest/download/nthpartyfinder-x86_64-unknown-linux-gnu.tgz
+tar -xzf nthpartyfinder.tgz &amp;&amp; ./nthpartyfinder --help</code></pre>
+        <p class="np-install-pane__note">Need <code class="np-inline-code">whois</code>? <code class="np-inline-code">apt install whois</code> (or your distro's equivalent). Checksums + SLSA provenance ship with every release.</p>
+      </div>
+
+      <div class="np-card np-install-pane" id="install-pane-windows" role="tabpanel" aria-labelledby="install-tab-windows" hidden>
+        <div class="np-install__head"><span class="material-symbols-outlined" style="color:var(--brand-eng)">desktop_windows</span><h3>Windows (x86-64)</h3></div>
+        <p>PowerShell — <code class="np-inline-code">curl.exe</code> and <code class="np-inline-code">tar</code> are built into Windows 10+.</p>
+        <pre class="np-code"><code>curl.exe -L -o nthpartyfinder.tgz `
+  https://github.com/grcengineering/nthpartyfinder/releases/latest/download/nthpartyfinder-x86_64-pc-windows-msvc.tgz
+tar -xzf nthpartyfinder.tgz
+.\nthpartyfinder.exe --help</code></pre>
+        <p class="np-install-pane__note">WHOIS lookups need a <code class="np-inline-code">whois</code> client — use WSL or SysInternals whois.</p>
+      </div>
+
+      <div class="np-card np-install-pane" id="install-pane-docker" role="tabpanel" aria-labelledby="install-tab-docker" hidden>
         <div class="np-install__head"><span class="material-symbols-outlined" style="color:var(--brand-eng)">deployed_code</span><h3>Docker</h3></div>
-        <span class="np-rec">Recommended</span>
-        <p>Pre-built image with embedded NER. Start scanning immediately.</p>
+        <p>Pre-built image with embedded NER and whois included. Start scanning immediately, on any platform.</p>
         <pre class="np-code"><code>docker pull ghcr.io/grcengineering/nthpartyfinder:latest
 
-docker run -v $(pwd)/output:/output \
-  nthpartyfinder -d example.com -r 2</code></pre>
+docker run -v "$(pwd)/output:/output" ghcr.io/grcengineering/nthpartyfinder:latest \
+  -d example.com -r 2 -f json -o /output/results</code></pre>
       </div>
-      <div class="np-card">
-        <div class="np-install__head"><span class="material-symbols-outlined" style="color:var(--brand-grc)">inventory_2</span><h3>Pre-built Binaries</h3></div>
-        <p>Download from <a href="https://github.com/grcengineering/nthpartyfinder/releases" target="_blank" rel="noopener">GitHub Releases</a>. Available as <code class="np-inline-code">full</code> (~150MB w/ NER) or <code class="np-inline-code">slim</code> (~15MB).</p>
-        <p>Windows x86_64 · macOS Intel &amp; Apple Silicon · Linux x86_64</p>
-      </div>
-      <div class="np-card">
-        <div class="np-install__head"><span class="material-symbols-outlined" style="color:var(--brand-grc)">terminal</span><h3>Build from Source</h3></div>
-        <p>Clone, build, and customize. Requires Rust toolchain.</p>
+
+      <div class="np-card np-install-pane" id="install-pane-source" role="tabpanel" aria-labelledby="install-tab-source" hidden>
+        <div class="np-install__head"><span class="material-symbols-outlined" style="color:var(--brand-grc)">construction</span><h3>Build from source</h3></div>
+        <p>Clone, build, customize. Requires the Rust toolchain.</p>
         <pre class="np-code"><code>git clone https://github.com/grcengineering/nthpartyfinder.git
-cd nthpartyfinder
+cd nthpartyfinder/nthpartyfinder
 cargo build --release</code></pre>
+        <p class="np-install-pane__note">The default build embeds the NER model (~175&nbsp;MB binary); add <code class="np-inline-code">--no-default-features</code> for a ~15&nbsp;MB slim build without it.</p>
+      </div>
+
+      <div class="np-card np-install-pane" id="install-pane-github" role="tabpanel" aria-labelledby="install-tab-github" hidden>
+        <div class="np-install__head"><span class="material-symbols-outlined" style="color:var(--brand-grc)">inventory_2</span><h3>Download from GitHub</h3></div>
+        <p>Browse all release assets — macOS (Apple Silicon &amp; Intel), Linux, and Windows archives, each with a <code class="np-inline-code">.sha256</code> checksum and signed SLSA build provenance.</p>
+        <p style="margin-top:var(--space-5)"><a href="https://github.com/grcengineering/nthpartyfinder/releases/latest" class="np-btn np-btn--primary" target="_blank" rel="noopener"><span class="material-symbols-outlined">download</span> Latest release on GitHub</a></p>
       </div>
     </div>
   </div>
@@ -685,6 +841,72 @@ cargo build --release</code></pre>
 
 <!-- Scroll-morph site header (vanilla, auto-mounts; DS SiteHeader port) -->
 <script src="ds/site-header.js" defer></script>
+
+<!-- Terminal view tabs + OS-aware install tab menu -->
+<script>
+(function () {
+  // Generic tab wiring: buttons with role=tab inside a container, panes via aria-controls.
+  function wireTabs(tablist, activeTabClass, activePaneClass) {
+    var tabs = Array.prototype.slice.call(tablist.querySelectorAll('[role="tab"]'));
+    function select(tab) {
+      tabs.forEach(function (t) {
+        var pane = document.getElementById(t.getAttribute('aria-controls'));
+        var on = t === tab;
+        t.classList.toggle(activeTabClass, on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        if (pane) {
+          pane.hidden = !on;
+          if (activePaneClass) pane.classList.toggle(activePaneClass, on);
+        }
+      });
+    }
+    tabs.forEach(function (t) {
+      t.addEventListener('click', function () { select(t); });
+      t.addEventListener('keydown', function (e) {
+        var i = tabs.indexOf(t), n = tabs.length;
+        if (e.key === 'ArrowRight') { e.preventDefault(); tabs[(i + 1) % n].focus(); select(tabs[(i + 1) % n]); }
+        if (e.key === 'ArrowLeft')  { e.preventDefault(); tabs[(i - 1 + n) % n].focus(); select(tabs[(i - 1 + n) % n]); }
+      });
+    });
+    return select;
+  }
+
+  // Same-page anchor scrolling: fragment navigation silently no-ops in some
+  // Chrome overflow/smooth-scroll configurations (observed on this page), so
+  // drive it explicitly. scroll-margin-top on targets keeps the header offset.
+  document.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    var id = a.getAttribute('href').slice(1);
+    var el = id && document.getElementById(id);
+    if (!el) return;
+    e.preventDefault();
+    el.scrollIntoView({ behavior: 'smooth' });
+    if (history.pushState) history.pushState(null, '', '#' + id);
+  });
+
+  // Hero terminal tabs
+  var termTabs = document.querySelector('.np-term__tabs');
+  if (termTabs) wireTabs(termTabs, 'np-term__tab--active', 'np-term__pane--active');
+
+  // Install tabs + OS auto-detect
+  var installBar = document.querySelector('.np-install-tabs .np-tabbar');
+  if (installBar) {
+    var select = wireTabs(installBar, 'np-tabbar__tab--active', null);
+    var ua = (navigator.userAgent || '').toLowerCase();
+    var plat = ((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '').toLowerCase();
+    var key = 'docker', label = '';
+    if (/iphone|ipad|ipod|android/.test(ua)) { key = 'github'; }  /* phones can't run the CLI — send them to the release page */
+    else if (plat.indexOf('mac') !== -1 || ua.indexOf('mac os') !== -1) { key = 'macos'; label = 'macOS detected'; }
+    else if (plat.indexOf('win') !== -1 || ua.indexOf('windows') !== -1) { key = 'windows'; label = 'Windows detected'; }
+    else if (plat.indexOf('linux') !== -1 || ua.indexOf('linux') !== -1) { key = 'linux'; label = 'Linux detected'; }
+    var tab = document.getElementById('install-tab-' + key);
+    if (tab) select(tab);
+    var det = document.getElementById('install-detected');
+    if (det && label) det.textContent = '// ' + label;
+  }
+}());
+</script>
 
 </body>
 </html>
