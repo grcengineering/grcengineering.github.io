@@ -358,7 +358,7 @@ a:hover { color: var(--brand-accent-strong); }
 .np-report__note { margin: var(--space-3) 0 0; font-size: var(--text-xs); color: var(--text-on-ink-muted); }
 
 /* Install tab menu — OS-aware */
-.np-install-tabs { max-width: 880px; }
+.np-install-tabs { max-width: 880px; margin: 0 auto; }
 .np-tabbar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: var(--space-6); }
 .np-tabbar__tab {
   appearance: none; cursor: pointer; padding: 9px 16px; border-radius: 999px;
@@ -396,7 +396,7 @@ a:hover { color: var(--brand-accent-strong); }
 .np-card p { font-size: var(--text-sm); color: var(--text-body); line-height: var(--leading-snug); }
 
 /* ════════ STEPS ════════ */
-.np-steps { display: flex; flex-direction: column; max-width: 720px; }
+.np-steps { display: flex; flex-direction: column; max-width: 720px; margin: 0 auto; }
 .np-step { display: flex; gap: var(--space-6); padding: var(--space-6) 0; position: relative; }
 .np-step:not(:last-child)::after { content: ""; position: absolute; left: 23px; top: 70px; bottom: -6px; width: 1.5px; background: linear-gradient(to bottom, var(--brand-grc), transparent); }
 .np-step__num {
@@ -418,6 +418,7 @@ a:hover { color: var(--brand-accent-strong); }
 .np-install h3 { font-size: var(--text-md); font-weight: var(--fw-semibold); color: var(--text-strong); }
 .np-install .material-symbols-outlined { font-size: 22px; }
 .np-rec { font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--status-pass-fg); }
+.np-rec--info { color: var(--status-info-fg); }
 .np-install p { font-size: var(--text-sm); color: var(--text-body); margin: var(--space-2) 0; line-height: var(--leading-snug); }
 .np-code {
   background: var(--surface-ink); color: var(--text-on-ink); border: 1px solid var(--border-ink);
@@ -713,8 +714,12 @@ a:hover { color: var(--brand-accent-strong); }
 
       <div class="np-card np-install-pane" id="install-pane-macos" role="tabpanel" aria-labelledby="install-tab-macos" hidden>
         <div class="np-install__head"><span class="material-symbols-outlined" style="color:var(--brand-grc)">laptop_mac</span><h3>macOS</h3></div>
-        <p>Grab the self-contained binary (embedded NER — works offline) for your chip and run it.</p>
-        <p style="margin-top:var(--space-4)"><strong>Apple Silicon</strong></p>
+        <p class="np-rec">Recommended</p>
+        <p>One command, via our tap — installs the signed release binary plus the <code class="np-inline-code">whois</code> and <code class="np-inline-code">subfinder</code> dependencies automatically.</p>
+        <pre class="np-code"><code>brew tap grcengineering/grcengineering
+brew install nthpartyfinder</code></pre>
+        <p style="margin-top:var(--space-6)"><strong>Or grab the binary directly</strong></p>
+        <p style="margin-top:var(--space-2)"><strong>Apple Silicon</strong></p>
         <pre class="np-code"><code>curl -L -o nthpartyfinder.tgz \
   https://github.com/grcengineering/nthpartyfinder/releases/latest/download/nthpartyfinder-aarch64-apple-darwin.tgz
 tar -xzf nthpartyfinder.tgz &amp;&amp; ./nthpartyfinder --help</code></pre>
@@ -722,21 +727,29 @@ tar -xzf nthpartyfinder.tgz &amp;&amp; ./nthpartyfinder --help</code></pre>
         <pre class="np-code"><code>curl -L -o nthpartyfinder.tgz \
   https://github.com/grcengineering/nthpartyfinder/releases/latest/download/nthpartyfinder-x86_64-apple-darwin.tgz
 tar -xzf nthpartyfinder.tgz &amp;&amp; ./nthpartyfinder --help</code></pre>
-        <p class="np-install-pane__note">Every release ships a <code class="np-inline-code">.sha256</code> checksum and signed SLSA build provenance. macOS includes the required <code class="np-inline-code">whois</code> client out of the box.</p>
+        <p class="np-install-pane__note">Every release ships a <code class="np-inline-code">.sha256</code> checksum and signed SLSA build provenance. A binary downloaded directly gets Gatekeeper's quarantine flag on first run — <code class="np-inline-code">brew install</code> and Docker skip that entirely; for a downloaded binary, clear it once with <code class="np-inline-code">xattr -dr com.apple.quarantine ./nthpartyfinder</code>.</p>
       </div>
 
       <div class="np-card np-install-pane" id="install-pane-linux" role="tabpanel" aria-labelledby="install-tab-linux" hidden>
         <div class="np-install__head"><span class="material-symbols-outlined" style="color:var(--brand-eng)">terminal</span><h3>Linux (x86-64)</h3></div>
-        <p>Self-contained binary with embedded NER — no runtime dependencies beyond a <code class="np-inline-code">whois</code> client.</p>
+        <p class="np-rec">Recommended</p>
+        <p>Same tap as macOS — one command installs the signed release binary plus the <code class="np-inline-code">whois</code> and <code class="np-inline-code">subfinder</code> dependencies automatically.</p>
+        <pre class="np-code"><code>brew tap grcengineering/grcengineering
+brew install nthpartyfinder</code></pre>
+        <p style="margin-top:var(--space-6)"><strong>Or grab the binary directly</strong></p>
         <pre class="np-code"><code>curl -L -o nthpartyfinder.tgz \
   https://github.com/grcengineering/nthpartyfinder/releases/latest/download/nthpartyfinder-x86_64-unknown-linux-gnu.tgz
 tar -xzf nthpartyfinder.tgz &amp;&amp; ./nthpartyfinder --help</code></pre>
-        <p class="np-install-pane__note">Need <code class="np-inline-code">whois</code>? <code class="np-inline-code">apt install whois</code> (or your distro's equivalent). Checksums + SLSA provenance ship with every release.</p>
+        <p class="np-install-pane__note">Need <code class="np-inline-code">whois</code>? <code class="np-inline-code">apt install whois</code> (or your distro's equivalent) — the Homebrew install pulls it in automatically. Checksums + SLSA provenance ship with every release.</p>
       </div>
 
       <div class="np-card np-install-pane" id="install-pane-windows" role="tabpanel" aria-labelledby="install-tab-windows" hidden>
         <div class="np-install__head"><span class="material-symbols-outlined" style="color:var(--brand-eng)">desktop_windows</span><h3>Windows (x86-64)</h3></div>
-        <p>PowerShell — <code class="np-inline-code">curl.exe</code> and <code class="np-inline-code">tar</code> are built into Windows 10+.</p>
+        <p class="np-rec np-rec--info">Coming soon</p>
+        <p>A WinGet package is on the way — once it ships:</p>
+        <pre class="np-code"><code>winget install grcengineering.nthpartyfinder</code></pre>
+        <p style="margin-top:var(--space-6)"><strong>Available now — PowerShell</strong></p>
+        <p><code class="np-inline-code">curl.exe</code> and <code class="np-inline-code">tar</code> are built into Windows 10+.</p>
         <pre class="np-code"><code>curl.exe -L -o nthpartyfinder.tgz `
   https://github.com/grcengineering/nthpartyfinder/releases/latest/download/nthpartyfinder-x86_64-pc-windows-msvc.tgz
 tar -xzf nthpartyfinder.tgz
@@ -755,7 +768,10 @@ docker run -v "$(pwd)/output:/output" ghcr.io/grcengineering/nthpartyfinder:late
 
       <div class="np-card np-install-pane" id="install-pane-source" role="tabpanel" aria-labelledby="install-tab-source" hidden>
         <div class="np-install__head"><span class="material-symbols-outlined" style="color:var(--brand-grc)">construction</span><h3>Build from source</h3></div>
-        <p>Clone, build, customize. Requires the Rust toolchain.</p>
+        <p>Already on crates.io — no clone needed:</p>
+        <pre class="np-code"><code>cargo install nthpartyfinder</code></pre>
+        <p style="margin-top:var(--space-6)"><strong>Or clone and build directly</strong></p>
+        <p>Requires the Rust toolchain.</p>
         <pre class="np-code"><code>git clone https://github.com/grcengineering/nthpartyfinder.git
 cd nthpartyfinder/nthpartyfinder
 cargo build --release</code></pre>
