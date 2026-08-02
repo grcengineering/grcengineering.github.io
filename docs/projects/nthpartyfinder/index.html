@@ -296,10 +296,16 @@ a:hover { color: var(--brand-accent-strong); }
 .np-btn--ghost { background: transparent; color: var(--eng-blue-300); border-color: rgba(99,190,220,0.45); }
 .np-btn--ghost:hover { border-color: var(--eng-blue-300); background: rgba(27,149,193,0.12); color: var(--eng-blue-200); }
 
-/* ════════ HERO TERMINAL — glass card over the constellation (signature) ════════ */
+/* ════════ HERO TERMINAL — glass card over the constellation (signature) ════════
+   Fixed-height window: header + tabs never scroll away; only .np-term__content
+   does. --term-window-h is capped by vh so the whole window always fits inside
+   a normal viewport, even when scrolled to a vertically-centered position. */
 .np-term {
+  --term-window-h: min(620px, 78vh);
   position: relative; border-radius: var(--radius-xl); overflow: hidden;
   max-width: 880px; margin: var(--space-12) auto 0; text-align: left;
+  height: var(--term-window-h);
+  display: flex; flex-direction: column;
   /* always dark glass — the terminal lives in the always-dark hero, over the constellation */
   background: color-mix(in srgb, #0C1117 74%, transparent); backdrop-filter: blur(var(--blur-md)); -webkit-backdrop-filter: blur(var(--blur-md));
   box-shadow: var(--glass-shadow), var(--glass-highlight);
@@ -308,17 +314,31 @@ a:hover { color: var(--brand-accent-strong); }
   content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; background: var(--glass-border);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; z-index: 1;
 }
-.np-term__bar { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border-ink); }
+.np-term__bar { flex-shrink: 0; display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border-ink); }
 .np-term__dot { width: 11px; height: 11px; border-radius: 50%; }
-.np-term__title { font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: var(--tracking-wide); color: var(--text-on-ink-muted); margin-left: 6px; }
+.np-term__title { font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: var(--tracking-wide); color: var(--text-on-ink-muted); margin-left: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* The scrollable region — the window's ONLY scrolling surface. A visible,
+   always-present (non-overlay) scrollbar so it reads as scrollable at a glance,
+   not just on hover. */
+.np-term__content {
+  flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden;
+  scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent;
+}
+.np-term__content::-webkit-scrollbar { width: 10px; }
+.np-term__content::-webkit-scrollbar-track { background: transparent; }
+.np-term__content::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: var(--radius-pill); border: 2px solid transparent; background-clip: padding-box; }
+.np-term__content::-webkit-scrollbar-thumb:hover { background: var(--eng-blue-300); background-clip: padding-box; }
 .np-term__body { padding: var(--space-6); font-family: var(--font-mono); font-size: var(--text-sm); line-height: 1.9; color: var(--text-on-ink); overflow-x: auto; }
 .t-prompt { color: var(--grc-orange-400); } .t-cmd { color: var(--text-on-ink); } .t-flag { color: var(--eng-blue-300); }
 .t-val { color: #4FD396; } .t-out { color: var(--text-on-ink-muted); } .t-ok { color: #4FD396; }
 .t-num { color: var(--grc-orange-300); } .t-accent { color: var(--grc-orange-400); }
 .t-dim { color: var(--text-on-ink-muted); opacity: 0.55; } .t-warn { color: var(--grc-orange-300); font-weight: var(--fw-medium); }
+.t-cursor { display: inline-block; width: 0.55em; height: 1.1em; background: var(--text-on-ink); vertical-align: text-bottom; margin-left: 1px; animation: t-blink 1s steps(1) infinite; }
+@keyframes t-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .t-cursor { animation: none; opacity: 0; } }
 
 /* Terminal view tabs — terminal / results.json / report.html */
-.np-term__tabs { display: flex; gap: 4px; padding: 8px 12px 0; border-bottom: 1px solid var(--border-ink); overflow-x: auto; scrollbar-width: none; }
+.np-term__tabs { flex-shrink: 0; display: flex; gap: 4px; padding: 8px 12px 0; border-bottom: 1px solid var(--border-ink); overflow-x: auto; scrollbar-width: none; }
 .np-term__tabs::-webkit-scrollbar { display: none; }
 .np-term__tab {
   appearance: none; background: transparent; border: 1px solid transparent; border-bottom: none;
@@ -337,13 +357,33 @@ a:hover { color: var(--brand-accent-strong); }
 @media (max-width: 640px) { .np-term__json { white-space: pre-wrap; word-break: break-word; } }
 .j-key { color: var(--eng-blue-300); } .j-str { color: #4FD396; }
 
+/* JSON fold controls — a small, genuinely-interactive collapse/expand system
+   (click any triangle any time). The auto-play sequence on tab activation only
+   sets the SAME .is-collapsed class these clicks toggle, so scripted and manual
+   interaction are indistinguishable to the DOM. */
+.jfold__btn {
+  appearance: none; background: transparent; border: none; padding: 0 3px 0 0; margin: 0; cursor: pointer;
+  color: var(--text-on-ink-muted); font-size: 0.8em; line-height: 1; vertical-align: 1px;
+}
+.jfold__btn:hover { color: var(--text-on-ink); }
+.jfold__btn:focus-visible { outline: 2px solid var(--eng-blue-300); outline-offset: 1px; border-radius: 2px; }
+.jfold__glyph { display: inline-block; transition: transform var(--dur-fast) var(--ease-out); }
+.jfold.is-collapsed .jfold__glyph { transform: rotate(-90deg); }
+.jfold__ellipsis { display: none; color: var(--text-on-ink-muted); font-style: italic; }
+.jfold.is-collapsed .jfold__ellipsis { display: inline; }
+.jfold.is-collapsed .jfold__body { display: none; }
+.jfold__bracket { color: var(--text-on-ink); }
+
 /* ════════ report.html pane — condensed recreation of the real generated report ════════
    Component class names (stat-card, insight-card, legend, tabs, search-box, filters,
    data-table, layer-badge, evidence-btn, …) match the actual nthpartyfinder HTML report
    template 1:1 — verified against a real export inspected 2026-08-02 — just resized to
    fit an 880px card instead of a full page. Scoped under #term-pane-html so these names
    can't leak or collide elsewhere on the page. */
-#term-pane-html .np-report { font-family: var(--font-body); text-align: left; }
+/* line-height reset: this pane sits inside .np-term__body, which sets 1.9 for
+   the terminal's multi-line ASCII output — inherited into small single-line
+   pills/badges here, it threw their text off-center vertically. */
+#term-pane-html .np-report { font-family: var(--font-body); text-align: left; line-height: var(--leading-normal); }
 
 #term-pane-html .npr-hero { text-align: center; padding: var(--space-6) var(--space-4) var(--space-7); }
 #term-pane-html .npr-eyebrow { display: inline-block; margin-bottom: var(--space-3); font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: var(--tracking-wider); text-transform: uppercase; color: var(--text-muted); }
@@ -380,14 +420,31 @@ a:hover { color: var(--brand-accent-strong); }
 
 #term-pane-html .npr-graph { position: relative; height: 240px; border: 1px solid var(--border-default); border-radius: var(--radius-md); background: var(--surface-card); margin-bottom: var(--space-4); overflow: hidden; }
 #term-pane-html .npr-graph__lines { position: absolute; inset: 0; width: 100%; height: 100%; }
-#term-pane-html .npr-graph__lines line { stroke: var(--border-strong); stroke-width: 1; }
-#term-pane-html .npr-node { position: absolute; transform: translate(-50%, -50%); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--eng-blue-400); box-shadow: var(--shadow-sm); z-index: 1; }
+/* Line x1/y1/x2/y2 are authored as 0-100 percentages (matching the node
+   divs' left/top %) and the viewBox below is the same square 100x100 as a
+   no-JS fallback — but rendering that with preserveAspectRatio="none" over
+   this wide/short box scales X and Y by different factors, so a plain (or
+   even vector-effect:non-scaling-stroke) stroke-width still comes out
+   visibly thicker on horizontal/vertical lines than on diagonals: Chromium's
+   non-scaling-stroke does not compensate for ANISOTROPIC scale, only uniform
+   scale (confirmed live — red/5px test stayed uniform only because it was
+   thick enough to mask the effect; the intended subtle width did not).
+   `sizeGraphLines()` in the shared script resolves this at the root by
+   re-writing the viewBox to the box's actual rendered pixel size and
+   converting each line's coordinates from % to those same px units, so the
+   SVG's internal scale is exactly 1:1 in both axes and stroke-width alone
+   is honestly uniform — no vector-effect needed. Each <line> also carries
+   matching stroke/stroke-width presentation attributes (this rule still
+   wins per CSS cascade in a real browser) as a static, non-JS-dependent
+   baseline. */
+#term-pane-html .npr-graph__lines line { stroke: rgba(255,255,255,0.55); stroke-width: 2px; }
+#term-pane-html .npr-node { position: absolute; transform: translate(-50%, -50%); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--eng-blue-400); box-shadow: var(--shadow-sm); z-index: 1; line-height: 1; }
 #term-pane-html .npr-node .npr-icon { width: 14px; height: 14px; color: #fff; }
 #term-pane-html .npr-node--root { width: 42px; height: 42px; background: var(--gradient-ocean); z-index: 2; }
 #term-pane-html .npr-node--root .npr-icon { width: 19px; height: 19px; }
-#term-pane-html .npr-node__badge { position: absolute; top: -6px; right: -8px; background: var(--grc-orange-500); color: #1a1208; font-family: var(--font-mono); font-size: 0.55rem; font-weight: var(--fw-bold); padding: 1px 5px; border-radius: var(--radius-pill); }
-#term-pane-html .npr-node__label { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 4px; font-family: var(--font-mono); font-size: 0.55rem; color: var(--text-muted); white-space: nowrap; }
-#term-pane-html .npr-node--more { width: auto; height: auto; border-radius: var(--radius-pill); background: var(--surface-inset); border: 1px dashed var(--border-strong); color: var(--text-muted); font-family: var(--font-mono); font-size: 0.6rem; padding: 4px 10px; z-index: 1; box-shadow: none; }
+#term-pane-html .npr-node__badge { position: absolute; top: -6px; right: -8px; display: flex; align-items: center; justify-content: center; line-height: 1; background: var(--grc-orange-500); color: #1a1208; font-family: var(--font-mono); font-size: 0.55rem; font-weight: var(--fw-bold); padding: 2px 5px; border-radius: var(--radius-pill); }
+#term-pane-html .npr-node__label { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 4px; line-height: 1.3; font-family: var(--font-mono); font-size: 0.55rem; color: var(--text-muted); white-space: nowrap; text-align: center; }
+#term-pane-html .npr-node--more { width: auto; height: auto; line-height: 1; border-radius: var(--radius-pill); background: var(--surface-inset); border: 1px dashed var(--border-strong); color: var(--text-muted); font-family: var(--font-mono); font-size: 0.6rem; padding: 4px 10px; z-index: 1; box-shadow: none; }
 
 #term-pane-html .legend { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); margin-top: var(--space-3); }
 #term-pane-html .legend-item { display: flex; align-items: center; gap: 6px; font-family: var(--font-sans); font-size: 0.65rem; color: var(--text-body); }
@@ -565,7 +622,14 @@ a:hover { color: var(--brand-accent-strong); }
 
 <!-- HERO -->
 <header class="np-hero" id="top">
-  <div class="grc-nodegraph" data-grc-nodegraph data-palette="spectrum" data-density="0.6" data-max-nodes="48" data-min-nodes="36" data-zoom="0.5" data-link-distance="210" data-link-opacity="0.9" data-speed="1" data-fps="60" data-theme="dark" aria-hidden="true"></div>
+  <!-- data-speed="0" pins the engine's documented "Still" mode: a fixed 3/4 camera
+       view that never yaws/sways. Verified live (2026-08-02): what read as the
+       constellation "resetting" on tab clicks was actually the PREVIOUS speed="1"
+       continuous slow orbit — over the several real seconds a user spends reading
+       and clicking, the camera visibly rotates, even though the cloud itself never
+       regenerates (confirmed via stats.builds/getBoundingClientRect instrumentation
+       staying constant across tab switches). Freezing the camera is the fix. -->
+  <div class="grc-nodegraph" data-grc-nodegraph data-palette="spectrum" data-density="0.6" data-max-nodes="48" data-min-nodes="36" data-zoom="0.5" data-link-distance="210" data-link-opacity="0.9" data-speed="0" data-fps="60" data-theme="dark" aria-hidden="true"></div>
   <div class="np-hero__glow"></div>
   <div class="np-hero__grid"></div>
   <div class="np-container">
@@ -598,13 +662,16 @@ a:hover { color: var(--brand-accent-strong); }
           <span class="np-term__dot" style="background:var(--grc-orange-400)"></span>
           <span class="np-term__dot" style="background:var(--grc-orange-300)"></span>
           <span class="np-term__dot" style="background:#4FD396"></span>
-          <span class="np-term__title">terminal</span>
+          <span class="np-term__title">Nth Party Finder Outputs</span>
         </div>
         <div class="np-term__tabs" role="tablist" aria-label="Scan output views">
           <button class="np-term__tab np-term__tab--active" role="tab" aria-selected="true" aria-controls="term-pane-run" id="term-tab-run">terminal</button>
           <button class="np-term__tab" role="tab" aria-selected="false" aria-controls="term-pane-json" id="term-tab-json">results.json</button>
           <button class="np-term__tab" role="tab" aria-selected="false" aria-controls="term-pane-html" id="term-tab-html">report.html</button>
         </div>
+        <!-- Scrollable content region — the fixed-height window's ONLY scrolling
+             surface. Header/tabs above stay put; only this wrapper scrolls. -->
+        <div class="np-term__content">
         <div class="np-term__body np-term__pane np-term__pane--active" id="term-pane-run" role="tabpanel" aria-labelledby="term-tab-run">
 <span class="t-prompt">$</span> <span class="t-cmd">nthpartyfinder</span> <span class="t-flag">-d</span> <span class="t-val">acme.com</span> <span class="t-flag">-r</span> <span class="t-val">1</span> <span class="t-flag">-f</span> <span class="t-val">html</span><br>
 <span class="t-out">nthpartyfinder v1.6.1</span><br>
@@ -664,15 +731,15 @@ a:hover { color: var(--brand-accent-strong); }
 <span class="t-ok"><span class="material-symbols-outlined" style="color:#4FD396;font-size:15px;">check_circle</span> SUCCESS: Analysis completed successfully! Found 125 vendor relationships.</span>
         </div>
         <div class="np-term__body np-term__pane" id="term-pane-json" role="tabpanel" aria-labelledby="term-tab-json" hidden>
-<pre class="np-term__json">{
-  <span class="j-key">"summary"</span>: {
+<pre class="np-term__json" id="json-pane-pre"><span class="jfold" data-fold="root"><button class="jfold__btn" type="button" aria-expanded="true" aria-label="Toggle root object"><span class="jfold__glyph">&#9662;</span></button><span class="jfold__bracket">{</span><span class="jfold__ellipsis"> &hellip; </span><span class="jfold__body">
+  <span class="jfold" data-fold="summary"><button class="jfold__btn" type="button" aria-expanded="true" aria-label="Toggle summary object"><span class="jfold__glyph">&#9662;</span></button><span class="j-key">"summary"</span>: <span class="jfold__bracket">{</span><span class="jfold__ellipsis"> &hellip; </span><span class="jfold__body">
     <span class="j-key">"total_relationships"</span>: <span class="t-num">125</span>,
     <span class="j-key">"max_depth"</span>: <span class="t-num">1</span>,
     <span class="j-key">"unique_domains"</span>: <span class="t-num">118</span>,
     <span class="j-key">"unique_organizations"</span>: <span class="t-num">105</span>
-  },
-  <span class="j-key">"relationships"</span>: [
-    {
+  </span><span class="jfold__bracket">}</span></span>,
+  <span class="jfold" data-fold="relationships"><button class="jfold__btn" type="button" aria-expanded="true" aria-label="Toggle relationships array"><span class="jfold__glyph">&#9662;</span></button><span class="j-key">"relationships"</span>: <span class="jfold__bracket">[</span><span class="jfold__ellipsis"> &hellip; </span><span class="jfold__body">
+    <span class="jfold" data-fold="item0"><button class="jfold__btn" type="button" aria-expanded="true" aria-label="Toggle relationship object"><span class="jfold__glyph">&#9662;</span></button><span class="jfold__bracket">{</span><span class="jfold__ellipsis"> &hellip; </span><span class="jfold__body">
       <span class="j-key">"nth_party_domain"</span>: <span class="j-str">"sendgrid.net"</span>,
       <span class="j-key">"nth_party_organization"</span>: <span class="j-str">"Twilio SendGrid"</span>,
       <span class="j-key">"nth_party_layer"</span>: <span class="t-num">1</span>,
@@ -680,17 +747,17 @@ a:hover { color: var(--brand-accent-strong); }
       <span class="j-key">"nth_party_record_type"</span>: <span class="j-str">"DNS::TXT::SPF"</span>,
       <span class="j-key">"root_customer_domain"</span>: <span class="j-str">"acme.com"</span>,
       <span class="j-key">"evidence"</span>: <span class="j-str">"v=spf1 include:sendgrid.net ~all"</span>
-    },
-    {
+    </span><span class="jfold__bracket">}</span></span>,
+    <span class="jfold" data-fold="item1"><button class="jfold__btn" type="button" aria-expanded="true" aria-label="Toggle relationship object"><span class="jfold__glyph">&#9662;</span></button><span class="jfold__bracket">{</span><span class="jfold__ellipsis"> &hellip; </span><span class="jfold__body">
       <span class="j-key">"nth_party_domain"</span>: <span class="j-str">"okta.com"</span>,
       <span class="j-key">"nth_party_organization"</span>: <span class="j-str">"Okta"</span>,
       <span class="j-key">"nth_party_layer"</span>: <span class="t-num">1</span>,
       <span class="j-key">"nth_party_record_type"</span>: <span class="j-str">"DISCOVERY::SAAS_TENANT"</span>,
       <span class="j-key">"evidence"</span>: <span class="j-str">"acme.okta.com resolves (tenant probe)"</span>
-    },
+    </span><span class="jfold__bracket">}</span></span>,
     <span class="t-out">&hellip; 123 more &mdash; every edge carries its evidence</span>
-  ]
-}</pre>
+  </span><span class="jfold__bracket">]</span></span>
+</span><span class="jfold__bracket">}</span></span></pre>
         </div>
         <div class="np-term__body np-term__pane" id="term-pane-html" role="tabpanel" aria-labelledby="term-tab-html" hidden>
           <div class="np-report">
@@ -769,14 +836,14 @@ a:hover { color: var(--brand-accent-strong); }
               </div>
               <div class="npr-graph" role="img" aria-label="Radial graph: acme.com at the center, connected to 8 direct vendors plus 117 more">
                 <svg class="npr-graph__lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-                  <line x1="50" y1="50" x2="50" y2="12"></line>
-                  <line x1="50" y1="50" x2="74" y2="22"></line>
-                  <line x1="50" y1="50" x2="86" y2="50"></line>
-                  <line x1="50" y1="50" x2="74" y2="78"></line>
-                  <line x1="50" y1="50" x2="50" y2="88"></line>
-                  <line x1="50" y1="50" x2="26" y2="78"></line>
-                  <line x1="50" y1="50" x2="14" y2="50"></line>
-                  <line x1="50" y1="50" x2="26" y2="22"></line>
+                  <line x1="50" y1="50" x2="50" y2="12" stroke="rgba(255,255,255,0.55)" stroke-width="2"></line>
+                  <line x1="50" y1="50" x2="74" y2="22" stroke="rgba(255,255,255,0.55)" stroke-width="2"></line>
+                  <line x1="50" y1="50" x2="86" y2="50" stroke="rgba(255,255,255,0.55)" stroke-width="2"></line>
+                  <line x1="50" y1="50" x2="74" y2="78" stroke="rgba(255,255,255,0.55)" stroke-width="2"></line>
+                  <line x1="50" y1="50" x2="50" y2="88" stroke="rgba(255,255,255,0.55)" stroke-width="2"></line>
+                  <line x1="50" y1="50" x2="26" y2="78" stroke="rgba(255,255,255,0.55)" stroke-width="2"></line>
+                  <line x1="50" y1="50" x2="14" y2="50" stroke="rgba(255,255,255,0.55)" stroke-width="2"></line>
+                  <line x1="50" y1="50" x2="26" y2="22" stroke="rgba(255,255,255,0.55)" stroke-width="2"></line>
                 </svg>
                 <div class="npr-node npr-node--root" style="left:50%;top:50%" aria-hidden="true">
                   <svg class="npr-icon" aria-hidden="true"><use href="#npr-ic-building-2"></use></svg>
@@ -871,6 +938,7 @@ a:hover { color: var(--brand-accent-strong); }
               <p class="npr-more">Showing 5 of 125 relationships</p>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>
@@ -1131,7 +1199,9 @@ cargo build --release</code></pre>
 <script>
 (function () {
   // Generic tab wiring: buttons with role=tab inside a container, panes via aria-controls.
-  function wireTabs(tablist, activeTabClass, activePaneClass) {
+  // onSelect (optional) fires on EVERY activation — click or arrow-key — so callers
+  // can react to "which pane just became visible" without duplicating tab logic.
+  function wireTabs(tablist, activeTabClass, activePaneClass, onSelect) {
     var tabs = Array.prototype.slice.call(tablist.querySelectorAll('[role="tab"]'));
     function select(tab) {
       tabs.forEach(function (t) {
@@ -1144,6 +1214,7 @@ cargo build --release</code></pre>
           if (activePaneClass) pane.classList.toggle(activePaneClass, on);
         }
       });
+      if (onSelect) onSelect(tab);
     }
     tabs.forEach(function (t) {
       t.addEventListener('click', function () { select(t); });
@@ -1155,6 +1226,123 @@ cargo build --release</code></pre>
     });
     return select;
   }
+
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ── Terminal tab: type the command, then stream log lines ──
+     Replays on every activation. Caches the pane's original static HTML once
+     (pane.__origHTML) — that cache is both the reduced-motion fallback and the
+     literal source of truth for the animation, so there is exactly one place
+     the log content is authored. */
+  function playTerminal(pane) {
+    if (pane.__origHTML === undefined) pane.__origHTML = pane.innerHTML;
+    var orig = pane.__origHTML;
+    if (reduceMotion) { pane.innerHTML = orig; return; }
+    if (pane.__playing) return; // a run is already in flight; let it finish rather than overlap
+    pane.__playing = true;
+    pane.innerHTML = '';
+    var lines = orig.split(/<br\s*\/?>/i);
+
+    function typeRichLine(html, cb) {
+      var tmp = document.createElement('span');
+      tmp.innerHTML = html;
+      var chars = [];
+      (function walk(node, cls) {
+        Array.prototype.forEach.call(node.childNodes, function (n) {
+          if (n.nodeType === 3) { for (var k = 0; k < n.data.length; k++) chars.push({ ch: n.data[k], cls: cls }); }
+          else if (n.nodeType === 1) { walk(n, n.className || cls); }
+        });
+      })(tmp, null);
+      var lineEl = document.createElement('span');
+      pane.appendChild(lineEl);
+      var cursor = document.createElement('span');
+      cursor.className = 't-cursor';
+      pane.appendChild(cursor);
+      var ci = 0, curCls, curSpan = null;
+      (function step() {
+        if (ci >= chars.length) { cursor.remove(); cb(); return; }
+        var c = chars[ci++];
+        if (c.cls !== curCls) { curSpan = document.createElement('span'); if (c.cls) curSpan.className = c.cls; lineEl.appendChild(curSpan); curCls = c.cls; }
+        curSpan.appendChild(document.createTextNode(c.ch));
+        setTimeout(step, 16 + Math.random() * 20);
+      })();
+    }
+    function timestampMs(html) {
+      var m = /\[(\d\d):(\d\d):(\d\d)\.(\d\d\d)\]/.exec(html);
+      return m ? ((+m[1] * 3600 + +m[2] * 60 + +m[3]) * 1000) + (+m[4]) : null;
+    }
+    var lastTs = null;
+    function appendLine(html, isLast) {
+      var scroller = pane.closest('.np-term__content');
+      var wasNearBottom = !scroller || (scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight) < 40;
+      var span = document.createElement('span');
+      span.innerHTML = html;
+      pane.appendChild(span);
+      if (!isLast) pane.appendChild(document.createElement('br'));
+      if (scroller && wasNearBottom) scroller.scrollTop = scroller.scrollHeight;
+    }
+    function playFrom(idx) {
+      if (idx >= lines.length) { pane.__playing = false; return; }
+      var html = lines[idx], isLast = idx === lines.length - 1;
+      if (idx === 0) {
+        // the command itself: typed out character by character
+        typeRichLine(html, function () {
+          if (!isLast) pane.appendChild(document.createElement('br'));
+          setTimeout(function () { playFrom(idx + 1); }, 260);
+        });
+        return;
+      }
+      // subsequent lines stream in whole, staggered — a longer pause where the
+      // real tool's own timestamps jumped (a scan phase actually took time)
+      var ts = timestampMs(html), gap = 55;
+      if (ts !== null && lastTs !== null) {
+        var delta = ts - lastTs;
+        gap = delta > 2000 ? 620 : delta > 200 ? 220 : 55;
+      }
+      if (ts !== null) lastTs = ts;
+      setTimeout(function () { appendLine(html, isLast); playFrom(idx + 1); }, gap);
+    }
+    playFrom(0);
+  }
+
+  /* ── JSON tab: start fully collapsed, auto-expand root → summary →
+     relationships → sample items ── Toggling stays live and generic (see the
+     delegated .jfold__btn click handler below) — the auto-play just sets the
+     same .is-collapsed class a manual click does, so a user's own click during
+     playback and the scripted reveal can never disagree about state. */
+  function playJsonReveal(pane) {
+    var order = ['root', 'summary', 'relationships', 'item0', 'item1'];
+    var stepDelay = [0, 350, 450, 400, 350];
+    var folds = order.map(function (k) { return pane.querySelector('.jfold[data-fold="' + k + '"]'); });
+    function setCollapsed(fold, collapsed) {
+      if (!fold) return;
+      fold.classList.toggle('is-collapsed', collapsed);
+      var btn = fold.querySelector('.jfold__btn');
+      if (btn) btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    }
+    if (reduceMotion) { folds.forEach(function (f) { setCollapsed(f, false); }); return; }
+    folds.forEach(function (f) { setCollapsed(f, true); });
+    var cancelled = false;
+    function onUserToggle(e) {
+      if (e.target.closest && e.target.closest('.jfold__btn')) { cancelled = true; pane.removeEventListener('click', onUserToggle, true); }
+    }
+    pane.addEventListener('click', onUserToggle, true);
+    var t = 0;
+    order.forEach(function (key, i) {
+      t += stepDelay[i];
+      setTimeout(function () { if (!cancelled) setCollapsed(folds[i], false); }, t);
+    });
+  }
+
+  // Generic fold toggle — always live, independent of the auto-play sequencer.
+  document.addEventListener('click', function (e) {
+    var btn = e.target && e.target.closest ? e.target.closest('.jfold__btn') : null;
+    if (!btn) return;
+    var fold = btn.closest('.jfold');
+    if (!fold) return;
+    var collapsed = fold.classList.toggle('is-collapsed');
+    btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+  });
 
   // Same-page anchor scrolling: fragment navigation silently no-ops in some
   // Chrome overflow/smooth-scroll configurations (observed on this page), so
@@ -1170,9 +1358,52 @@ cargo build --release</code></pre>
     if (history.pushState) history.pushState(null, '', '#' + id);
   });
 
-  // Hero terminal tabs
+  // Hero terminal tabs — each activation (click, arrow-key, or initial load)
+  // replays that pane's own animation. report.html has none; it's static by design.
   var termTabs = document.querySelector('.np-term__tabs');
-  if (termTabs) wireTabs(termTabs, 'np-term__tab--active', 'np-term__pane--active');
+  if (termTabs) {
+    var selectTerm = wireTabs(termTabs, 'np-term__tab--active', 'np-term__pane--active', function (tab) {
+      var pane = document.getElementById(tab.getAttribute('aria-controls'));
+      if (!pane) return;
+      if (pane.id === 'term-pane-run') playTerminal(pane);
+      else if (pane.id === 'term-pane-json') playJsonReveal(pane);
+      else if (pane.id === 'term-pane-html') sizeGraphLines();
+    });
+    var initialTermTab = termTabs.querySelector('[aria-selected="true"]') || termTabs.querySelector('[role="tab"]');
+    if (initialTermTab) selectTerm(initialTermTab);
+  }
+
+  // Vendor graph connector lines: rewrite the SVG viewBox to the box's
+  // actual rendered pixel size (1:1 in both axes) so stroke-width is
+  // honestly uniform regardless of line angle — see CSS comment above
+  // .npr-graph__lines line for why vector-effect alone can't fix this.
+  function sizeGraphLines() {
+    var svgs = document.querySelectorAll('.npr-graph__lines');
+    for (var i = 0; i < svgs.length; i++) {
+      var svg = svgs[i];
+      var box = svg.parentElement;
+      var w = box.clientWidth, h = box.clientHeight;
+      if (!w || !h) continue;
+      svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+      svg.removeAttribute('preserveAspectRatio');
+      var lines = svg.querySelectorAll('line');
+      for (var j = 0; j < lines.length; j++) {
+        var l = lines[j];
+        if (!l.__pct) {
+          l.__pct = {
+            x1: parseFloat(l.getAttribute('x1')), y1: parseFloat(l.getAttribute('y1')),
+            x2: parseFloat(l.getAttribute('x2')), y2: parseFloat(l.getAttribute('y2'))
+          };
+        }
+        l.setAttribute('x1', (l.__pct.x1 / 100 * w).toFixed(2));
+        l.setAttribute('y1', (l.__pct.y1 / 100 * h).toFixed(2));
+        l.setAttribute('x2', (l.__pct.x2 / 100 * w).toFixed(2));
+        l.setAttribute('y2', (l.__pct.y2 / 100 * h).toFixed(2));
+      }
+    }
+  }
+  sizeGraphLines();
+  window.addEventListener('resize', sizeGraphLines);
 
   // Install tabs + OS auto-detect
   var installBar = document.querySelector('.np-install-tabs .np-tabbar');
