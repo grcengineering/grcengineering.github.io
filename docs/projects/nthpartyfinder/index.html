@@ -315,6 +315,7 @@ a:hover { color: var(--brand-accent-strong); }
 .t-prompt { color: var(--grc-orange-400); } .t-cmd { color: var(--text-on-ink); } .t-flag { color: var(--eng-blue-300); }
 .t-val { color: #4FD396; } .t-out { color: var(--text-on-ink-muted); } .t-ok { color: #4FD396; }
 .t-num { color: var(--grc-orange-300); } .t-accent { color: var(--grc-orange-400); }
+.t-dim { color: var(--text-on-ink-muted); opacity: 0.55; } .t-warn { color: var(--grc-orange-300); font-weight: var(--fw-medium); }
 
 /* Terminal view tabs — terminal / results.json / report.html */
 .np-term__tabs { display: flex; gap: 4px; padding: 8px 12px 0; border-bottom: 1px solid var(--border-ink); overflow-x: auto; scrollbar-width: none; }
@@ -336,26 +337,96 @@ a:hover { color: var(--brand-accent-strong); }
 @media (max-width: 640px) { .np-term__json { white-space: pre-wrap; word-break: break-word; } }
 .j-key { color: var(--eng-blue-300); } .j-str { color: #4FD396; }
 
-/* report.html pane — stylized mini of the interactive layered vendor graph */
-.np-report { font-family: var(--font-body); }
-.np-report__head { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; justify-content: space-between; margin-bottom: var(--space-4); }
-.np-report__title { font-family: var(--font-display); font-weight: var(--fw-semibold); color: var(--text-on-ink); font-size: var(--text-md); }
-.np-report__stats { font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--text-on-ink-muted); }
-.np-report__stats b { color: var(--grc-orange-300); font-weight: var(--fw-semibold); }
-.np-report__band { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 12px; border: 1px dashed rgba(255,255,255,0.14); border-radius: var(--radius-md); margin-bottom: 8px; }
-.np-report__band--root { border-style: solid; border-color: rgba(255,168,79,0.35); }
-.np-report__label { flex: 0 0 100%; font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: var(--tracking-wider); text-transform: uppercase; color: var(--text-on-ink-muted); }
-.np-report__node {
-  display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px;
-  font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--text-on-ink);
-  background: rgba(27,149,193,0.16); border: 1px solid rgba(99,190,220,0.35);
+/* ════════ report.html pane — condensed recreation of the real generated report ════════
+   Component class names (stat-card, insight-card, legend, tabs, search-box, filters,
+   data-table, layer-badge, evidence-btn, …) match the actual nthpartyfinder HTML report
+   template 1:1 — verified against a real export inspected 2026-08-02 — just resized to
+   fit an 880px card instead of a full page. Scoped under #term-pane-html so these names
+   can't leak or collide elsewhere on the page. */
+#term-pane-html .np-report { font-family: var(--font-body); text-align: left; }
+
+#term-pane-html .npr-hero { text-align: center; padding: var(--space-6) var(--space-4) var(--space-7); }
+#term-pane-html .npr-eyebrow { display: inline-block; margin-bottom: var(--space-3); font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: var(--tracking-wider); text-transform: uppercase; color: var(--text-muted); }
+#term-pane-html .npr-title {
+  margin: 0 0 var(--space-3); font-family: var(--font-display); font-size: var(--text-2xl); font-weight: var(--fw-bold);
+  letter-spacing: var(--tracking-tighter); line-height: var(--leading-none);
+  background: var(--gradient-fusion-text); -webkit-background-clip: text; background-clip: text;
+  color: transparent; -webkit-text-fill-color: transparent;
 }
-.np-report__node::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--eng-blue-300); }
-.np-report__node--root { background: rgba(255,168,79,0.18); border-color: rgba(255,168,79,0.45); }
-.np-report__node--root::before { background: var(--grc-orange-400); }
-.np-report__node--more { background: transparent; border-style: dashed; color: var(--text-on-ink-muted); }
-.np-report__node--more::before { display: none; }
-.np-report__note { margin: var(--space-3) 0 0; font-size: var(--text-xs); color: var(--text-on-ink-muted); }
+#term-pane-html .npr-subtitle { margin: 0 0 var(--space-4); font-family: var(--font-sans); font-size: var(--text-sm); color: var(--text-muted); }
+#term-pane-html .npr-rule { width: min(220px, 55%); margin: 0 auto var(--space-4); height: 2px; border: 0; border-radius: var(--radius-pill); background: var(--gradient-fusion); }
+#term-pane-html .npr-domain { display: inline-block; background: var(--surface-sunken); border: 1px solid var(--border-default); border-radius: var(--radius-lg); padding: var(--space-3) var(--space-5); color: var(--text-body); font-size: var(--text-sm); }
+#term-pane-html .npr-domain strong { color: var(--text-strong); font-family: var(--font-sans); font-weight: var(--fw-semibold); }
+#term-pane-html .npr-domain__meta { margin-top: var(--space-1); font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--text-muted); letter-spacing: var(--tracking-wide); }
+
+#term-pane-html .npr-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-3); margin-bottom: var(--space-6); }
+#term-pane-html .stat-card { position: relative; background: var(--surface-sunken); border: 1px solid var(--border-default); border-radius: var(--radius-md); padding: var(--space-3) var(--space-2); text-align: center; overflow: hidden; }
+#term-pane-html .stat-card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 2px; background: var(--gradient-fusion); }
+#term-pane-html .stat-value { font-family: var(--font-display); font-size: var(--text-xl); font-weight: var(--fw-bold); color: var(--text-strong); line-height: var(--leading-none); }
+#term-pane-html .stat-label { margin-top: var(--space-1); font-family: var(--font-mono); font-size: 0.58rem; font-weight: var(--fw-medium); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--text-muted); }
+
+#term-pane-html .npr-section { margin-bottom: var(--space-6); }
+#term-pane-html .npr-section__head { margin-bottom: var(--space-4); }
+#term-pane-html .npr-section .section-title { font-family: var(--font-display); font-size: var(--text-md); font-weight: var(--fw-semibold); color: var(--text-strong); margin-bottom: 2px; }
+#term-pane-html .npr-section .section-description { font-family: var(--font-sans); font-size: var(--text-xs); color: var(--text-muted); }
+
+#term-pane-html .npr-insights { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: var(--space-3); }
+#term-pane-html .insight-card { background: var(--surface-sunken); border: 1px solid var(--border-subtle); border-left: 3px solid var(--brand-accent); border-radius: var(--radius-sm); padding: var(--space-3); }
+#term-pane-html .npr-icon { display: inline-block; width: 1em; height: 1em; vertical-align: -0.125em; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+#term-pane-html .insight-icon { display: block; width: 18px; height: 18px; margin-bottom: var(--space-1); color: var(--brand-accent); }
+#term-pane-html .insight-title { font-family: var(--font-mono); font-size: 0.56rem; text-transform: uppercase; letter-spacing: var(--tracking-wide); color: var(--text-muted); font-weight: var(--fw-medium); margin-bottom: 2px; }
+#term-pane-html .insight-value { font-family: var(--font-display); font-size: var(--text-md); font-weight: var(--fw-bold); color: var(--text-strong); }
+#term-pane-html .insight-subtitle { font-family: var(--font-sans); font-size: 0.6rem; color: var(--text-muted); }
+
+#term-pane-html .npr-graph { position: relative; height: 240px; border: 1px solid var(--border-default); border-radius: var(--radius-md); background: var(--surface-card); margin-bottom: var(--space-4); overflow: hidden; }
+#term-pane-html .npr-graph__lines { position: absolute; inset: 0; width: 100%; height: 100%; }
+#term-pane-html .npr-graph__lines line { stroke: var(--border-strong); stroke-width: 1; }
+#term-pane-html .npr-node { position: absolute; transform: translate(-50%, -50%); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--eng-blue-400); box-shadow: var(--shadow-sm); z-index: 1; }
+#term-pane-html .npr-node .npr-icon { width: 14px; height: 14px; color: #fff; }
+#term-pane-html .npr-node--root { width: 42px; height: 42px; background: var(--gradient-ocean); z-index: 2; }
+#term-pane-html .npr-node--root .npr-icon { width: 19px; height: 19px; }
+#term-pane-html .npr-node__badge { position: absolute; top: -6px; right: -8px; background: var(--grc-orange-500); color: #1a1208; font-family: var(--font-mono); font-size: 0.55rem; font-weight: var(--fw-bold); padding: 1px 5px; border-radius: var(--radius-pill); }
+#term-pane-html .npr-node__label { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 4px; font-family: var(--font-mono); font-size: 0.55rem; color: var(--text-muted); white-space: nowrap; }
+#term-pane-html .npr-node--more { width: auto; height: auto; border-radius: var(--radius-pill); background: var(--surface-inset); border: 1px dashed var(--border-strong); color: var(--text-muted); font-family: var(--font-mono); font-size: 0.6rem; padding: 4px 10px; z-index: 1; box-shadow: none; }
+
+#term-pane-html .legend { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); margin-top: var(--space-3); }
+#term-pane-html .legend-item { display: flex; align-items: center; gap: 6px; font-family: var(--font-sans); font-size: 0.65rem; color: var(--text-body); }
+#term-pane-html .legend-color { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+#term-pane-html .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border-default); margin-bottom: var(--space-3); }
+#term-pane-html .tab { padding: var(--space-2) var(--space-3); border: none; background: none; font-family: var(--font-sans); font-weight: var(--fw-medium); font-size: 0.7rem; color: var(--text-muted); border-bottom: 2px solid transparent; }
+#term-pane-html .tab.active { color: var(--brand-accent); border-bottom-color: var(--brand-accent); }
+
+#term-pane-html .npr-toolbar { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3); flex-wrap: wrap; }
+#term-pane-html .search-box { flex: 1; min-width: 140px; height: 30px; padding: 0 var(--space-3); border: 1px solid var(--border-default); border-radius: var(--radius-sm); font-family: var(--font-sans); font-size: 0.7rem; color: var(--text-body); background: var(--surface-card); }
+#term-pane-html .search-box::placeholder { color: var(--text-muted); }
+#term-pane-html .export-btn { display: inline-flex; align-items: center; gap: 4px; height: 30px; padding: 0 var(--space-3); background: var(--brand-accent); color: #fff; border: none; border-radius: var(--radius-sm); font-family: var(--font-sans); font-size: 0.68rem; font-weight: var(--fw-medium); white-space: nowrap; }
+
+#term-pane-html .filters { display: flex; gap: var(--space-3); margin-bottom: var(--space-3); flex-wrap: wrap; }
+#term-pane-html .filter-group { display: flex; flex-direction: column; gap: 2px; }
+#term-pane-html .filter-label { font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--text-muted); }
+#term-pane-html .filter-select { height: 26px; padding: 0 var(--space-2); border: 1px solid var(--border-default); border-radius: var(--radius-sm); font-family: var(--font-sans); font-size: 0.68rem; color: var(--text-body); background: var(--surface-card); }
+
+#term-pane-html .table-container { overflow-x: auto; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); }
+#term-pane-html .data-table { width: 100%; min-width: 620px; border-collapse: collapse; font-family: var(--font-sans); font-size: 0.68rem; }
+#term-pane-html .data-table th, #term-pane-html .data-table td { padding: 7px 10px; text-align: left; border-bottom: 1px solid var(--border-subtle); white-space: nowrap; }
+#term-pane-html .data-table th { background: var(--surface-sunken); font-family: var(--font-mono); font-size: 0.56rem; font-weight: var(--fw-semibold); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--text-muted); }
+#term-pane-html .data-table td strong { font-family: var(--font-sans); font-weight: var(--fw-semibold); color: var(--text-link); }
+#term-pane-html .data-table td code { font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-body); }
+#term-pane-html .layer-badge, #term-pane-html .record-type-badge { display: inline-block; padding: 1px 8px; border-radius: var(--radius-pill); font-family: var(--font-mono); font-size: 0.58rem; font-weight: var(--fw-medium); white-space: nowrap; border: 1px solid var(--border-default); }
+#term-pane-html .layer-1 { background: var(--eng-blue-50); color: var(--eng-blue-700); border-color: var(--eng-blue-200); }
+#term-pane-html .record-type-badge { background: var(--surface-inset); color: var(--text-body); }
+#term-pane-html .rt-verify { background: var(--status-info-bg); color: var(--status-info-fg); border-color: var(--eng-blue-300); }
+#term-pane-html .rt-spf { background: var(--eng-blue-50); color: var(--eng-blue-700); border-color: var(--eng-blue-200); }
+#term-pane-html .evidence-btn { padding: 3px 9px; border-radius: var(--radius-sm); font-family: var(--font-sans); font-size: 0.6rem; font-weight: var(--fw-medium); border: 1px solid; white-space: nowrap; }
+#term-pane-html .evidence-btn-reveal { background: var(--eng-blue-50); color: var(--eng-blue-700); border-color: var(--eng-blue-200); }
+#term-pane-html .npr-more { margin-top: var(--space-2); font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-muted); text-align: center; }
+
+@media (max-width: 640px) {
+  #term-pane-html .npr-stats { grid-template-columns: repeat(2, 1fr); }
+  #term-pane-html .npr-graph { height: 200px; }
+  #term-pane-html .npr-node__label { display: none; }
+}
 
 /* Install tab menu — OS-aware */
 .np-install-tabs { max-width: 880px; margin: 0 auto; }
@@ -535,31 +606,70 @@ a:hover { color: var(--brand-accent-strong); }
           <button class="np-term__tab" role="tab" aria-selected="false" aria-controls="term-pane-html" id="term-tab-html">report.html</button>
         </div>
         <div class="np-term__body np-term__pane np-term__pane--active" id="term-pane-run" role="tabpanel" aria-labelledby="term-tab-run">
-<span class="t-prompt">$</span> <span class="t-cmd">nthpartyfinder</span> <span class="t-flag">-d</span> <span class="t-val">acme.com</span> <span class="t-flag">--depth</span> <span class="t-val">2</span> <span class="t-flag">-f</span> <span class="t-val">json</span> <span class="t-flag">-o</span> <span class="t-val">acme_vendors.json</span><br>
-<span class="t-out">nthpartyfinder v1.3.0</span><br>
-<span class="t-out">Analyzing domain: acme.com at depth 1</span><br>
-<span class="t-out">Running SaaS tenant discovery for acme.com...</span><br>
-<span class="t-out">Analyzing 8 vendor domains (WHOIS + org lookup)</span><br>
-<span class="t-out">Analyzing vendors (8/8) &mdash; 23 relationships found</span><br>
+<span class="t-prompt">$</span> <span class="t-cmd">nthpartyfinder</span> <span class="t-flag">-d</span> <span class="t-val">acme.com</span> <span class="t-flag">-r</span> <span class="t-val">1</span> <span class="t-flag">-f</span> <span class="t-val">html</span><br>
+<span class="t-out">nthpartyfinder v1.6.1</span><br>
+<span class="t-dim">[09:14:06.988]</span> <span class="t-out">INFO: Parsing arguments...</span><br>
+<span class="t-dim">[09:14:06.992]</span> <span class="t-out">INFO: Checking dependencies...</span><br>
+<span class="t-dim">[09:14:07.002]</span> <span class="t-out">INFO: Vendor registry (218 vendors, 280 domains)</span><br>
+<span class="t-dim">[09:14:07.067]</span> <span class="t-out">INFO: Organization normalizer (threshold: 85%)</span><br>
+<span class="t-dim">[09:14:07.599]</span> <span class="t-out">INFO: NER model loaded (GLiNER ready)</span><br>
+<span class="t-dim">[09:14:07.632]</span> <span class="t-out">INFO: Initialization complete</span><br>
 <br>
-<span class="t-accent">=== Analysis Summary ===</span><br>
-<span class="t-out">Total vendor relationships found:</span> <span class="t-num">23</span><br>
-<span class="t-out">Maximum depth reached:</span> <span class="t-num">2 layers</span><br>
-<span class="t-out">Unique vendor domains:</span> <span class="t-num">14</span><br>
-<span class="t-out">Unique vendor organizations:</span> <span class="t-num">11</span><br>
-<span class="t-out">&nbsp;&nbsp;Layer 1 vendors:</span> <span class="t-val">8</span><br>
-<span class="t-out">&nbsp;&nbsp;Layer 2 vendors:</span> <span class="t-val">6</span><br>
+<span class="t-dim">📁</span> <span class="t-out">Output file will be saved to: ./reports/acme_com/Nth Party Analysis for acme.com.html</span><br>
+<br>
+<span class="t-dim">[09:14:08.910]</span> <span class="t-out">INFO: Starting Nth Party Analysis for domain: acme.com</span><br>
+<span class="t-dim">[09:14:09.733]</span> <span class="t-warn">WARN: Analysis timeout active: 600s. Use --timeout 0 to disable.</span><br>
+<span class="t-dim">[09:14:09.811]</span> <span class="t-out">INFO: DNS lookup successful: 39 TXT records found for acme.com (via DoH/DNS)</span><br>
+<span class="t-dim">[09:14:10.050]</span> <span class="t-out">INFO: Running subdomain discovery via subfinder for acme.com...</span><br>
+<span class="t-dim">[09:14:10.054]</span> <span class="t-out">INFO: Running SaaS tenant discovery for acme.com...</span><br>
+<span class="t-dim">[09:14:10.054]</span> <span class="t-out">INFO: Running webpage source &amp; network request discovery for acme.com...</span><br>
+<span class="t-dim">[09:14:18.633]</span> <span class="t-out">INFO: Found 12 likely/confirmed SaaS tenants for acme.com</span><br>
+<span class="t-dim">[09:14:23.681]</span> <span class="t-out">INFO: Found 48 vendors from webpage analysis for acme.com</span><br>
+<span class="t-dim">[09:14:26.173]</span> <span class="t-out">INFO: Subfinder found 155 subdomains for acme.com</span><br>
+<span class="t-dim">[09:14:28.330]</span> <span class="t-out">INFO: Found 4 vendors from subdomain TXT records, 68 from CNAME infrastructure for acme.com</span><br>
+<span class="t-dim">[09:14:38.664]</span> <span class="t-out">INFO: Subprocessor analysis: 38 additional vendors found for acme.com</span><br>
+<span class="t-dim">[09:14:38.665]</span> <span class="t-out">INFO: Processing 198 domains at depth 1 (parallel execution)</span><br>
+<span class="t-dim">[09:14:54.199]</span> <span class="t-out">INFO: Parallel processing completed: 5096 relationships established</span><br>
+<span class="t-dim">[09:14:54.206]</span> <span class="t-out">INFO: 196 raw relationships deduplicated to 135 unique</span><br>
+<span class="t-dim">[09:14:54.206]</span> <span class="t-out">INFO: Filtered 6 common infra provider entries (use --include-infra to include)</span><br>
+<span class="t-dim">[09:14:54.206]</span> <span class="t-out">INFO: Suppressed 4 social/ad-network marketing-tracking entries</span><br>
+<span class="t-dim">[09:14:54.208]</span> <span class="t-out">INFO: Export completed: ./reports/acme_com/Nth Party Analysis for acme.com.html</span><br>
+<br>
+<span class="t-accent">── unverified organization names ──</span><br>
+<span class="t-out">Inferred from domain name &mdash; WHOIS unavailable or privacy-protected.</span><br>
+<span class="t-out">&nbsp;[1] greenhouse-mail.io &rarr; "Greenhouse-mail"</span><br>
+<span class="t-out">&nbsp;[2] segmentio-cdn.com &rarr; "Segmentio-cdn"</span><br>
+<span class="t-out">&nbsp;[3] statuspage-embed.io &rarr; "Statuspage-embed"</span><br>
+<span class="t-out">&nbsp;[4] typeform-forms.co &rarr; "Typeform-forms"</span><br>
+<span class="t-out">&hellip; and 45 more</span><br>
+<span class="t-out">Your choice (A/R/S):</span> <span class="t-val">S</span><br>
+<span class="t-dim">Skipped &mdash; using inferred organization names (not saved)</span><br>
+<br>
+<span class="t-accent">── discovery coverage ──</span><br>
+<span class="t-out">subprocessor&nbsp;&nbsp;on by default &mdash; 38 found, 0 failed</span><br>
+<span class="t-out">subdomain&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;on by default &mdash; 72 found, 0 failed</span><br>
+<span class="t-out">saas-tenant&nbsp;&nbsp;&nbsp;&nbsp;on by default &mdash; 12 found, 0 failed</span><br>
+<span class="t-out">ct-logs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;disabled (enable with --enable-ct-discovery)</span><br>
+<span class="t-out">web-traffic&nbsp;&nbsp;&nbsp;&nbsp;on by default &mdash; 48 found, 0 failed</span><br>
+<br>
+<span class="t-accent">=== ANALYSIS SUMMARY ===</span><br>
+<span class="t-out">Analysis Duration:</span> <span class="t-num">47.20s</span><br>
+<span class="t-out">DNS Resolution Method:</span> <span class="t-val">DoH/DNS</span><br>
+<span class="t-out">TXT Records Found:</span> <span class="t-num">39</span><br>
+<span class="t-out">Vendor Relationships:</span> <span class="t-num">125</span><br>
+<span class="t-out">Unique Vendors:</span> <span class="t-num">105</span><br>
+<span class="t-out">Maximum Depth:</span> <span class="t-num">1</span><br>
 <span class="t-accent">========================</span><br>
 <br>
-<span class="t-ok"><span class="material-symbols-outlined" style="color:#4FD396;font-size:15px;">check_circle</span> Exported 23 relationships &rarr; acme_vendors.json</span>
+<span class="t-ok"><span class="material-symbols-outlined" style="color:#4FD396;font-size:15px;">check_circle</span> SUCCESS: Analysis completed successfully! Found 125 vendor relationships.</span>
         </div>
         <div class="np-term__body np-term__pane" id="term-pane-json" role="tabpanel" aria-labelledby="term-tab-json" hidden>
 <pre class="np-term__json">{
   <span class="j-key">"summary"</span>: {
-    <span class="j-key">"total_relationships"</span>: <span class="t-num">23</span>,
-    <span class="j-key">"max_depth"</span>: <span class="t-num">2</span>,
-    <span class="j-key">"unique_domains"</span>: <span class="t-num">14</span>,
-    <span class="j-key">"unique_organizations"</span>: <span class="t-num">11</span>
+    <span class="j-key">"total_relationships"</span>: <span class="t-num">125</span>,
+    <span class="j-key">"max_depth"</span>: <span class="t-num">1</span>,
+    <span class="j-key">"unique_domains"</span>: <span class="t-num">118</span>,
+    <span class="j-key">"unique_organizations"</span>: <span class="t-num">105</span>
   },
   <span class="j-key">"relationships"</span>: [
     {
@@ -578,29 +688,188 @@ a:hover { color: var(--brand-accent-strong); }
       <span class="j-key">"nth_party_record_type"</span>: <span class="j-str">"DISCOVERY::SAAS_TENANT"</span>,
       <span class="j-key">"evidence"</span>: <span class="j-str">"acme.okta.com resolves (tenant probe)"</span>
     },
-    <span class="t-out">&hellip; 21 more &mdash; every edge carries its evidence</span>
+    <span class="t-out">&hellip; 123 more &mdash; every edge carries its evidence</span>
   ]
 }</pre>
         </div>
         <div class="np-term__body np-term__pane" id="term-pane-html" role="tabpanel" aria-labelledby="term-tab-html" hidden>
           <div class="np-report">
-            <div class="np-report__head">
-              <span class="np-report__title">Nth Party Analysis for acme.com</span>
-              <span class="np-report__stats"><b>23</b> relationships · <b>14</b> domains · depth <b>2</b></span>
+            <!-- Inline icon sprite, scoped to this mockup only — mirrors the real report's own
+                 technique (Lucide icons embedded offline, no CDN font) rather than relying on
+                 the page's Google-Fonts Material Symbols, which can fail to load. -->
+            <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+              <symbol id="npr-ic-trophy" viewBox="0 0 24 24"><path d="M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978" /><path d="M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978" /><path d="M18 9h1.5a1 1 0 0 0 0-5H18" /><path d="M4 22h16" /><path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z" /><path d="M6 9H4.5a1 1 0 0 1 0-5H6" /></symbol>
+              <symbol id="npr-ic-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></symbol>
+              <symbol id="npr-ic-mail" viewBox="0 0 24 24"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" /><rect x="2" y="4" width="20" height="16" rx="2" /></symbol>
+              <symbol id="npr-ic-circle-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" /></symbol>
+              <symbol id="npr-ic-building-2" viewBox="0 0 24 24"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z" /><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2" /><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2" /><path d="M10 6h4" /><path d="M10 10h4" /><path d="M10 14h4" /><path d="M10 18h4" /></symbol>
+              <symbol id="npr-ic-download" viewBox="0 0 24 24"><path d="M12 15V3" /><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="m7 10 5 5 5-5" /></symbol>
+            </svg>
+            <div class="npr-hero">
+              <span class="npr-eyebrow">Nth-Party Discovery &middot; Vendor Graph</span>
+              <h3 class="npr-title">Nth Party Analysis Report</h3>
+              <p class="npr-subtitle">Vendor relationship discovery &amp; risk assessment</p>
+              <hr class="npr-rule" aria-hidden="true">
+              <div class="npr-domain">
+                <strong>acme.com</strong> (Acme Inc)
+                <div class="npr-domain__meta">Generated 2026&#8209;01&#8209;14 09:15:22 UTC</div>
+              </div>
             </div>
-            <div class="np-report__band np-report__band--root">
-              <span class="np-report__label">Root</span>
-              <span class="np-report__node np-report__node--root">acme.com</span>
+
+            <div class="npr-stats">
+              <div class="stat-card"><div class="stat-value">125</div><div class="stat-label">Total Relationships</div></div>
+              <div class="stat-card"><div class="stat-value">1</div><div class="stat-label">Maximum Depth</div></div>
+              <div class="stat-card"><div class="stat-value">118</div><div class="stat-label">Unique Domains</div></div>
+              <div class="stat-card"><div class="stat-value">105</div><div class="stat-label">Unique Orgs</div></div>
             </div>
-            <div class="np-report__band">
-              <span class="np-report__label">Layer 1 · 3rd parties</span>
-              <span class="np-report__node">sendgrid.net</span><span class="np-report__node">okta.com</span><span class="np-report__node">stripe.com</span><span class="np-report__node np-report__node--more">+5</span>
+
+            <div class="npr-section">
+              <div class="npr-section__head">
+                <div class="section-title">Analysis Insights</div>
+                <div class="section-description">Key findings from vendor relationship analysis</div>
+              </div>
+              <div class="npr-insights">
+                <div class="insight-card">
+                  <svg class="insight-icon npr-icon" aria-hidden="true"><use href="#npr-ic-trophy"></use></svg>
+                  <div class="insight-title">Most Common Vendor</div>
+                  <div class="insight-value">HubSpot</div>
+                  <div class="insight-subtitle">7 relationships</div>
+                </div>
+                <div class="insight-card">
+                  <svg class="insight-icon npr-icon" aria-hidden="true"><use href="#npr-ic-link"></use></svg>
+                  <div class="insight-title">Deepest Chain</div>
+                  <div class="insight-value">1 layer</div>
+                  <div class="insight-subtitle">125 vendors at this depth</div>
+                </div>
+                <div class="insight-card">
+                  <svg class="insight-icon npr-icon" aria-hidden="true"><use href="#npr-ic-mail"></use></svg>
+                  <div class="insight-title">Email Providers</div>
+                  <div class="insight-value">4</div>
+                  <div class="insight-subtitle">Unique SPF domains</div>
+                </div>
+                <div class="insight-card">
+                  <svg class="insight-icon npr-icon" aria-hidden="true"><use href="#npr-ic-circle-check"></use></svg>
+                  <div class="insight-title">Verified Services</div>
+                  <div class="insight-value">11</div>
+                  <div class="insight-subtitle">Domain verifications</div>
+                </div>
+                <div class="insight-card">
+                  <svg class="insight-icon npr-icon" aria-hidden="true"><use href="#npr-ic-building-2"></use></svg>
+                  <div class="insight-title">Subprocessors</div>
+                  <div class="insight-value">38</div>
+                  <div class="insight-subtitle">From subprocessor pages</div>
+                </div>
+              </div>
             </div>
-            <div class="np-report__band">
-              <span class="np-report__label">Layer 2 · 4th parties</span>
-              <span class="np-report__node">twilio.com</span><span class="np-report__node">auth0.com</span><span class="np-report__node np-report__node--more">+4</span>
+
+            <div class="npr-section">
+              <div class="npr-section__head">
+                <div class="section-title">Interactive Vendor Relationship Graph</div>
+                <div class="section-description">Click nodes to expand and explore. Drag to pan, scroll to zoom.</div>
+              </div>
+              <div class="npr-graph" role="img" aria-label="Radial graph: acme.com at the center, connected to 8 direct vendors plus 117 more">
+                <svg class="npr-graph__lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                  <line x1="50" y1="50" x2="50" y2="12"></line>
+                  <line x1="50" y1="50" x2="74" y2="22"></line>
+                  <line x1="50" y1="50" x2="86" y2="50"></line>
+                  <line x1="50" y1="50" x2="74" y2="78"></line>
+                  <line x1="50" y1="50" x2="50" y2="88"></line>
+                  <line x1="50" y1="50" x2="26" y2="78"></line>
+                  <line x1="50" y1="50" x2="14" y2="50"></line>
+                  <line x1="50" y1="50" x2="26" y2="22"></line>
+                </svg>
+                <div class="npr-node npr-node--root" style="left:50%;top:50%" aria-hidden="true">
+                  <svg class="npr-icon" aria-hidden="true"><use href="#npr-ic-building-2"></use></svg>
+                  <span class="npr-node__badge">118</span>
+                  <span class="npr-node__label">acme.com</span>
+                </div>
+                <div class="npr-node" style="left:50%;top:12%" aria-hidden="true"><svg class="npr-icon" aria-hidden="true"><use href="#npr-ic-building-2"></use></svg><span class="npr-node__label">apple.com</span></div>
+                <div class="npr-node" style="left:74%;top:22%" aria-hidden="true"><svg class="npr-icon" aria-hidden="true"><use href="#npr-ic-building-2"></use></svg><span class="npr-node__label">openai.com</span></div>
+                <div class="npr-node" style="left:86%;top:50%" aria-hidden="true"><svg class="npr-icon" aria-hidden="true"><use href="#npr-ic-building-2"></use></svg><span class="npr-node__label">atlassian.com</span></div>
+                <div class="npr-node" style="left:74%;top:78%" aria-hidden="true"><svg class="npr-icon" aria-hidden="true"><use href="#npr-ic-building-2"></use></svg><span class="npr-node__label">canva.com</span></div>
+                <div class="npr-node" style="left:50%;top:88%" aria-hidden="true"><svg class="npr-icon" aria-hidden="true"><use href="#npr-ic-building-2"></use></svg><span class="npr-node__label">docusign.com</span></div>
+                <div class="npr-node" style="left:26%;top:78%" aria-hidden="true"><svg class="npr-icon" aria-hidden="true"><use href="#npr-ic-building-2"></use></svg><span class="npr-node__label">hubspot.com</span></div>
+                <div class="npr-node" style="left:14%;top:50%" aria-hidden="true"><svg class="npr-icon" aria-hidden="true"><use href="#npr-ic-building-2"></use></svg><span class="npr-node__label">cursor.com</span></div>
+                <div class="npr-node" style="left:26%;top:22%" aria-hidden="true"><svg class="npr-icon" aria-hidden="true"><use href="#npr-ic-building-2"></use></svg><span class="npr-node__label">jamf.com</span></div>
+                <div class="npr-node npr-node--more" style="left:50%;top:68%" aria-hidden="true">+ 117 more</div>
+              </div>
+              <div class="legend">
+                <div class="legend-item"><div class="legend-color" style="background:var(--gradient-ocean)"></div>Root Domain (you)</div>
+                <div class="legend-item"><div class="legend-color" style="background:var(--eng-blue-400)"></div>Layer 1 &mdash; Direct Vendors</div>
+                <div class="legend-item"><div class="legend-color" style="background:var(--eng-blue-800)"></div>Layer 2 &mdash; Sub-processors</div>
+                <div class="legend-item"><div class="legend-color" style="background:var(--amber-500)"></div>Layer 3 &mdash; Nth Parties</div>
+                <div class="legend-item"><div class="legend-color" style="background:var(--grc-orange-700)"></div>Layer 4+ &mdash; Deeper Nth Parties</div>
+              </div>
             </div>
-            <p class="np-report__note">Interactive, zoomable vendor graph &mdash; generated with <span class="t-flag">-f html</span></p>
+
+            <div class="npr-section">
+              <div class="npr-section__head">
+                <div class="section-title">Vendor Relationships Data</div>
+                <div class="section-description">Sortable, searchable table of all discovered vendor relationships</div>
+              </div>
+              <div class="tabs" role="tablist" aria-label="Data view tabs (preview)">
+                <button class="tab active" type="button" tabindex="-1">All Relationships</button>
+                <button class="tab" type="button" tabindex="-1">Summary by Organization</button>
+              </div>
+              <div class="npr-toolbar">
+                <input class="search-box" type="text" placeholder="Search all relationships&hellip;" aria-label="Search (preview)" disabled>
+                <button class="export-btn" type="button" tabindex="-1"><svg class="npr-icon" style="width:14px;height:14px" aria-hidden="true"><use href="#npr-ic-download"></use></svg> Export CSV</button>
+              </div>
+              <div class="filters">
+                <div class="filter-group"><label class="filter-label">Layer</label><select class="filter-select" disabled><option>All Layers</option></select></div>
+                <div class="filter-group"><label class="filter-label">Discovery Source</label><select class="filter-select" disabled><option>All Sources</option></select></div>
+              </div>
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr><th>Vendor Domain</th><th>Organization</th><th>Layer</th><th>Discovery Source</th><th>Customer</th><th>Record Value</th><th>Evidence</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>apple.com</strong></td><td>Apple</td>
+                      <td><span class="layer-badge layer-1">Layer 1</span></td>
+                      <td><span class="record-type-badge rt-verify">Domain Verification</span></td>
+                      <td>acme.com</td>
+                      <td><code>apple-domain-verification=k3Jm8&hellip;</code></td>
+                      <td class="evidence-cell"><button class="evidence-btn evidence-btn-reveal" type="button" tabindex="-1">Show</button></td>
+                    </tr>
+                    <tr>
+                      <td><strong>hubspot.com</strong></td><td>HubSpot</td>
+                      <td><span class="layer-badge layer-1">Layer 1</span></td>
+                      <td><span class="record-type-badge rt-verify">Domain Verification</span></td>
+                      <td>acme.com</td>
+                      <td><code>hubspot-domain-verification=NGNj&hellip;</code></td>
+                      <td class="evidence-cell"><button class="evidence-btn evidence-btn-reveal" type="button" tabindex="-1">Show</button></td>
+                    </tr>
+                    <tr>
+                      <td><strong>slack.com</strong></td><td>Slack Technologies</td>
+                      <td><span class="layer-badge layer-1">Layer 1</span></td>
+                      <td><span class="record-type-badge rt-spf">Email Provider (SPF)</span></td>
+                      <td>acme.com</td>
+                      <td><code>v=spf1 include:_spf.slack.com&hellip;</code></td>
+                      <td class="evidence-cell"><button class="evidence-btn evidence-btn-reveal" type="button" tabindex="-1">Show</button></td>
+                    </tr>
+                    <tr>
+                      <td><strong>stripe.com</strong></td><td>Stripe</td>
+                      <td><span class="layer-badge layer-1">Layer 1</span></td>
+                      <td><span class="record-type-badge rt-verify">Domain Verification</span></td>
+                      <td>acme.com</td>
+                      <td><code>stripe-verification=7ac5d&hellip;</code></td>
+                      <td class="evidence-cell"><button class="evidence-btn evidence-btn-reveal" type="button" tabindex="-1">Show</button></td>
+                    </tr>
+                    <tr>
+                      <td><strong>docusign.com</strong></td><td>DocuSign</td>
+                      <td><span class="layer-badge layer-1">Layer 1</span></td>
+                      <td><span class="record-type-badge rt-verify">Domain Verification</span></td>
+                      <td>acme.com</td>
+                      <td><code>docusign=3eb6d&hellip;</code></td>
+                      <td class="evidence-cell"><button class="evidence-btn evidence-btn-reveal" type="button" tabindex="-1">Show</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="npr-more">Showing 5 of 125 relationships</p>
+            </div>
           </div>
         </div>
       </div>
