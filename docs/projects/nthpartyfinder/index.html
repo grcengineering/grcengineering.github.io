@@ -622,14 +622,11 @@ a:hover { color: var(--brand-accent-strong); }
 
 <!-- HERO -->
 <header class="np-hero" id="top">
-  <!-- data-speed="0" pins the engine's documented "Still" mode: a fixed 3/4 camera
-       view that never yaws/sways. Verified live (2026-08-02): what read as the
-       constellation "resetting" on tab clicks was actually the PREVIOUS speed="1"
-       continuous slow orbit — over the several real seconds a user spends reading
-       and clicking, the camera visibly rotates, even though the cloud itself never
-       regenerates (confirmed via stats.builds/getBoundingClientRect instrumentation
-       staying constant across tab switches). Freezing the camera is the fix. -->
-  <div class="grc-nodegraph" data-grc-nodegraph data-palette="spectrum" data-density="0.6" data-max-nodes="48" data-min-nodes="36" data-zoom="0.5" data-link-distance="210" data-link-opacity="0.9" data-speed="0" data-fps="60" data-theme="dark" aria-hidden="true"></div>
+  <!-- data-speed="1" (the engine default): a slow continuous camera orbit around
+       the stationary constellation (~1.7deg/sec — a full revolution takes ~3.5min).
+       The cloud itself never regenerates on tab switches (confirmed via the
+       engine's own stats.builds counter staying constant); only the camera moves. -->
+  <div class="grc-nodegraph" data-grc-nodegraph data-palette="spectrum" data-density="0.6" data-max-nodes="48" data-min-nodes="36" data-zoom="0.5" data-link-distance="210" data-link-opacity="0.9" data-speed="1" data-fps="60" data-theme="dark" aria-hidden="true"></div>
   <div class="np-hero__glow"></div>
   <div class="np-hero__grid"></div>
   <div class="np-container">
