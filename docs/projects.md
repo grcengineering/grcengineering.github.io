@@ -71,19 +71,38 @@
 ## GigaChad GRC
 
 <div style="background: linear-gradient(135deg, #C41E3A 0%, #9C27B0 100%); color: white; padding: 30px; border-radius: 12px; margin: 20px 0;">
-  <h3 style="color: white; margin-top: 0;">GRC Engineering Automation Framework</h3>
-  <p style="font-size: 16px; margin-bottom: 20px;">A powerful framework for automating governance, risk, and compliance workflows - completely free and open source.</p>
+  <h3 style="color: white; margin-top: 0;">Open Source GRC Engineering Platform</h3>
+  <p style="font-size: 16px; margin-bottom: 20px;">A comprehensive, enterprise-grade GRC automation platform built by practitioners, for practitioners. Designed to bring trust and transparency to the same level of visibility as governance, risk, and compliance - completely free and open source.</p>
   <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-    <a href="https://github.com/grcengineering/gigachad-grc" target="_blank" rel="noopener noreferrer" style="background: white; color: #C41E3A; padding: 12px 32px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 16px; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(196,30,58,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';">View Project 🚀</a>
+    <a href="https://github.com/grcengineering/gigachad-grc" target="_blank" rel="noopener noreferrer" style="background: white; color: #C41E3A; padding: 12px 32px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 16px; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(196,30,58,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';">View on GitHub</a>
   </div>
 </div>
 
-**Features:**
+**Core Modules:**
 
-- **Automation-First**: Streamline repetitive GRC tasks and workflows
-- **Open Source**: Fully transparent and customizable to your needs
-- **Modern Architecture**: Built with best practices for reliability and scalability
-- **Community-Driven**: Collaborate with GRC professionals to build better tools
+| Module | Capabilities |
+|--------|--------------|
+| **Controls** | Control management, evidence collection, control testing workflows |
+| **Frameworks** | Framework assessments, risk register, risk scenarios, risk treatments |
+| **Policies** | Policy lifecycle management, version control, approval workflows |
+| **TPRM** | Third-party risk management, vendor assessments, contract lifecycle |
+| **Trust** | Security questionnaires, knowledge base, customer-facing Trust Center |
+| **Audit** | Audit orchestration, evidence requests, findings management, auditor portal |
+
+**Architecture:**
+
+- **Microservices**: Each module runs independently with its own API and Swagger documentation
+- **Modern Stack**: TypeScript, React, PostgreSQL, Redis, Keycloak SSO
+- **API-First**: RESTful APIs enable integration with existing workflows
+- **S3-Compatible Storage**: RustFS for scalable evidence and document storage
+- **Infrastructure as Code**: Terraform configurations for cloud deployment
+
+**Built Different:**
+
+- **AI Pair Programmed**: Developed using AI-assisted coding, demonstrating that practitioners can build sophisticated platforms without large engineering teams
+- **Trust Transparency Mission**: Designed to bring trust and assurance to the same level of visibility that exists for GRC
+- **Practitioner-First**: Built by someone who uses GRC tools daily, not by vendors who don't
+- **Elastic License 2.0**: Free for internal use, self-hosting, and contributions
 
 **Developer:** [Chad Fryer](https://www.linkedin.com/in/c-fryer/)
 

@@ -44,9 +44,27 @@ This manifesto defines what we see as the foundational problems with Legacy GRC,
 
 ??? warning "Commoditization of compliance"
     
-    While the advent of compliance automation products and low-cost audits have boosted GRC’s efficiency, the same cannot be said about the impact they’ve had on GRC’s effectiveness. In other words: automating and streamlining Legacy GRC practices simply results in producing low-value outcomes faster. In this context, GRC is largely, if not entirely, valued as a sales enabler or a “cover-your-ass” necessity rather than as foundational for having strong security and privacy practices that sustainably improve organizational outcomes and customer value.
+    While the advent of compliance automation products and low-cost audits have boosted GRC's efficiency, the same cannot be said about the impact they've had on GRC's effectiveness. In other words: automating and streamlining Legacy GRC practices simply results in producing low-value outcomes faster. In this context, GRC is largely, if not entirely, valued as a sales enabler or a "cover-your-ass" necessity rather than as foundational for having strong security and privacy practices that sustainably improve organizational outcomes and customer value.
 
-    **For example**: SOC 2 Type II audits are notorious for being inherently open ended “tests” of an organization's controls. In cases where a low cost audit provider is used, it can be akin to a student writing both the questions and answer key for an exam, providing that to the teacher, and the teacher grading their answers accordingly. Organizations have long been incentivized to pass their audits with no findings so as to not disrupt sales. Audit providers have been incentivized to be “flexible” to ensure their customers are happily provided a passing audit and keep giving them their business. Vendor due diligence teams are pressured to approve vendors and accept industry standard audit results without much, if any, additional scrutiny, treating it as a “rigorous” examination of an organization’s controls. New GRC automation products merely speed up this perversely incentivized cycle without creating stronger incentives to improve controls beyond checkbox compliance.
+    **For example**: SOC 2 Type II audits are notorious for being inherently open ended "tests" of an organization's controls. In cases where a low cost audit provider is used, it can be akin to a student writing both the questions and answer key for an exam, providing that to the teacher, and the teacher grading their answers accordingly. Organizations have long been incentivized to pass their audits with no findings so as to not disrupt sales. Audit providers have been incentivized to be "flexible" to ensure their customers are happily provided a passing audit and keep giving them their business. Vendor due diligence teams are pressured to approve vendors and accept industry standard audit results without much, if any, additional scrutiny, treating it as a "rigorous" examination of an organization's controls. New GRC automation products merely speed up this perversely incentivized cycle without creating stronger incentives to improve controls beyond checkbox compliance.
+
+??? warning "External stakeholders treated as afterthought"
+
+    Legacy GRC programs focus almost entirely on internal compliance workflows while treating external transparency as an afterthought—typically a static PDF or marketing page. Customers and prospects are forced to submit vendor questionnaires and wait days or weeks for responses that GRC teams manually compile. This creates friction in sales cycles, duplicates effort across customer requests, and misses opportunities to build trust through proactive transparency.
+
+    **For example**: responding to the same security questionnaire questions hundreds of times per year, with each response requiring manual effort to gather current evidence, rather than maintaining a continuously updated, self-service Trust Center where customers can access current compliance documentation, certifications, and security practices on-demand. This wastes GRC team time on repetitive work instead of focusing on improving actual security posture.
+
+??? warning "Prohibitive cost barriers to modern GRC tools"
+
+    Commercial GRC platforms often cost $50,000-$500,000+ annually, creating a paradox where organizations that most need help maturing their GRC practices (smaller companies, early-stage startups, under-resourced teams) cannot afford the tools that could help them. This cost barrier forces practitioners back into spreadsheets and manual processes—the very problems that GRC automation was meant to solve. The result is a two-tier system where only well-funded organizations can access modern GRC tooling.
+
+    **For example**: an early-stage SaaS company needing to achieve SOC 2 compliance to close enterprise deals but unable to justify $100K+ for a commercial GRC platform, forcing them to manage their entire compliance program through Google Sheets, email threads, and hope. This creates unnecessary risk, audit challenges, and practitioner burnout—all solvable problems if tooling were accessible.
+
+??? warning "AI as an untapped force multiplier"
+
+    The GRC community has been slow to recognize how AI and large language models can dramatically accelerate solution development and amplify practitioner effectiveness. AI pair programming now enables individual practitioners to build sophisticated platforms that previously would have required full engineering teams and months of development time. Meanwhile, AI-assisted workflows can help with policy drafting, control mapping, risk analysis, and evidence synthesis—yet most GRC programs remain entirely manual or reliant on traditional automation that requires significant engineering resources to implement.
+
+    **For example**: a GRC practitioner using AI pair programming to build a custom compliance automation platform in weeks rather than hiring a development team for months, or using LLMs to draft initial policy language based on framework requirements and organizational context, then refining it with practitioner expertise. These capabilities exist today but are largely unexplored in GRC, while other domains like software engineering and security research have already integrated AI as a standard part of their workflow.
 
 ## Values
 _A value is something that has relative worth, merit, or importance. That is, while there is value in the items on the right, we value the items on the left more._
@@ -59,6 +77,10 @@ _A value is something that has relative worth, merit, or importance. That is, wh
 6. **Stakeholder-centric UX** over building what works best for GRC teams
 7. **Shared fate partnerships** over transactional relationships
 8. **Open source practitioner-developed solutions** over closed source vendor and industry organization paradigms
+9. **AI-augmented practitioners** over traditional development cycles
+10. **API-first architecture** over siloed GRC platforms
+11. **Structured programmatic evidence** over manual artifacts
+12. **External transparency** over security through obscurity
 
 
 ## Principles
@@ -72,6 +94,8 @@ _A principle describes a fundamental truth of GRC Engineering that enables effic
 
     When working together in an open, collaborative, and welcoming community, GRC practitioners – more so than vendors, government agencies, and industry organizations – are in a prime position to define and build the best solutions to the problems they face on a regular basis. Building *and* using solutions for your own problems creates an immediate feedback loop that allows for faster and more intelligent iteration around feature development, UI/UX enhancements, and defect resolution. We have seen this be the case with best-in-class open source security solutions that have been developed by practitioners across other security domains over the years: [Metasploit](https://github.com/rapid7/metasploit-framework) for offensive security, [osquery](https://github.com/osquery/osquery) for endpoint security, [Trufflehog](https://github.com/trufflesecurity/trufflehog) for credential security, [Velociraptor](https://github.com/Velocidex/velociraptor) for threat hunting, etc. We can and should do the same for GRC tools, concepts, and frameworks.
 
+    We are seeing this emerge in GRC with projects like [GigaChad GRC](https://github.com/grcengineering/gigachad-grc), an open source compliance platform built by a practitioner using AI pair programming. It demonstrates how modern development techniques enable individual GRC professionals to create sophisticated solutions—including risk registers, control frameworks, evidence collection, and Trust Centers—that would have required full engineering teams in the past. This represents a step-change in what's possible for practitioner-developed tooling.
+
 ??? success "GRC as a product"
 
     When treated as a product as opposed to a service, GRC provides demonstrably beneficial business, mission, security, and assurance outcomes - beyond GRC’s primary use cases. For example: data collected through continuous control monitoring could be used by partner teams to solve other tangentially-related problems; user access review data helping system owners proactively maintain better security hygiene beyond what is expected from a compliance programs. 
@@ -82,15 +106,84 @@ _A principle describes a fundamental truth of GRC Engineering that enables effic
 
 ??? success "Systems thinking + design thinking"
 
-    Before trying to solve problems, it's essential to clearly identify the underlying root causes of them, understand how those root causes manifest symptomatically, and what people’s experiences are when dealing with them. [Systems thinking](https://en.m.wikipedia.org/wiki/Systems_thinking) allows us to more effectively do this by understanding problems in a more holistic context of an overarching system, i.e. things that interact and interrelate in ways that produce patterns of behaviors. Systems thinking can substantially augment GRC activities such as risk identification, analysis, and assessment; control design, monitoring, and testing; governance and process engineering; etc. 
+    Before trying to solve problems, it's essential to clearly identify the underlying root causes of them, understand how those root causes manifest symptomatically, and what people's experiences are when dealing with them. [Systems thinking](https://en.m.wikipedia.org/wiki/Systems_thinking) allows us to more effectively do this by understanding problems in a more holistic context of an overarching system, i.e. things that interact and interrelate in ways that produce patterns of behaviors. Systems thinking can substantially augment GRC activities such as risk identification, analysis, and assessment; control design, monitoring, and testing; governance and process engineering; etc. 
 
     When combined with systems thinking, [design thinking](https://en.m.wikipedia.org/wiki/Design_thinking) allows us to ideate and implement highly effective solutions in ways that
 
-    - empathetically account for stakeholders’ experiences and needs
+    - empathetically account for stakeholders' experiences and needs
     - embrace participatory approaches to solution development; and 
     - emphasize rapid prototyping and frequent solution iteration to incrementally deliver value to stakeholders, early on and often
 
     Synthesizing these two thinking styles can unlock new levels of efficiency and effectiveness for any GRC program.
+
+??? success "Evidence architecture and observability"
+
+    Modern security tooling provides APIs that can be programmatically queried for compliance evidence. Rather than asking stakeholders for quarterly screenshots or manually reviewing access logs, GRC Engineering embraces continuous, API-driven evidence collection that provides real-time compliance posture monitoring. This approach enables:
+
+    - Automated evidence gathering from identity providers, EDR platforms, ticketing systems, cloud infrastructure, and SIEMs
+    - Continuous monitoring with alerting on control deviations rather than quarterly/annual point-in-time checks
+    - Trend analysis and metrics that demonstrate control effectiveness over time
+    - Reduced burden on stakeholders who no longer need to compile evidence manually
+
+    This shifts GRC from periodic retrospective auditing to continuous observability of the security and compliance environment.
+
+    Instead of emailing IT administrators quarterly to request screenshots of MFA enforcement settings (complete with visible system clocks), programmatically query your identity provider's API to continuously monitor MFA adoption rates, alert immediately when MFA enforcement policies are weakened or bypassed, generate audit-ready evidence with tamper-evident timestamps automatically, and trend MFA adoption over time to demonstrate control effectiveness. The same approach applies across the security tooling ecosystem: endpoint compliance from EDR APIs, vulnerability metrics from scanner APIs, access review data from HR/IdP APIs, incident response metrics from ticketing system APIs, and configuration compliance from infrastructure-as-code repositories.
+
+??? success "Cross-framework efficiency"
+
+    Organizations face an explosion of overlapping compliance frameworks: SOC 2, ISO 27001, ISO 27701, NIST CSF, PCI DSS, HIPAA, GDPR, and countless others. Legacy GRC treats each framework as a separate program, creating duplication of effort.
+
+    GRC Engineering embraces unified control implementations mapped to multiple frameworks simultaneously. Design and implement a control once, then map it to satisfy requirements across all applicable frameworks. Collect evidence once, then reference it for multiple audit requirements. This approach:
+
+    - Reduces redundant work and stakeholder burden
+    - Enables efficient scaling as new framework requirements emerge
+    - Makes control inheritance and scoping decisions more transparent
+    - Allows practitioners to focus on control effectiveness rather than framework paperwork
+
+    The goal is "map once, comply many times" through intelligent control architecture.
+
+??? success "Measurable maturity over binary pass/fail"
+
+    Traditional compliance treats organizations as either "compliant" or "non-compliant"—a binary outcome that fails to capture the reality of incremental improvement and varying levels of program maturity. This binary thinking can create perverse incentives to do the minimum necessary to pass audits rather than continuously improve.
+
+    GRC Engineering embraces maturity models and metrics that:
+
+    - Quantify current state and track improvement over time (e.g., privacy maturity: 1.55 → 4.0)
+    - Help prioritize investments based on impact and current capability gaps
+    - Demonstrate progress to leadership and stakeholders beyond "we passed the audit"
+    - Enable benchmarking and goal-setting for program evolution
+
+    Show the journey, not just the destination. Measurable maturity creates better incentives for continuous improvement.
+
+??? success "Trust Center as product"
+
+    External-facing compliance transparency should be treated as a first-class product, not an afterthought or static marketing page. A well-designed Trust Center provides customers, prospects, and auditors with self-service access to:
+
+    - Current certifications, attestations, and compliance documentation
+    - Security practices, policies, and procedures appropriate for external audiences
+    - Answers to common security questionnaire questions
+    - Real-time security posture indicators where appropriate
+
+    This approach:
+
+    - Reduces GRC team burden from repetitive vendor questionnaire responses
+    - Accelerates sales cycles by providing immediate transparency
+    - Builds customer confidence through proactive disclosure
+    - Positions security and compliance as a competitive differentiator
+
+    Legacy GRC treats compliance as something to prove on-demand when asked. GRC Engineering treats transparency as something to provide proactively and continuously.
+
+??? success "AI governance as frontier"
+
+    As organizations increasingly adopt AI systems, AI-generated code, AI-assisted decision-making, and AI-powered products, GRC Engineering must extend to govern these technologies with the same rigor applied to traditional systems. This emerging domain includes:
+
+    - Model risk management and AI system lifecycle governance
+    - Data provenance, training data quality, and bias mitigation
+    - Algorithmic transparency and explainability requirements
+    - Responsible AI principles and ethical guidelines
+    - AI-specific incident response and failure mode analysis
+
+    AI governance cannot be an afterthought bolted onto existing frameworks. It requires purpose-built approaches that account for AI's unique characteristics: probabilistic outputs, emergent behaviors, continuous learning, and potential for unintended consequences at scale.
 
 ## Authors
 - [Ayoub Fandi](https://www.linkedin.com/in/ayoubfandi/)
