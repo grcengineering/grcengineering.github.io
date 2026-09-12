@@ -1,0 +1,19 @@
+# sscsb signing-model attestations.
+#
+# These lanes (cloud / web / Codespaces) live behind forge web UIs and App
+# installs with NO read API, so sscsb cannot prove them — it records the DATE
+# you confirmed each, and `sscsb signing verify` warns when a confirmation goes
+# stale (default 180 days). Record with:
+#   sscsb signing setup <lane> --confirm
+# after you've done that lane's guided steps.
+
+# [github-web]
+# vigilant_mode = "YYYY-MM-DD"            # you enabled "Flag unsigned commits as unverified"
+# phishing_resistant_mfa = "YYYY-MM-DD"   # you enrolled a passkey / hardware security key
+
+# [codespaces]
+# gpg_verification = "YYYY-MM-DD"         # enabled for a SELECTED trusted-repo list (never "all")
+
+# [cloud-claude]
+# github_app_installed = "YYYY-MM-DD"     # authorized the Claude GitHub App (not a personal token)
+# signing_mode = "app-signed"             # app-signed | unsigned-drafts

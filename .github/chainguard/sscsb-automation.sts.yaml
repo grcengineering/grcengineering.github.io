@@ -1,0 +1,26 @@
+# sscsb Octo STS trust policy — lives at .github/chainguard/sscsb-automation.sts.yaml
+# in the repo that GRANTS access. Workflows in `subject_pattern` below can
+# exchange their OIDC identity for a short-lived token with EXACTLY these
+# permissions on THIS repo. No PAT, nothing stored, expires in ~1 hour.
+#
+# Docs: https://github.com/octo-sts/app
+issuer: https://token.actions.githubusercontent.com
+
+# Which workflow identities may federate. GitHub's OIDC `sub` claim is
+# ID-DECORATED — `repo:OWNER@<owner_id>/REPO@<repo_id>:ref:refs/heads/main` —
+# so a pattern spelled from names alone never matches (Octo STS refuses with
+# `subject "repo:OWNER@123/REPO@456:ref:…" did not match "repo:OWNER/REPO:ref:…"`).
+# The `(@<id>)?` groups accept both the bare and the decorated form; the ids
+# are what survive a rename and what a re-created repository of the same name
+# does NOT share, so pin them (sscsb fills them in from the GitHub API when
+# `gh` is available; otherwise `[0-9]+` accepts any id until you replace it):
+#   gh api repos/grcengineering/grcengineering.github.io --jq .id   → repo id
+#   gh api users/grcengineering --jq .id       → owner id
+# `.` in the repository name is escaped: this is a regular expression.
+subject_pattern: 'repo:grcengineering(@155832502)?/grcengineering\.github\.io(@743624125)?:ref:refs/heads/main'
+
+permissions:
+  # Least privilege: grant only what the automation needs.
+  contents: read
+  # issues: write
+  # pull_requests: write

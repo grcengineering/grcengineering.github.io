@@ -1,0 +1,246 @@
+# SSCS Bootstrapper configuration — the single source of truth for which
+# controls are enabled. Every control is independently toggleable here;
+# no code changes required. Secure defaults are ON; optional integrations
+# that need external services or extra tooling are OFF.
+#
+# Toggle:   sscsb enable <control> | sscsb disable <control>
+# Inspect:  sscsb status | sscsb verify | sscsb report
+
+[general]
+# Branches where human-only signing and merge policy are enforced.
+# This repository has no `master` branch (checked against the remote: the only
+# long-lived branch is `main`, which is also the Pages source's parent). Leaving
+# "master" in the list made `sscsb verify branch-protection` report on a branch
+# that does not exist, which is noise, not coverage.
+protected_branches = ["main"]
+# fail_open = true would let hooks pass when scanners are missing. Keep false.
+fail_open = false
+github_repo = "grcengineering/grcengineering.github.io"
+
+# ── Phase 1 — Local source integrity ──
+
+# Secret scanning hooks: TruffleHog + Gitleaks block secrets at pre-commit and pre-push
+[controls.secrets]
+enabled = true
+trufflehog = true
+# POLICY (grcengineering.github.io): strongest-tool-only. TruffleHog is the sole
+# credential/secret detector here — it verifies candidate secrets against the
+# issuing provider, so a finding is a live credential rather than a regex match.
+# Gitleaks is regex-only (no verification) and, for an ORGANISATION-owned repo,
+# gitleaks-action additionally requires a paid GITLEAKS_LICENSE. Keeping both
+# would add licence-gated noise without adding detection strength.
+gitleaks = false
+pre_push_range_scan = true
+
+# CommitSigningGuard: Hardware-backed, human-only signing enforced on protected branches at pre-push
+[controls.commit-signing]
+enabled = true
+require_hardware_backed = true
+require_review_evidence_for_ai_merges = true
+
+# AI agent commit signing: Verifiable AI-agent signatures (distinct identity, never valid on protected branches); off by default
+[controls.agent-signing]
+enabled = false
+require_agent_signatures = false
+allowed_backends = ["github-app", "tpm", "fido2", "kms", "piv", "software"]
+max_key_age_days = 90
+
+# Five-environment signing model: Machine-wide signing posture: human enclave lane, distinct agent identity, cloud/web/Codespaces guidance
+[controls.signing-model]
+enabled = true
+
+# Branch protection verification: Verify GitHub protected-branch rules (PRs, no force-push, signatures, checks)
+[controls.branch-protection]
+enabled = true
+
+# Actions pinning & permissions audit: Flag mutable action refs and missing/over-broad workflow permissions
+[controls.actions-audit]
+enabled = true
+
+# gittuf ref protection: Signed, forge-independent policy over who may change which git refs, verified in CI; off by default (advanced)
+[controls.gittuf]
+enabled = false
+
+# AI commit trailers: Validate AI-Assisted / AI-Tool / AI-Model / AI-Role commit trailers
+[controls.ai-trailers]
+enabled = true
+
+# AI dependency & command gate: Extra gating when AI-assisted commits add dependencies or shell commands
+[controls.ai-dep-gate]
+enabled = true
+
+# AI-provenance PR template: PR template asking whether AI generated code/tests/dependencies/docs
+[controls.pr-template]
+enabled = true
+
+# AI provenance receipts: Optional cryptographic receipts linking commits to AI tool/model/role
+[controls.ai-receipts]
+enabled = false
+sign_with_cosign = false
+cosign_identity = ""
+cosign_issuer = "https://token.actions.githubusercontent.com"
+
+# Committed binary artifacts: No compiled programs or code-carrying archives in the tracked tree — bytes, not names
+[controls.binary-artifacts]
+enabled = true
+
+# Webhook secrets: Every active repository webhook carries a shared secret and verifies TLS
+[controls.webhooks]
+enabled = true
+
+# ── Phase 2 — Dependency & vulnerability visibility ──
+
+# SBOM generation: Syft SBOM in CycloneDX (default) or SPDX JSON
+[controls.sbom]
+enabled = true
+format = "cyclonedx-json"
+
+# Vulnerability scanning: Trivy (vuln+secret+misconfig) and OSV-Scanner V2 (lockfile-exact)
+[controls.vuln-scan]
+enabled = true
+fail_on = "high"
+
+# Dependency pinning: Digest-pinned base images, verified downloads, pinned installs, committed lockfiles
+[controls.dependency-pinning]
+enabled = true
+
+# OpenSSF Scorecard: Scorecard workflow scoring repository security posture
+[controls.scorecard]
+enabled = true
+
+# Renovate onboarding: Automated dependency updates with digest pinning + lockfile maintenance
+[controls.renovate]
+enabled = true
+
+# Package trust gate: Existence validation, human approval for new packages, typosquat heuristics, lockfile-exact installs
+[controls.package-trust]
+enabled = true
+registry_check = true
+typosquat_check = true
+
+# Bumblebee endpoint exposure scan: Inventory installed packages, MCP servers, editor/browser extensions and agent skills; match against known-compromise catalogs
+[controls.bumblebee]
+enabled = false
+profile = "baseline"
+catalog = ""
+
+# Grype (optional): SBOM-first vulnerability scanning where Syft+Grype is preferred
+[controls.grype]
+enabled = false
+
+# Socket Firewall (optional): Malicious-package detection/blocking at install time
+[controls.socket-firewall]
+enabled = false
+
+# ── Phase 3 — Provenance, signing & credential federation ──
+
+# Sigstore keyless signing: Cosign keyless signing + SBOM/provenance attestations bound to digests
+[controls.sigstore-signing]
+enabled = true
+
+# SLSA Build L3 provenance: slsa-github-generator reusable workflow (tag-pinned per its trust model)
+[controls.slsa-provenance]
+enabled = true
+
+# GitHub artifact attestations: GitHub-native build provenance (attest-build-provenance) — additive to Cosign/SLSA, verified with `gh attestation verify`
+[controls.github-attestations]
+enabled = true
+
+# GitHub SBOM attestation: GitHub-native SBOM attestation bound to the artifact digest (actions/attest, sbom-path) — additive, verified with `gh attestation verify`
+[controls.sbom-attestation]
+enabled = true
+
+# OpenSSF Model Signing: Sign & verify ML model artifacts with Sigstore keyless signing; applies when models are present (off by default)
+[controls.model-signing]
+enabled = false
+
+# Provenance verification gates: slsa-verifier + cosign verification required before promote/deploy/publish
+[controls.provenance-verify]
+enabled = true
+builder_id = ""
+
+# Immutable releases (draft-then-publish): Draft-then-publish release.yml so assets attach before publish — compatible with GitHub release immutability (Settings -> Releases); opt-in, supersedes the modular release-sign/slsa flow
+[controls.release-immutability]
+enabled = false
+
+# Octo STS federation: Short-lived repo-scoped GitHub credentials replacing long-lived PATs
+[controls.octo-sts]
+enabled = true
+
+# Harden-Runner: StepSecurity Harden-Runner egress/tamper monitoring in every workflow
+[controls.harden-runner]
+enabled = true
+
+# Witness (optional): Richer in-toto attestation capture and policy around build steps
+[controls.witness]
+enabled = false
+
+# ── Phase 4 — Deeper code security & CI hardening ──
+
+# SAST (OpenGrep default): OpenGrep rule-driven SAST in pre-commit and CI; Semgrep selectable
+[controls.sast]
+enabled = true
+engine = "opengrep"
+pre_commit = false
+rules = ".sscsb/rules"
+
+# Sighthound (optional): Ultra-fast local pre-commit SAST layer
+[controls.sighthound]
+enabled = false
+
+# CodeQL: Deep interprocedural analysis on PRs and default branch
+[controls.codeql]
+enabled = true
+
+# ClusterFuzzLite fuzzing: Continuous fuzzing on PRs (cargo-fuzz + ClusterFuzzLite) — the OpenSSF-Scorecard Rust fuzzing probe; opt-in (needs project fuzz targets)
+[controls.fuzzing]
+enabled = false
+
+# Extended workflow audit: pull_request_target misuse, script injection, credential persistence, secret echo, risky actions
+[controls.workflow-audit-extended]
+enabled = true
+
+# StepSecurity secure-repo: Onboarding accelerator via app.stepsecurity.io (web service, not an action)
+[controls.secure-repo]
+enabled = true
+
+# wait-for-secrets (optional): Human-in-the-loop secret injection for high-sensitivity workflows
+[controls.wait-for-secrets]
+enabled = false
+
+# ── Phase 5 — Observability & governance ──
+
+# Dependency-Track: Continuous SBOM management platform (self-hosted); sscsb uploads BOMs
+[controls.dependency-track]
+enabled = false
+url = ""
+project_name = ""
+
+# GUAC ingestion: Supply-chain knowledge graph over SBOMs, attestations, and VEX
+[controls.guac]
+enabled = false
+
+# OpenVEX: Generate and ingest VEX for exploitability-aware triage
+[controls.openvex]
+enabled = true
+
+# ORAS OCI storage (optional): Push SBOMs/attestations to an OCI registry as reference artifacts
+[controls.oras]
+enabled = false
+
+# OpenSSF Security Insights: Machine-readable security-insights.yml declaring the project's security practices and reporting channels
+[controls.security-insights]
+enabled = true
+
+# OpenSSF Best Practices Badge helper: Worksheet pre-filling the passing-badge criteria from installed controls (lifts Scorecard's CII check)
+[controls.best-practices-badge]
+enabled = true
+
+# OSPS Baseline assessment: Maps enabled controls to OpenSSF Project Security Baseline families and adds an OSPS column to `sscsb report`
+[controls.osps-baseline]
+enabled = true
+
+# Compliance map & report: Machine-readable control → SLSA/SSDF/CRA/OSPS/Badge map behind `sscsb report`
+[controls.compliance-map]
+enabled = true
+

@@ -1,0 +1,58 @@
+# sscsb: OpenGrep SAST (default engine — Semgrep-compatible, open rules).
+# No first-party OpenGrep action exists, so the pinned release binary is
+# downloaded directly and its checksum verified before execution.
+name: SAST (OpenGrep)
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  OPENGREP_VERSION: v1.25.0
+
+jobs:
+  opengrep:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Install cosign (verifies the OpenGrep release below)
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+      - name: Install pinned OpenGrep and verify signature (cosign keyless)
+        run: |
+          curl -fsSL -o opengrep \
+            "https://github.com/opengrep/opengrep/releases/download/${OPENGREP_VERSION}/opengrep_manylinux_x86"
+          curl -fsSL -o opengrep.sig \
+            "https://github.com/opengrep/opengrep/releases/download/${OPENGREP_VERSION}/opengrep_manylinux_x86.sig"
+          curl -fsSL -o opengrep.cert \
+            "https://github.com/opengrep/opengrep/releases/download/${OPENGREP_VERSION}/opengrep_manylinux_x86.cert"
+          cosign verify-blob opengrep \
+            --signature opengrep.sig \
+            --certificate opengrep.cert \
+            --certificate-identity-regexp "^https://github\.com/opengrep/opengrep/" \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com
+          chmod +x opengrep && sudo mv opengrep /usr/local/bin/
+      # --exclude .sscsb/rules: a scanner must not scan its own rule definitions.
+      # A rule file necessarily contains the pattern text it matches on, so any
+      # finding there is false by construction.
+      - name: Run OpenGrep
+        run: |
+          opengrep scan --config .sscsb/rules --exclude .sscsb/rules \
+            --sarif-output=opengrep.sarif --error .
+      - name: Upload SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@99df26d4f13ea111d4ec1a7dddef6063f76b97e9 # v4.37.0
+        with:
+          sarif_file: opengrep.sarif

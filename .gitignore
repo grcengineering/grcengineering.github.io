@@ -32,3 +32,9 @@ node_modules/
 *.swp
 *.swo
 *~
+
+# sscsb: generated output (SBOMs, receipts, VEX), not policy
+.sscsb/out/
+
+# Agent tooling state, alongside .claude/ and .superpowers/ above
+.serena/

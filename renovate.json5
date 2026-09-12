@@ -1,0 +1,22 @@
+// sscsb Renovate onboarding config — secure baseline.
+// - pins GitHub Actions to full commit SHAs and keeps them updated
+// - opens fix PRs for OSV-known vulnerabilities
+// - weekly lockfile maintenance keeps transitive deps patched
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "helpers:pinGitHubActionDigestsToSemver",
+    "security:openssf-scorecard"
+  ],
+  "osvVulnerabilityAlerts": true,
+  "dependencyDashboardOSVVulnerabilitySummary": "all",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 3am on monday"]
+  },
+  "vulnerabilityAlerts": {
+    "labels": ["security"]
+  },
+  "prConcurrentLimit": 5
+}

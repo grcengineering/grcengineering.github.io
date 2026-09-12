@@ -1,32 +1,50 @@
-name: Deploy GRC Engineering MkDocs site 
+name: Deploy GRC Engineering MkDocs site
 on:
   push:
     branches:
-      - master 
+      - master
       - main
+
+# Least privilege at the top level: nothing inherits write. The single job that
+# genuinely needs to write takes a job-scoped grant below.
 permissions:
-  contents: write
+  contents: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      # `mkdocs gh-deploy` pushes the built site to the gh-pages branch.
+      contents: write
     steps:
-      - uses: actions/checkout@v4
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+      # persist-credentials stays at its default (true) for this job ONLY:
+      # `mkdocs gh-deploy` pushes to the gh-pages branch over the origin remote
+      # and needs the checkout credential to do it. Every other workflow in this
+      # repo sets persist-credentials: false.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Configure Git Credentials
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: 3.x
-      - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV 
-      - uses: actions/cache@v4
+      - run: echo "cache_id=$(date --utc '+%V')" >> "$GITHUB_ENV"
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           key: mkdocs-material-${{ env.cache_id }}
           path: .cache
           restore-keys: |
             mkdocs-material-
-      - run: pip install mkdocs-material 
-      - run: pip install "mkdocs-material[imaging]"
-      - run: pip install mkdocs-git-revision-date-localized-plugin
-      - run: pip install mkdocs-git-committers-plugin-2
+      # Version-pinned: an unpinned `pip install` takes whatever the index serves
+      # at build time, so a compromised or yanked upstream release lands silently.
+      # Renovate (renovate.json5) proposes the bumps.
+      - run: pip install "mkdocs-material==9.7.7"
+      - run: pip install "mkdocs-material[imaging]==9.7.7"
+      - run: pip install "mkdocs-git-revision-date-localized-plugin==1.5.4"
+      - run: pip install "mkdocs-git-committers-plugin-2==2.5.0"
       - run: mkdocs gh-deploy --force

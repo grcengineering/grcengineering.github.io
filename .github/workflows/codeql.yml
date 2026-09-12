@@ -1,0 +1,57 @@
+# sscsb: CodeQL — deep interprocedural analysis on PRs and the default branch.
+#
+# Languages for THIS repo. The sscsb template ships `actions` only and tells you
+# to add your own, because CodeQL that does not read your source code is not
+# analysing your source code:
+#   actions               — the workflows in this directory
+#   javascript-typescript — docs/javascripts/tablesort.js and the nthpartyfinder
+#                           design-system scripts (ds/node-graph.js,
+#                           ds/site-header.js), plus the inline <script> blocks in
+#                           docs/**/index.html, which the JS extractor also reads.
+#
+# This file REPLACES GitHub's code-scanning *default setup*, which was configured
+# for `actions` only on a weekly schedule and so never looked at the site's
+# JavaScript. Default setup and an advanced configuration cannot both be enabled;
+# default setup is turned off for this repo as part of the same change.
+#
+# security-extended adds the lower-precision / higher-recall queries on top of
+# the default suite — appropriate for a public site with no build to slow down.
+name: CodeQL
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+  schedule:
+    - cron: "45 3 * * 2"
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ["actions", "javascript-typescript"]
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@99df26d4f13ea111d4ec1a7dddef6063f76b97e9 # v4.37.0
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-extended
+      - name: Analyze
+        uses: github/codeql-action/analyze@99df26d4f13ea111d4ec1a7dddef6063f76b97e9 # v4.37.0
+        with:
+          category: "/language:${{ matrix.language }}"
