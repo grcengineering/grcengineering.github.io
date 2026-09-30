@@ -9,7 +9,6 @@ GRC Engineering is a step-change evolution in security governance, risk, and com
   </blockquote>
   <figcaption>
     <span class="grce-definition__source">&mdash; <a href="https://cheatsheet.grc.engineering/#grc-engineering">The GRC Engineering Cheat Sheet</a></span>
-    <a class="grce-definition__cta" href="https://cheatsheet.grc.engineering">Explore the Cheat Sheet &rarr;</a>
   </figcaption>
 </figure>
 
