@@ -1,0 +1,13 @@
+#!/bin/sh
+# Installed by sscsb (SSCS Bootstrapper). DO NOT EDIT — regenerate with `sscsb init`.
+# This shim only delegates; policy logic lives in the sscsb CLI (Rust).
+if command -v sscsb >/dev/null 2>&1; then
+  exec sscsb hook pre-push "$@"
+fi
+if [ -n "${SSCSB_BIN:-}" ] && [ -x "${SSCSB_BIN}" ]; then
+  exec "${SSCSB_BIN}" hook pre-push "$@"
+fi
+echo "sscsb: CLI not found on PATH — blocking pre-push (fail-closed) because" >&2
+echo "sscsb: enabled supply-chain controls cannot run without it." >&2
+echo "sscsb: install sscsb (cargo install --path . / release binary) or set SSCSB_BIN." >&2
+exit 1

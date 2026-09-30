@@ -1,15 +1,25 @@
+# Semgrep Cloud CI. Complements — does not replace — the two SAST controls sscsb
+# owns: OpenGrep (.github/workflows/sast-opengrep.yml, local pinned ruleset) and
+# CodeQL (.github/workflows/codeql.yml, deep interprocedural). This one runs the
+# organisation's own semgrep.dev policy, which is a different rule set again.
+#
+# Hardening notes (sscsb actions-audit / harden-runner / workflow-audit-extended):
+#  - was `container: semgrep/semgrep` on a mutable tag. Running on the runner
+#    host instead lets step-security/harden-runner attach (it cannot monitor a
+#    container job) and lets the Semgrep version be pinned explicitly.
+#  - actions pinned to full commit SHAs; checkout no longer persists the token.
 on:
   workflow_dispatch: {}
   pull_request: {}
   push:
     branches:
-    - main
-    - master
+      - main
+      - master
     paths:
-    - .github/workflows/semgrep.yml
+      - .github/workflows/semgrep.yml
   schedule:
-  # random HH:MM to avoid a load spike on GitHub Actions at 00:00
-  - cron: 38 7 * * *
+    # random HH:MM to avoid a load spike on GitHub Actions at 00:00
+    - cron: 38 7 * * *
 name: Semgrep
 jobs:
   semgrep:
@@ -19,8 +29,17 @@ jobs:
       contents: read
     env:
       SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
-    container:
-      image: semgrep/semgrep
     steps:
-    - uses: actions/checkout@v4
-    - run: semgrep ci
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.12"
+      - name: Install pinned Semgrep
+        run: pip install "semgrep==1.177.0"
+      - run: semgrep ci

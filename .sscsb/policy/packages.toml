@@ -1,0 +1,14 @@
+# sscsb approved-packages baseline.
+#
+# A dependency not in this baseline (and not already in the previous manifest
+# revision) blocks at commit time until a human approves it:
+#   sscsb deps check              # validate existence + typosquat heuristics
+#   sscsb deps approve <eco>:<name>
+#   sscsb deps baseline           # approve everything currently in manifests
+#
+# [approved]
+# cargo = ["serde"]
+# npm = []
+# pypi = []
+# go = []
+# rubygems = []

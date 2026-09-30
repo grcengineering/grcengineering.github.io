@@ -1,0 +1,51 @@
+# sscsb approved-signers policy.
+#
+# Humans, CI, and AI agents must NEVER share keys or identities. Only signers
+# listed here can push to protected branches, and only `class = "human"`
+# signers satisfy the human-only protected-branch signing policy. AI agents
+# draft changes; they never sign, so no `class = "ai"` entry should ever carry
+# a key that is used for signing — the class exists so an AI-associated
+# identity can be explicitly DENIED signing rights.
+#
+# [[signer]]
+# principal = "you@example.com"          # matches allowed_signers principal
+# class = "human"                        # human | ci | ai
+# hardware_backed = true                 # asserted when the key lives on a YubiKey/secure element
+# ssh_public_key = "ssh-ed25519 AAAA... you@example.com"
+# # gpg_fingerprint = "ABCD1234..."      # for gpg.format=openpgp signers
+#
+# AI agents may sign ONLY when the `agent-signing` control is enabled, and their
+# signatures are ALWAYS rejected on protected branches regardless of any other
+# field — humans, CI, and AI never share identities. When agent-signing is on:
+#
+# [[signer]]
+# principal = "agent@ci.example.com"     # a DISTINCT identity, never a human's
+# class = "ai"                           # only emitted into allowed_signers when agent-signing is on
+# backend = "github-app"                 # tpm | fido2 | kms | github-app | piv | software
+# hardware_backed = true                 # self-asserted; see attestation_file to back it up
+# # attestation_file = ".sscsb/policy/attestations/agent.bin"  # out-of-band hardware proof
+# # expires = "2027-01-01"               # reported by `sscsb verify`; rotate before this
+# ssh_public_key = "ssh-ed25519 AAAA... agent@ci.example.com"
+
+# ── Approved signers for grcengineering/grcengineering.github.io ──
+#
+# One signer, one identity. Every commit on this repo — feature work and
+# housekeeping alike — is signed by the repository owner with the SSH key below,
+# which is registered on GitHub as a signing key.
+
+[[signer]]
+principal = "10093271+p4gs@users.noreply.github.com"
+class = "human"
+# HONEST VALUE, deliberately not asserted true to make a check pass.
+# The key is an ed25519 key held in a 1Password vault and used through the
+# 1Password SSH agent (gpg.ssh.program = op-ssh-sign), with device
+# authentication on every signature. That is strong custody, but it is NOT a
+# secure-element key: it is not an `ssh-ed25519-sk` credential, and the private
+# key is vault-resident rather than non-exportable hardware-resident.
+# `sscsb verify commit-signing` therefore reports DEGRADED against
+# require_hardware_backed = true. That requirement is left ON rather than
+# lowered to force a pass; closing it means provisioning a YubiKey-resident
+# ed25519-sk signing key, which is an owner decision because it changes the
+# single-signing-identity model used across every repository on this account.
+hardware_backed = false
+ssh_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBxEAReKc/G/sUxY/UbXprOccUKaxhd+sr/7Gbb40u9w github-signing@1password.p4gs"

@@ -1,0 +1,113 @@
+# sscsb: SLSA Build L3 provenance via the slsa-github-generator reusable
+# workflow, verified in-pipeline with slsa-verifier.
+#
+# This is the MUTABLE-release shape: it runs on `release: published` and the
+# generator ATTACHES the provenance to that release (`upload-assets: true`),
+# i.e. it writes to a release after publish. On the immutable draft-then-
+# publish path (release-immutability), use release.yml instead — it calls the
+# SAME generator with `upload-assets: false` and uploads the provenance to the
+# DRAFT before the single publish. The generator is compatible with immutable
+# releases; only this after-publish attachment is not. Install one or the
+# other, not both.
+#
+# PINNING EXCEPTION (deliberate, audited): slsa-github-generator MUST be
+# referenced by @vX.Y.Z tag — slsa-verifier validates the trusted builder's
+# ref and the build fails on SHA or short-tag refs (upstream README;
+# slsa-verifier issue #12). Every other action here is SHA-pinned.
+name: Release — SLSA Provenance
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      hashes: ${{ steps.hash.outputs.hashes }}
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      # CUSTOMIZE: replace with your real build (same artifact set as release-sign.yml).
+      - name: Build artifact
+        run: |
+          mkdir -p dist
+          git archive --format=tar.gz -o "dist/${GITHUB_REPOSITORY#*/}-${GITHUB_REF_NAME}.tar.gz" HEAD
+      - name: Compute subject hashes
+        id: hash
+        run: |
+          cd dist
+          echo "hashes=$(sha256sum -- * | base64 -w0)" >> "$GITHUB_OUTPUT"
+      - name: Upload artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-artifacts
+          path: dist/
+
+  provenance:
+    needs: [build]
+    permissions:
+      actions: read # workflow context for provenance
+      id-token: write # sign provenance (Fulcio)
+      contents: write # attach provenance to the release
+    # Tag-pinned BY DESIGN — see header comment.
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.1.0
+    with:
+      base64-subjects: "${{ needs.build.outputs.hashes }}"
+      upload-assets: true
+
+  verify:
+    needs: [build, provenance]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+      - name: Download artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: release-artifacts
+          path: dist/
+      - name: Download provenance
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: ${{ needs.provenance.outputs.provenance-name }}
+      - name: Install slsa-verifier
+        uses: slsa-framework/slsa-verifier/actions/installer@ea584f4502babc6f60d9bc799dbbb13c1caa9ee6 # v2.7.1
+      # The provenance filename reaches the shell through the ENVIRONMENT, never by
+      # `${{ }}` interpolation into the script body — the same rule sscsb enforces
+      # on your workflows. Verification also fails EXPLICITLY when there is nothing
+      # to verify: an empty dist/ must never read as "everything passed".
+      # --builder-id is OPTIONAL to slsa-verifier, and omitting it makes the
+      # verdict "some builder slsa-verifier trusts produced this, for this
+      # source URI" rather than "the builder this workflow actually uses".
+      # BUILDER_ID must track the generator pinned in the `provenance` job
+      # above — change one, change the other.
+      - name: Verify provenance for every artifact
+        env:
+          PROVENANCE: ${{ needs.provenance.outputs.provenance-name }}
+          BUILDER_ID: https://github.com/slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@refs/tags/v2.1.0
+        run: |
+          set -uo pipefail
+          shopt -s nullglob
+          artifacts=(dist/*)
+          if [ ${#artifacts[@]} -eq 0 ]; then
+            echo "::error::no artifacts in dist/ — nothing was verified"
+            exit 1
+          fi
+          for f in "${artifacts[@]}"; do
+            slsa-verifier verify-artifact "$f" \
+              --provenance-path "$PROVENANCE" \
+              --source-uri "github.com/${GITHUB_REPOSITORY}" \
+              --source-tag "${GITHUB_REF_NAME}" \
+              --builder-id "$BUILDER_ID"
+          done

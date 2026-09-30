@@ -1,0 +1,132 @@
+# sscsb: GitHub-native SBOM attestation (actions/attest with sbom-path).
+# ADDITIVE to release-attest.yml (build provenance), release-sign.yml (Cosign
+# keyless), and release-slsa.yml (SLSA L3 generator) — a fourth, independent
+# provenance trail, NOT a replacement: it binds the artifact's SBOM to the
+# artifact's digest and lands the attestation in GitHub's own attestation store,
+# verifiable anywhere with (no cosign or slsa-verifier install needed):
+#   gh attestation verify <file> --repo grcengineering/grcengineering.github.io \
+#     --predicate-type https://cyclonedx.org/bom
+# The --predicate-type is REQUIRED: `gh attestation verify` defaults to the
+# build-provenance predicate, so an SBOM attestation is invisible without it.
+#
+# Uses actions/attest in SBOM mode (sbom-path). actions/attest-sbom is
+# DEPRECATED in favour of actions/attest; this pins the SAME attest engine
+# version (v4.1.1) that release-attest.yml's attest-build-provenance wrapper
+# uses internally — bump both together.
+#
+# Availability: public repositories on all plans; private repositories require
+# GitHub Enterprise Cloud (see docs.github.com → artifact attestations).
+name: Release — SBOM Attestation
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  attest-sbom:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # sign via GitHub's Sigstore instance (OIDC)
+      attestations: write # write to the repo's attestation store
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      # CUSTOMIZE: replace with your real build (same artifact set as
+      # release-attest.yml / release-sign.yml / release-slsa.yml so every trail
+      # covers identical digests).
+      - name: Build artifact
+        run: |
+          mkdir -p dist
+          git archive --format=tar.gz -o "dist/${GITHUB_REPOSITORY#*/}-${GITHUB_REF_NAME}.tar.gz" HEAD
+      # Fails EXPLICITLY on an empty dist/: "there was nothing to attest" must
+      # never be indistinguishable from "everything was attested".
+      - name: Refuse to attest nothing
+        run: |
+          set -uo pipefail
+          shopt -s nullglob
+          artifacts=(dist/*)
+          if [ ${#artifacts[@]} -eq 0 ]; then
+            echo "::error::dist/ is empty — nothing to attest (did the build step run?)"
+            exit 1
+          fi
+      # CUSTOMIZE: in a real pipeline the SBOM should describe the ACTUAL
+      # released artifact and its dependencies. The stub scans the repo tree,
+      # which matches the git-archive build above.
+      - name: Generate CycloneDX SBOM
+        uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610 # v0.24.0
+        with:
+          format: cyclonedx-json
+          output-file: sbom.cdx.json
+      # Fail EXPLICITLY if the SBOM did not materialise — an absent SBOM must
+      # never be silently attested-over (same invariant as the empty-dist gate).
+      - name: Refuse to attest a missing SBOM
+        run: |
+          set -uo pipefail
+          if [ ! -s sbom.cdx.json ]; then
+            echo "::error::sbom.cdx.json is missing or empty — nothing to attest"
+            exit 1
+          fi
+      - name: Attest the SBOM to the artifact digest
+        uses: actions/attest@a1948c3f048ba23858d222213b7c278aabede763 # v4.1.1
+        with:
+          subject-path: dist/*
+          sbom-path: sbom.cdx.json
+      - name: Upload artifacts for the verify job
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: sbom-attested-artifacts
+          path: dist/
+
+  verify:
+    needs: [attest-sbom]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      attestations: read # fetch attestations via the API (required for private repos; public repos merely tolerate its absence)
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+      - name: Download artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: sbom-attested-artifacts
+          path: dist/
+      # Identity is pinned to BOTH the repository and the signer workflow path —
+      # this proves *this repo's release-attest-sbom workflow* produced the SBOM
+      # attestation, not merely that some SBOM attestation exists. Values reach
+      # the shell through the ENVIRONMENT, never `${{ }}` interpolation into the
+      # script body — the same rule sscsb enforces on your workflows.
+      # Verification also fails EXPLICITLY when there is nothing to verify.
+      - name: Verify SBOM attestation for every artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -uo pipefail
+          shopt -s nullglob
+          artifacts=(dist/*)
+          if [ ${#artifacts[@]} -eq 0 ]; then
+            echo "::error::no artifacts in dist/ — nothing was verified"
+            exit 1
+          fi
+          for f in "${artifacts[@]}"; do
+            # --predicate-type is REQUIRED for SBOM attestations: `gh attestation
+            # verify` defaults to the build-provenance predicate
+            # (https://slsa.dev/provenance/v1), so without this it would look for
+            # provenance and never match the SBOM attestation. CycloneDX = the
+            # URI below; switch to https://spdx.dev/Document/v2.3 for SPDX.
+            gh attestation verify "$f" \
+              --repo "$GITHUB_REPOSITORY" \
+              --predicate-type https://cyclonedx.org/bom \
+              --signer-workflow "$GITHUB_REPOSITORY/.github/workflows/release-attest-sbom.yml"
+          done
