@@ -162,8 +162,6 @@ td:nth-child(2) {
 }
 .md-typeset .grce-definition blockquote p {
   margin: 0;
-  font-size: 1.12em;
-  line-height: 1.75;
 }
 .md-typeset .grce-hl {
   padding: 0 0.1em;
@@ -187,30 +185,11 @@ td:nth-child(2) {
   color: var(--md-typeset-a-color);
 }
 .md-typeset .grce-definition figcaption {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.6em 1.2em;
   max-width: none;
   margin: 1.1em 0 0;
   font-size: 0.85em;
   font-style: normal;
   color: var(--md-default-fg-color--light);
-}
-.md-typeset .grce-definition__cta {
-  display: inline-block;
-  padding: 0.45em 1em;
-  border-radius: 999px;
-  font-weight: 700;
-  color: #ffffff !important;
-  background: linear-gradient(100deg, #ffa84fff 0%, #1b95c1ff 100%);
-  text-decoration: none;
-  transition: filter 200ms, transform 200ms !important;
-}
-.md-typeset .grce-definition__cta:hover {
-  filter: brightness(1.08);
-  transform: translateY(-1px);
 }
 [data-md-color-scheme="grcengineering-dark"] .md-typeset .grce-definition {
   background:
@@ -227,5 +206,4 @@ td:nth-child(2) {
 }
 @media screen and (max-width: 44.9375em) {
   .md-typeset .grce-definition { padding: 1.3em 1.2em 1.2em 1.4em; }
-  .md-typeset .grce-definition blockquote p { font-size: 1.02em; }
 }
