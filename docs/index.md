@@ -2,6 +2,17 @@
 
 GRC Engineering is a step-change evolution in security governance, risk, and compliance (GRC), and related disciplines such as trust and assurance. It’s more than just “GRC + writing code.”  It’s a fundamental shift in how GRC is done, one that fully embraces an engineering mindset (broadly speaking), [systems thinking](https://en.m.wikipedia.org/wiki/Systems_thinking) and [design thinking](https://en.m.wikipedia.org/wiki/Design_thinking), and a customer-centric focus around how best to deliver GRC outcomes.
 
+<figure class="grce-definition" markdown="0">
+  <p class="grce-definition__eyebrow">What is GRC Engineering?</p>
+  <blockquote cite="https://cheatsheet.grc.engineering/#grc-engineering">
+    <p>GRC Engineering is the practice of using <span class="grce-hl grce-hl--blue">science</span>, <span class="grce-hl grce-hl--blue">math</span>, <span class="grce-hl grce-hl--blue"><a href="https://en.wikipedia.org/wiki/User-centered_design">user-centered design</a>, and <a href="https://en.wikipedia.org/wiki/Software_development">modern software development</a></span> to <span class="grce-hl grce-hl--orange">assure an organization <a href="https://cheatsheet.grc.engineering/#term-governance">reliably achieves objectives</a>, <a href="https://cheatsheet.grc.engineering/#term-risk">addresses uncertainty</a>, and <a href="https://cheatsheet.grc.engineering/#term-compliance">acts with integrity</a></span>, all while <span class="grce-hl grce-hl--blue">continuously improving its efficiency, productivity, and systems</span>.</p>
+  </blockquote>
+  <figcaption>
+    <span class="grce-definition__source">&mdash; <a href="https://cheatsheet.grc.engineering/#grc-engineering">The GRC Engineering Cheat Sheet</a></span>
+    <a class="grce-definition__cta" href="https://cheatsheet.grc.engineering">Explore the Cheat Sheet &rarr;</a>
+  </figcaption>
+</figure>
+
 We see the [organic interest](https://www.reddit.com/r/cybersecurity/comments/18efir2/grc_engineering/) and momentum that is growing around GRC Engineering as an opportunity to bring our community together with a shared definition of what GRC Engineering is as well as a shared focus on advancing it together before it’s co-opted and constrained by commercial interests.
 
 As a group of impassioned GRC practitioners, we seek to propel GRC into the modern era so it can: 

@@ -5,7 +5,7 @@ repo_name: grcengineering
 edit_uri: edit/main/docs/index.md
 nav:
   - index.md
-  - Learning Hub: learning-hub.md
+  - Teachings: "https://cheatsheet.grc.engineering/#teachings"
   - Blog: "https://blog.grc.engineering"
   - Projects: projects.md
 extra_css:
