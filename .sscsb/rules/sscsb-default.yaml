@@ -1,0 +1,43 @@
+# sscsb default SAST ruleset (Semgrep-compatible - runs under OpenGrep and
+# Semgrep identically). Deliberately small: high-signal supply-chain patterns
+# that make sense for EVERY repo. Point `controls.sast.rules` at "auto" to use
+# the full Semgrep registry instead.
+rules:
+  - id: sscsb.curl-pipe-shell
+    languages: [generic]
+    severity: ERROR
+    message: >-
+      Piping a remote script directly into a shell executes unverified code -
+      download, checksum/signature-verify, then execute.
+    patterns:
+      - pattern-either:
+          - pattern-regex: 'curl[^|;\n]*\|\s*(sudo\s+)?(ba|z|da)?sh'
+          - pattern-regex: 'wget[^|;\n]*\|\s*(sudo\s+)?(ba|z|da)?sh'
+    paths:
+      include: ["*.sh", "*.bash", "*.zsh", "Makefile", "*.yml", "*.yaml"]
+
+  - id: sscsb.git-protocol-insecure
+    languages: [generic]
+    severity: WARNING
+    message: >-
+      Insecure git:// or http:// remote - use https:// or ssh:// so the
+      transport is authenticated.
+    pattern-regex: '(git|http)://[a-zA-Z0-9.-]+/[^\s"]+\.git'
+
+  - id: sscsb.npm-install-ignore-scripts-missing
+    languages: [generic]
+    severity: WARNING
+    message: >-
+      CI npm installs should use `npm ci --ignore-scripts` unless install
+      scripts are specifically required (install-script malware vector).
+    pattern-regex: 'npm install(?! .*--ignore-scripts)[^\n]*'
+    paths:
+      include: ["*.yml", "*.yaml"]
+
+  - id: sscsb.hardcoded-home-path
+    languages: [generic]
+    severity: WARNING
+    message: Hardcoded user home path reduces portability and can leak usernames.
+    pattern-regex: '/(Users|home)/[a-z0-9_-]+/'
+    paths:
+      include: ["*.sh", "*.yml", "*.yaml", "*.toml"]

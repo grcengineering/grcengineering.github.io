@@ -1,0 +1,35 @@
+# sscsb: Octo STS — short-lived, repo-scoped GitHub credentials via OIDC
+# federation. Replaces long-lived PATs and static App credentials.
+#
+# Requires: the Octo STS GitHub App installed on the TARGET repo/org, and a
+# trust policy at .github/chainguard/<identity>.sts.yaml in the target repo
+# (sscsb installs a template — see .github/chainguard/sscsb-automation.sts.yaml).
+name: Octo STS Example
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  federated-call:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # exchange OIDC identity for a scoped token
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+      # Upstream README shows @main; sscsb pins the release SHA (v1.1.1).
+      - name: Exchange OIDC for short-lived token
+        id: octo-sts
+        uses: octo-sts/action@f603d3be9d8dd9871a265776e625a27b00effe05 # v1.1.1
+        with:
+          scope: grcengineering/grcengineering.github.io
+          identity: sscsb-automation
+      - name: Use the scoped token (expires in ~1h, never stored)
+        env:
+          GH_TOKEN: ${{ steps.octo-sts.outputs.token }}
+        run: gh api "repos/grcengineering/grcengineering.github.io" --jq .full_name

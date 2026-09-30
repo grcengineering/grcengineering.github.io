@@ -1,0 +1,102 @@
+# sscsb: GitHub-native artifact attestations (actions/attest-build-provenance).
+# ADDITIVE to release-sign.yml (Cosign keyless) and release-slsa.yml (SLSA L3
+# generator) — a third, independent provenance trail, NOT a replacement:
+# attestations land in GitHub's own attestation store and verify anywhere with
+# `gh attestation verify <file> --repo grcengineering/grcengineering.github.io` — no cosign or
+# slsa-verifier install needed on the consuming side.
+#
+# Availability: public repositories on all plans; private repositories require
+# GitHub Enterprise Cloud (see docs.github.com → artifact attestations).
+# This default-workflow path yields SLSA Build L1/L2 provenance material;
+# the Build L3 claim stays with release-slsa.yml's isolated trusted builder.
+name: Release — GitHub Attestations
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  attest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # sign via GitHub's Sigstore instance (OIDC)
+      attestations: write # write to the repo's attestation store
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      # CUSTOMIZE: replace with your real build (same artifact set as
+      # release-sign.yml / release-slsa.yml so all three trails cover
+      # identical digests).
+      - name: Build artifact
+        run: |
+          mkdir -p dist
+          git archive --format=tar.gz -o "dist/${GITHUB_REPOSITORY#*/}-${GITHUB_REF_NAME}.tar.gz" HEAD
+      # Fails EXPLICITLY on an empty dist/: "there was nothing to attest" must
+      # never be indistinguishable from "everything was attested".
+      - name: Refuse to attest nothing
+        run: |
+          set -uo pipefail
+          shopt -s nullglob
+          artifacts=(dist/*)
+          if [ ${#artifacts[@]} -eq 0 ]; then
+            echo "::error::dist/ is empty — nothing to attest (did the build step run?)"
+            exit 1
+          fi
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373 # v4.1.1
+        with:
+          subject-path: dist/*
+      - name: Upload artifacts for the verify job
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: attested-artifacts
+          path: dist/
+
+  verify:
+    needs: [attest]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      attestations: read # fetch attestations via the API (required for private repos; public repos merely tolerate its absence)
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+      - name: Download artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: attested-artifacts
+          path: dist/
+      # Identity is pinned to BOTH the repository and the signer workflow path —
+      # verifying that *something* attested the artifact is close to worthless;
+      # verifying that *this repo's release-attest workflow* did is the control.
+      # Values reach the shell through the ENVIRONMENT, never `${{ }}`
+      # interpolation into the script body — the same rule sscsb enforces on
+      # your workflows. Verification also fails EXPLICITLY when there is
+      # nothing to verify.
+      - name: Verify attestation for every artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -uo pipefail
+          shopt -s nullglob
+          artifacts=(dist/*)
+          if [ ${#artifacts[@]} -eq 0 ]; then
+            echo "::error::no artifacts in dist/ — nothing was verified"
+            exit 1
+          fi
+          for f in "${artifacts[@]}"; do
+            gh attestation verify "$f" \
+              --repo "$GITHUB_REPOSITORY" \
+              --signer-workflow "$GITHUB_REPOSITORY/.github/workflows/release-attest.yml"
+          done

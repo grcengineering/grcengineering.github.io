@@ -1,0 +1,7 @@
+# sscsb sample TruffleHog configuration (.trufflehog.yaml).
+# sscsb invokes trufflehog with --results=verified,unknown --fail; this file
+# holds project-specific detector tuning. Most repos need nothing here —
+# an empty custom-detector list keeps behavior identical to stock trufflehog.
+#
+# Docs: https://github.com/trufflesecurity/trufflehog#regex-detector-example
+detectors: []

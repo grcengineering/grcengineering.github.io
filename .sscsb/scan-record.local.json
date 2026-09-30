@@ -1,0 +1,731 @@
+{
+  "schema_version": 1,
+  "methodology_version": 2,
+  "repo": {
+    "owner": "grcengineering",
+    "name": "grcengineering.github.io",
+    "url": "https://github.com/grcengineering/grcengineering.github.io",
+    "default_branch": "main",
+    "commit": "361c9d393e170b623a55fce6b4197fc86cb25485",
+    "description": ""
+  },
+  "scanned_at": "2026-09-12T16:00:42Z",
+  "scanner": {
+    "sscsb_version": "0.4.0",
+    "workflow_run_id": 0,
+    "workflow_run_url": ""
+  },
+  "request_issue": null,
+  "controls": [
+    {
+      "id": "secrets",
+      "phase": 1,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        "pre-commit + commit-msg + pre-push shims installed, executable, and unmodified (core.hooksPath=.sscsb/hooks)",
+        "trufflehog: 3.97.4 (/opt/homebrew/bin/trufflehog)",
+        "gitleaks: disabled in config"
+      ]
+    },
+    {
+      "id": "commit-signing",
+      "phase": 1,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        "pre-commit + commit-msg + pre-push shims installed, executable, and unmodified (core.hooksPath=.sscsb/hooks)",
+        "1 approved signer(s), 1 human",
+        "git config gpg.format = ssh",
+        "git config user.signingkey = /Users/p4gs/.ssh/github_signing_key.pub",
+        "signing key does not look hardware-backed (no `-sk`) — spec recommends YubiKey ed25519-sk; software keys weaken the human-accountability model",
+        "git config commit.gpgSign = true",
+        "policy: hardware-backed keys required on protected branches"
+      ]
+    },
+    {
+      "id": "agent-signing",
+      "phase": 1,
+      "in_scope": false,
+      "raw_outcome": "disabled",
+      "scan_outcome": "info",
+      "reclassified": false,
+      "reason": "optional control not enabled by this repository",
+      "messages": [
+        "disabled in .sscsb/config.toml"
+      ]
+    },
+    {
+      "id": "signing-model",
+      "phase": 1,
+      "in_scope": true,
+      "raw_outcome": "degraded",
+      "scan_outcome": "unverified",
+      "reclassified": true,
+      "reason": "the control could not be performed on this machine — an unperformed check is never a verdict",
+      "messages": [
+        "human-local: configured",
+        "agent-claude-code: incomplete — run `sscsb signing setup agent-claude-code`",
+        "cloud-claude: repo-side attribution is probeable and is not in place — an attestation cannot stand in for it",
+        "cloud-claude: github_app_installed: not attested — `sscsb signing setup cloud-claude --confirm`",
+        "github-web: vigilant_mode: not attested — `sscsb signing setup github-web --confirm`",
+        "github-web: phishing_resistant_mfa: not attested — `sscsb signing setup github-web --confirm`",
+        "codespaces: gpg_verification: not attested — `sscsb signing setup codespaces --confirm`"
+      ]
+    },
+    {
+      "id": "branch-protection",
+      "phase": 1,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        "main: required pull requests ✓",
+        "main: force-push blocking ✓",
+        "main: required signed commits ✓",
+        "main: required status checks ✓",
+        "main: deletion protection ✓",
+        "main: Scorecard — stale-review dismissal ✓",
+        "main: Scorecard gap — ≥1 required approving review off (needs a 2nd reviewer; a solo maintainer cannot self-approve — opt in with `sscsb harden branch-protection --require-reviews` once you have one)",
+        "main: Scorecard gap — code-owner review off (needs a 2nd reviewer; a solo maintainer cannot self-approve — opt in with `sscsb harden branch-protection --require-reviews` once you have one)",
+        "main: Scorecard gap — last-push approval off (needs a 2nd reviewer; a solo maintainer cannot self-approve — opt in with `sscsb harden branch-protection --require-reviews` once you have one)",
+        "main: Scorecard — branch-up-to-date (strict) ✓"
+      ]
+    },
+    {
+      "id": "actions-audit",
+      "phase": 1,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        "[info] .github/workflows/release-slsa.yml: `slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.1.0` is tag-pinned by design: slsa-github-generator must be referenced by @vX.Y.Z for slsa-verifier to verify the trusted builder"
+      ]
+    },
+    {
+      "id": "gittuf",
+      "phase": 1,
+      "in_scope": false,
+      "raw_outcome": "disabled",
+      "scan_outcome": "info",
+      "reclassified": false,
+      "reason": "optional control not enabled by this repository",
+      "messages": [
+        "disabled in .sscsb/config.toml"
+      ]
+    },
+    {
+      "id": "ai-trailers",
+      "phase": 1,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        "enforced by the commit-msg hook",
+        "pre-commit + commit-msg + pre-push shims installed, executable, and unmodified (core.hooksPath=.sscsb/hooks)"
+      ]
+    },
+    {
+      "id": "ai-dep-gate",
+      "phase": 1,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        "enforced by the commit-msg hook",
+        "pre-commit + commit-msg + pre-push shims installed, executable, and unmodified (core.hooksPath=.sscsb/hooks)"
+      ]
+    },
+    {
+      "id": "pr-template",
+      "phase": 1,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        "AI-provenance PR template installed (code/tests/deps/docs questions)"
+      ]
+    },
+    {
+      "id": "ai-receipts",
+      "phase": 1,
+      "in_scope": false,
+      "raw_outcome": "disabled",
+      "scan_outcome": "info",
+      "reclassified": false,
+      "reason": "optional control not enabled by this repository",
+      "messages": [
+        "disabled in .sscsb/config.toml"
+      ]
+    },
+    {
+      "id": "binary-artifacts",
+      "phase": 1,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        "67 tracked file(s), none a compiled program or a code-carrying archive"
+      ]
+    },
+    {
+      "id": "webhooks",
+      "phase": 1,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        "grcengineering/grcengineering.github.io: no webhooks configured"
+      ]
+    },
+    {
+      "id": "sbom",
+      "phase": 2,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        "syft 1.51.1: .sscsb/out/sbom.cdx.json validated, 78 component(s) catalogued"
+      ]
+    },
+    {
+      "id": "vuln-scan",
+      "phase": 2,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        "trivy: 0.74.0",
+        "osv-scanner: 2.5.1",
+        "0 finding(s) from trivy + osv-scanner; 0 at or above `high` (undetermined severity counts as above)"
+      ]
+    },
+    {
+      "id": "dependency-pinning",
+      "phase": 2,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        "[warn] .github/workflows/ci.yml: job `deploy` step #7: `pip install mkdocs-material==9.7.7` pins a version, not a hash — `--require-hashes` with `--hash=sha256:…` pins the bytes",
+        "[warn] .github/workflows/ci.yml: job `deploy` step #8: `pip install mkdocs-material[imaging]==9.7.7` pins a version, not a hash — `--require-hashes` with `--hash=sha256:…` pins the bytes",
+        "[warn] .github/workflows/ci.yml: job `deploy` step #9: `pip install mkdocs-git-revision-date-localized-plugin==1.5.4` pins a version, not a hash — `--require-hashes` with `--hash=sha256:…` pins the bytes",
+        "[warn] .github/workflows/ci.yml: job `deploy` step #10: `pip install mkdocs-git-committers-plugin-2==2.5.0` pins a version, not a hash — `--require-hashes` with `--hash=sha256:…` pins the bytes",
+        "[warn] .github/workflows/semgrep.yml: job `semgrep` step `Install pinned Semgrep`: `pip install semgrep==1.177.0` pins a version, not a hash — `--require-hashes` with `--hash=sha256:…` pins the bytes"
+      ]
+    },
+    {
+      "id": "scorecard",
+      "phase": 2,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        ".github/workflows/scorecard.yml installed",
+        "live scan: no open Scorecard findings 🎉"
+      ]
+    },
+    {
+      "id": "renovate",
+      "phase": 2,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        "renovate.json5 installed (7 key(s))"
+      ]
+    },
+    {
+      "id": "package-trust",
+      "phase": 2,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        "new-package approval gate enforced in commit-msg hook",
+        "pre-commit + commit-msg + pre-push shims installed, executable, and unmodified (core.hooksPath=.sscsb/hooks)",
+        "approved baseline present (0 package(s))",
+        "registry existence validation ON for `sscsb deps check` and approvals (anti-slopsquat)",
+        "typosquat proximity heuristic ON for `sscsb deps check`, approvals, and the commit gate"
+      ]
+    },
+    {
+      "id": "bumblebee",
+      "phase": 2,
+      "in_scope": false,
+      "raw_outcome": "disabled",
+      "scan_outcome": "info",
+      "reclassified": false,
+      "reason": "optional control not enabled by this repository",
+      "messages": [
+        "disabled in .sscsb/config.toml"
+      ]
+    },
+    {
+      "id": "grype",
+      "phase": 2,
+      "in_scope": false,
+      "raw_outcome": "disabled",
+      "scan_outcome": "info",
+      "reclassified": false,
+      "reason": "optional control not enabled by this repository",
+      "messages": [
+        "disabled in .sscsb/config.toml"
+      ]
+    },
+    {
+      "id": "socket-firewall",
+      "phase": 2,
+      "in_scope": false,
+      "raw_outcome": "disabled",
+      "scan_outcome": "info",
+      "reclassified": false,
+      "reason": "optional control not enabled by this repository",
+      "messages": [
+        "disabled in .sscsb/config.toml"
+      ]
+    },
+    {
+      "id": "sigstore-signing",
+      "phase": 3,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        ".github/workflows/release-sign.yml installed (1 job(s))"
+      ]
+    },
+    {
+      "id": "slsa-provenance",
+      "phase": 3,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        ".github/workflows/release-slsa.yml installed (3 job(s))"
+      ]
+    },
+    {
+      "id": "github-attestations",
+      "phase": 3,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        ".github/workflows/release-attest.yml installed (2 job(s))"
+      ]
+    },
+    {
+      "id": "sbom-attestation",
+      "phase": 3,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        ".github/workflows/release-attest-sbom.yml installed (2 job(s))"
+      ]
+    },
+    {
+      "id": "model-signing",
+      "phase": 3,
+      "in_scope": false,
+      "raw_outcome": "disabled",
+      "scan_outcome": "info",
+      "reclassified": false,
+      "reason": "optional control not enabled by this repository",
+      "messages": [
+        "disabled in .sscsb/config.toml"
+      ]
+    },
+    {
+      "id": "provenance-verify",
+      "phase": 3,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        "slsa-verifier: 2.7.1",
+        "cosign: 3.1.3",
+        "gate: `sscsb provenance verify --artifact <f> --provenance <f>.intoto.jsonl --source-uri github.com/<owner>/<repo> --builder-id <trusted builder> [--source-tag vX.Y.Z]`",
+        "no builder_id pinned under [controls.provenance-verify] — `provenance verify` will require --builder-id on the command line rather than trusting any builder",
+        "deploy-gate workflow present (verification before publish)"
+      ]
+    },
+    {
+      "id": "release-immutability",
+      "phase": 3,
+      "in_scope": false,
+      "raw_outcome": "disabled",
+      "scan_outcome": "info",
+      "reclassified": false,
+      "reason": "optional control not enabled by this repository",
+      "messages": [
+        "disabled in .sscsb/config.toml"
+      ]
+    },
+    {
+      "id": "octo-sts",
+      "phase": 3,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        ".github/workflows/octo-sts-example.yml installed (1 job(s))",
+        ".github/chainguard/sscsb-automation.sts.yaml installed (3 key(s))"
+      ]
+    },
+    {
+      "id": "harden-runner",
+      "phase": 3,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        "ci.yml: harden-runner present in job `deploy`",
+        "codeql.yml: harden-runner present in job `analyze`",
+        "deploy-gate.yml: harden-runner present in job `verify`",
+        "octo-sts-example.yml: harden-runner present in job `federated-call`",
+        "release-attest-sbom.yml: harden-runner present in job `attest-sbom`",
+        "release-attest-sbom.yml: harden-runner present in job `verify`",
+        "release-attest.yml: harden-runner present in job `attest`",
+        "release-attest.yml: harden-runner present in job `verify`",
+        "release-sign.yml: harden-runner present in job `sign`",
+        "release-slsa.yml: harden-runner present in job `build`",
+        "release-slsa.yml: reusable-workflow only — job `provenance` calls `slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.1.0`, where harden-runner is the called workflow's concern",
+        "release-slsa.yml: harden-runner present in job `verify`",
+        "sast-opengrep.yml: harden-runner present in job `opengrep`",
+        "sbom.yml: harden-runner present in job `sbom`",
+        "scorecard.yml: harden-runner present in job `analysis`",
+        "secrets-scan.yml: harden-runner present in job `trufflehog`",
+        "semgrep.yml: harden-runner present in job `semgrep`",
+        "vuln-scan.yml: harden-runner present in job `trivy`",
+        "vuln-scan.yml: reusable-workflow only — job `osv-scanner` calls `google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@9a498708959aeaef5ef730655706c5a1df1edbc2`, where harden-runner is the called workflow's concern"
+      ]
+    },
+    {
+      "id": "witness",
+      "phase": 3,
+      "in_scope": false,
+      "raw_outcome": "disabled",
+      "scan_outcome": "info",
+      "reclassified": false,
+      "reason": "optional control not enabled by this repository",
+      "messages": [
+        "disabled in .sscsb/config.toml"
+      ]
+    },
+    {
+      "id": "sast",
+      "phase": 4,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        "engine: opengrep (rules: /Users/p4gs/Code/grcengineering/grcengineering.github.io/.sscsb/rules)",
+        "local ruleset present (1 file(s))",
+        "opengrep: 1.25.0"
+      ]
+    },
+    {
+      "id": "sighthound",
+      "phase": 4,
+      "in_scope": false,
+      "raw_outcome": "disabled",
+      "scan_outcome": "info",
+      "reclassified": false,
+      "reason": "optional control not enabled by this repository",
+      "messages": [
+        "disabled in .sscsb/config.toml"
+      ]
+    },
+    {
+      "id": "codeql",
+      "phase": 4,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        ".github/workflows/codeql.yml installed (1 job(s))"
+      ]
+    },
+    {
+      "id": "fuzzing",
+      "phase": 4,
+      "in_scope": false,
+      "raw_outcome": "disabled",
+      "scan_outcome": "info",
+      "reclassified": false,
+      "reason": "optional control not enabled by this repository",
+      "messages": [
+        "disabled in .sscsb/config.toml"
+      ]
+    },
+    {
+      "id": "workflow-audit-extended",
+      "phase": 4,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        "[warn] .github/workflows/ci.yml: job `deploy`: `actions/checkout` checks out code without `persist-credentials: false` — the GITHUB_TOKEN stays on disk for later steps to exfiltrate",
+        "[info] .github/workflows/release-slsa.yml: `slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.1.0` is tag-pinned by design: slsa-github-generator must be referenced by @vX.Y.Z for slsa-verifier to verify the trusted builder"
+      ]
+    },
+    {
+      "id": "secure-repo",
+      "phase": 4,
+      "in_scope": true,
+      "raw_outcome": "info",
+      "scan_outcome": "info",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        "StepSecurity secure-repo is a web service (app.stepsecurity.io), not an action; run it against this repo to auto-generate hardening PRs. See docs/phase-4.md."
+      ]
+    },
+    {
+      "id": "wait-for-secrets",
+      "phase": 4,
+      "in_scope": false,
+      "raw_outcome": "disabled",
+      "scan_outcome": "info",
+      "reclassified": false,
+      "reason": "optional control not enabled by this repository",
+      "messages": [
+        "disabled in .sscsb/config.toml"
+      ]
+    },
+    {
+      "id": "dependency-track",
+      "phase": 5,
+      "in_scope": false,
+      "raw_outcome": "disabled",
+      "scan_outcome": "info",
+      "reclassified": false,
+      "reason": "optional control not enabled by this repository",
+      "messages": [
+        "disabled in .sscsb/config.toml"
+      ]
+    },
+    {
+      "id": "guac",
+      "phase": 5,
+      "in_scope": false,
+      "raw_outcome": "disabled",
+      "scan_outcome": "info",
+      "reclassified": false,
+      "reason": "optional control not enabled by this repository",
+      "messages": [
+        "disabled in .sscsb/config.toml"
+      ]
+    },
+    {
+      "id": "openvex",
+      "phase": 5,
+      "in_scope": true,
+      "raw_outcome": "info",
+      "scan_outcome": "info",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        "no OpenVEX documents in .sscsb/out — N/A for this repo until one is generated",
+        "generate: `sscsb vex create --vuln CVE-… --product pkg:… --status not_affected --justification …`",
+        "ingest: `sscsb scan --vex <file>` suppresses not_affected/fixed findings visibly"
+      ]
+    },
+    {
+      "id": "oras",
+      "phase": 5,
+      "in_scope": false,
+      "raw_outcome": "disabled",
+      "scan_outcome": "info",
+      "reclassified": false,
+      "reason": "optional control not enabled by this repository",
+      "messages": [
+        "disabled in .sscsb/config.toml"
+      ]
+    },
+    {
+      "id": "security-insights",
+      "phase": 5,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        "structurally valid — run `si validate` for full schema conformance"
+      ]
+    },
+    {
+      "id": "best-practices-badge",
+      "phase": 5,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        ".sscsb/best-practices-badge.md installed (present and non-empty; no machine-checkable structure — its substance is a human judgement sscsb does not assert)"
+      ]
+    },
+    {
+      "id": "osps-baseline",
+      "phase": 5,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        ".sscsb/osps-baseline.md installed (present and non-empty; no machine-checkable structure — its substance is a human judgement sscsb does not assert)"
+      ]
+    },
+    {
+      "id": "compliance-map",
+      "phase": 5,
+      "in_scope": true,
+      "raw_outcome": "pass",
+      "scan_outcome": "pass",
+      "reclassified": false,
+      "reason": null,
+      "messages": [
+        "map covers all 47 controls across SLSA/SSDF/CRA/Badge"
+      ]
+    }
+  ],
+  "score": {
+    "grade": "A+",
+    "provisional": false,
+    "overall_percent": 100.0,
+    "evidence_coverage_percent": 90.6,
+    "phases": [
+      {
+        "phase": 1,
+        "pass": 9,
+        "fail": 0,
+        "gap": 0,
+        "unverified": 1,
+        "info": 0,
+        "percent": 100.0
+      },
+      {
+        "phase": 2,
+        "pass": 6,
+        "fail": 0,
+        "gap": 0,
+        "unverified": 0,
+        "info": 0,
+        "percent": 100.0
+      },
+      {
+        "phase": 3,
+        "pass": 7,
+        "fail": 0,
+        "gap": 0,
+        "unverified": 0,
+        "info": 0,
+        "percent": 100.0
+      },
+      {
+        "phase": 4,
+        "pass": 3,
+        "fail": 0,
+        "gap": 0,
+        "unverified": 0,
+        "info": 1,
+        "percent": 100.0
+      },
+      {
+        "phase": 5,
+        "pass": 4,
+        "fail": 0,
+        "gap": 0,
+        "unverified": 0,
+        "info": 1,
+        "percent": 100.0
+      }
+    ]
+  },
+  "local": {
+    "record_version": 1,
+    "lane": "local",
+    "namespace": "sscsb-scan-record",
+    "generated_at": "2026-09-12T16:00:42Z",
+    "sscsb_version": "0.4.0",
+    "repo": {
+      "owner": "grcengineering",
+      "name": "grcengineering.github.io",
+      "url": "https://github.com/grcengineering/grcengineering.github.io",
+      "default_branch": "main",
+      "branch": "chore/sscsb-baseline",
+      "commit": "361c9d393e170b623a55fce6b4197fc86cb25485"
+    },
+    "worktree": {
+      "clean": true,
+      "tracked_changes": []
+    },
+    "signer": {
+      "principal": "10093271+p4gs@users.noreply.github.com",
+      "key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBxEAReKc/G/sUxY/UbXprOccUKaxhd+sr/7Gbb40u9w",
+      "fingerprint": "SHA256:prXatGO56nl8Or4JdDSzIIcj8hZE1jBxnFaXZOnAPDQ",
+      "program": "op-ssh-sign"
+    },
+    "allowed_signers": {
+      "path": ".sscsb/policy/allowed_signers",
+      "sha256": "9c08731db65f44491bb6ec657e5eea801eb4776441a79690482a69c156e946e1"
+    }
+  }
+}
