@@ -1,0 +1,15 @@
+<svg width="320" height="64" viewBox="0 0 320 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="GRC Engineering">
+  <defs>
+    <linearGradient id="grcFusionWD" x1="4" y1="14" x2="56" y2="58" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFA84F"></stop>
+      <stop offset="0.42" stop-color="#E58A56"></stop>
+      <stop offset="0.66" stop-color="#6FA9C2"></stop>
+      <stop offset="1" stop-color="#1B95C1"></stop>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="8" width="48" height="48" rx="13" fill="url(#grcFusionWD)"></rect>
+  <rect x="16" y="23.5" width="24" height="4.3" rx="2.15" fill="#FFFFFF"></rect>
+  <rect x="16" y="29.85" width="24" height="4.3" rx="2.15" fill="#FFFFFF" opacity="0.9"></rect>
+  <rect x="16" y="36.2" width="24" height="4.3" rx="2.15" fill="#FFFFFF"></rect>
+  <text x="70" y="41" font-family="Archivo, ui-sans-serif, sans-serif" font-size="27" font-weight="700" letter-spacing="-0.6" fill="#FFFFFF">grc<tspan fill="#6B7A88">.</tspan>engineering</text>
+</svg>

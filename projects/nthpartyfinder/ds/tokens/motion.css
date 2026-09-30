@@ -1,0 +1,22 @@
+/* ============================================================
+   MOTION — GRC Engineering
+   Restrained, precise. Ease-out entrances, no bounce.
+   ============================================================ */
+
+:root {
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);       /* @kind other */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);    /* @kind other */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);    /* @kind other */
+
+  --dur-instant: 80ms;  /* @kind other */
+  --dur-fast: 130ms;    /* @kind other */
+  --dur-base: 200ms;    /* @kind other */
+  --dur-slow: 320ms;    /* @kind other */
+  --dur-slower: 520ms;  /* @kind other */
+
+  --transition-control: background-color var(--dur-fast) var(--ease-out),
+                        border-color var(--dur-fast) var(--ease-out),
+                        color var(--dur-fast) var(--ease-out),
+                        box-shadow var(--dur-fast) var(--ease-out),
+                        transform var(--dur-fast) var(--ease-out);
+}

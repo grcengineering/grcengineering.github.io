@@ -1,0 +1,209 @@
+a {
+  transition: color 500ms !important;
+  transition-behavior: normal !important;
+  transition-duration: 500ms !important;
+  transition-timing-function: ease !important;
+  transition-delay: 0s !important;
+  transition-property: color !important; 
+}
+
+/* Add this in after adding additional columns for Summary + GRC Engineering Relevancy
+<!--Set max column width for "Title" column-->
+th:nth-child(1), 
+td:nth-child(1) { 
+    max-width: 350px; 
+}
+<!--Set max column width for "Author(s)" column-->
+th:nth-child(2), 
+td:nth-child(2) {
+    max-width: 200px; 
+}
+*/
+
+.md-typeset h1 {
+  font-weight: bolder;
+  font-size: 2em;
+  margin: 0 0 0em;
+  font-family: 'SF Pro Display', -apple-system, system-ui, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+}
+
+.md-typeset h2 {
+  font-weight: 600;
+  font-size: 1.5em;
+  font-family: 'SF Pro Display', -apple-system, system-ui, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+}
+
+.md-nav__title {
+  font-weight: 600;
+  font-size: 1.5em;
+}
+
+.md-header {
+  background-image: linear-gradient(to left, #1b95c1ff, #ffa84fff);
+}
+
+[data-md-color-scheme="grcengineering-light"] {
+    --md-primary-fg-color:        #ffa84fff;
+    --md-primary-fg-color--dark:  rgb(188, 102, 16);
+    --md-default-bg-color: #ffffff;
+    --md-primary-bg-color: #ffffff;
+    --md-typeset-a-color: #1b95c1ff;
+    --md-accent-fg-color: #ffa84fff;
+    .md-typeset table th[role=columnheader] {
+      background-color: #1b95c12b;
+    }
+}
+
+[data-md-color-scheme="grcengineering-dark"] {
+    --md-primary-fg-color:        #1b95c1ff;
+    --md-primary-fg-color--dark:  rgb(2, 98, 133);
+    --md-default-bg-color: #000000;
+    --md-typeset-color: #ffffff;
+    --md-default-fg-color--light: #ffffffcb;
+    --md-primary-bg-color: #000000;
+    --md-typeset-a-color: #ffa84fff;
+    --md-typeset-table-color: #ffffff40;
+    --md-default-fg-color--lightest: #ffffff40;
+    --md-accent-fg-color: #1b95c1ff;
+    --md-admonition-bg-color:  #000000;
+    --md-admonition-fg-color:  #ffffff;
+    --md-shadow-z2: 0 0.2rem 0.5rem #ffffff33, 0 0 0.05rem #ffffff66;
+    .md-typeset .grid.cards>ol>li:focus-within, .md-typeset .grid.cards>ol>li:hover, .md-typeset .grid.cards>ul>li:focus-within, .md-typeset .grid.cards>ul>li:hover, .md-typeset .grid>.card:focus-within, .md-typeset .grid>.card:hover {
+      border-color: #0000;
+    }
+    .md-typeset table th[role=columnheader] {
+      background-color: #ffa74f4b;
+    }
+}
+
+.md-typeset .warning>.admonition-title, .md-typeset .warning>summary {
+  background-color: rgba(255, 167, 79, 0.25);
+}
+
+.md-typeset .admonition.warning, .md-typeset details.warning {
+  border-color: #db7d00;
+}
+
+.md-typeset .warning>.admonition-title:before, .md-typeset .warning>summary:before {
+  background-color: #ffa84fff;
+}
+
+.md-typeset .warning>.admonition-title:after, .md-typeset .warning>summary:after {
+  color: #ffa84fff;
+}
+
+.md-typeset .success>.admonition-title, .md-typeset .success>summary {
+  background-color: rgba(27, 149, 193, 0.25);
+}
+
+.md-typeset .admonition.warning, .md-typeset details.success {
+  border-color: #1b95c1ff;
+}
+
+.md-typeset .warning>.admonition-title:before, .md-typeset .success>summary:before {
+  background-color: #1b95c1ff;
+}
+
+.md-typeset .warning>.admonition-title:after, .md-typeset .success>summary:after {
+  color: #1b95c1ff;
+}
+
+.md-typeset .admonition, .md-typeset details {
+  box-shadow: var(--md-shadow-z1);
+  color: var(--md-admonition-fg-color);
+  transition: box-shadow 500ms;
+}
+/* ── Cheat Sheet definition quote (home page, between intro paragraphs) ── */
+.md-typeset .grce-definition {
+  position: relative;
+  margin: 2em 0 2.2em;
+  padding: 1.6em 1.8em 1.4em 2em;
+  border-radius: 12px;
+  background:
+    radial-gradient(120% 140% at 0% 0%, rgba(255, 168, 79, 0.10) 0%, transparent 55%),
+    radial-gradient(120% 140% at 100% 100%, rgba(27, 149, 193, 0.10) 0%, transparent 55%),
+    var(--md-code-bg-color);
+  box-shadow: var(--md-shadow-z1);
+  overflow: hidden;
+  text-align: left;
+}
+.md-typeset .grce-definition::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: linear-gradient(180deg, #ffa84fff 0%, #1b95c1ff 100%);
+}
+.md-typeset .grce-definition::after {
+  content: "\201C";
+  position: absolute;
+  top: -0.12em;
+  right: 0.25em;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 7em;
+  line-height: 1;
+  color: #1b95c1ff;
+  opacity: 0.12;
+  pointer-events: none;
+}
+.md-typeset .grce-definition__eyebrow {
+  margin: 0 0 0.6em;
+  font-size: 0.72em;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--md-default-fg-color--light);
+}
+.md-typeset .grce-definition blockquote {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: var(--md-typeset-color);
+}
+.md-typeset .grce-definition blockquote p {
+  margin: 0;
+}
+.md-typeset .grce-hl {
+  padding: 0 0.1em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.md-typeset .grce-hl--blue {
+  background: linear-gradient(transparent 62%, rgba(27, 149, 193, 0.28) 62%);
+}
+.md-typeset .grce-hl--orange {
+  background: linear-gradient(transparent 62%, rgba(255, 168, 79, 0.40) 62%);
+}
+.md-typeset .grce-definition blockquote a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.md-typeset .grce-definition blockquote a:hover {
+  color: var(--md-typeset-a-color);
+}
+.md-typeset .grce-definition figcaption {
+  max-width: none;
+  margin: 1.1em 0 0;
+  font-size: 0.85em;
+  font-style: normal;
+  color: var(--md-default-fg-color--light);
+}
+[data-md-color-scheme="grcengineering-dark"] .md-typeset .grce-definition {
+  background:
+    radial-gradient(120% 140% at 0% 0%, rgba(255, 168, 79, 0.12) 0%, transparent 55%),
+    radial-gradient(120% 140% at 100% 100%, rgba(27, 149, 193, 0.14) 0%, transparent 55%),
+    #0c1117;
+  box-shadow: 0 0 0 1px #ffffff1f;
+}
+[data-md-color-scheme="grcengineering-dark"] .md-typeset .grce-hl--blue {
+  background: linear-gradient(transparent 62%, rgba(27, 149, 193, 0.45) 62%);
+}
+[data-md-color-scheme="grcengineering-dark"] .md-typeset .grce-hl--orange {
+  background: linear-gradient(transparent 62%, rgba(255, 168, 79, 0.38) 62%);
+}
+@media screen and (max-width: 44.9375em) {
+  .md-typeset .grce-definition { padding: 1.3em 1.2em 1.2em 1.4em; }
+}

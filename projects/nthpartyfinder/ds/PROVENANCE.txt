@@ -1,0 +1,152 @@
+GRCE Design System vendored copy
+Source project: GRC Engineering Design System (73c32b48-9855-4a18-ab4b-101e72dd50e0)
+Source repo commit: 0c979ea
+Vendored: 2026-06-30
+Link ds/styles.css only; do not hand-edit — re-copy from the DS mirror.
+Engine update 2026-07-05: ds/node-graph.js regenerated from the Claude Design
+canvas NodeGraphBackground.jsx (project 73c32b48…, pulled via DesignSync
+2026-07-05) — adds the energy-pulse cascade + theme-aware rendering. NOTE: the
+GitHub mirror's components/backgrounds/NodeGraphBackground.jsx was stale at
+sync time; the canvas is the source of truth for this port.
+Canvas source archived: ~/.claude/PAI/MEMORY/WORK/npf-spheres-glassy-hero/canvas-NodeGraphBackground-2026-07-05.jsx
+sha256 4e7f1d445ea92f7d8c5755604d3a18e03e273ceb6052cfdd95d10a5d92b856b0 (34,982 bytes, 711 lines)
+
+ToolLockup resync 2026-07-12: after the grce-design-system repo re-synced from
+the Claude Design canvas (commits a655a80+d5b08f6), index.html's inline
+.grc-lockup ring CSS was updated to match the current
+components/brand/ToolLockup.jsx (1.5px flush arc, zero overlap — was a 1px
+overhang arc). Full audit task: ~/.claude/PAI/MEMORY/WORK/npf-ds-resync-audit/ISA.md.
+
+NodeGraphBackground audited-and-KEPT 2026-07-12 (not re-pulled): this page's
+ds/node-graph.js sphere/pulse antialiasing (shipped 2026-07-08) and
+frustum-fill tuning (FILL=1.08 overfill, rim-bias sampling, 280-node cap,
+sqrt DPR area budget, no-op resize guard) are more refined than the DS
+canvas's own 2026-07-11 antialiasing fix and its still-partial frustum-fill
+catch-up (FILL=0.85, no rim-bias, 220-node cap, no DPR area budget, no
+pulse-edge AA). Re-vendoring from the canvas at this point would be a
+regression. See the audit ISA above for the full line-by-line comparison.
+
+Halo-under-rim cross-fade AA ported 2026-07-15 (owner reported a dark seam
+ring around every sphere on the live page vs the DS canvas): the DS canvas
+NodeGraphBackground has since gained a genuine antialiasing improvement this
+page lacked — the glow-halo pass used to start exactly at the sphere edge
+(discard r<1.0) while the body's rim feather fades to alpha 0 by r=1, leaving
+the ~1px feather band lit by NEITHER body nor halo → the dark page shows
+through as a 1-2px seam ring (glaring when the halo flares red). Ported the
+fix SURGICALLY: only the SPHERE_FS halo pass changed — it now ramps the halo
+up from `inner = 1 - 2*vFeather` (the body feather start) so body-fade and
+halo-rise are exact complements and cross-fade into continuous light. Expressed
+in THIS page's own vFeather varying (not the canvas's vPixelRadius/featherR
+scheme) so the complement is exact against this page's crisper ~1.2px body
+feather, and so the page's superior frustum-fill/AA tuning documented above is
+preserved untouched — the ONLY change is the halo annulus inner edge. The
+grce-design-system mirror already carried the canvas fix (synced earlier this
+session, commit 8d08367), so no mirror update was needed. Verified: node
+--check clean; halo inner edge now r>=inner not r>=1.0. Rendered-pixel
+confirmation deferred to the live site — browser automation was unreachable
+this background session (and WebGL scenes don't composite into plain
+screenshots regardless).
+
+SiteHeader adopted 2026-07-15: the nav (previously a page-local `.np-nav`,
+position:sticky bar) is now `ds/site-header.js` — a vanilla auto-mount port
+of the DS `SiteHeader.jsx` (grce-design-system re-synced from the Claude
+Design canvas this session; SiteHeader itself was byte-identical to the
+mirror, no drift). CSS/scroll math ported verbatim; only the React shell is
+replaced (same pattern as node-graph.js). `.grc-siteheader` is `position:
+fixed`, so `.np-hero` gained `padding-top: 64px` to reserve space under it.
+Content-width aligned to the page's own `--container-lg` (1080px) via
+`data-contained-width="1080"` rather than the component's 1120px default.
+The auto-collapse behavior (JS-measures the real nav+actions width against
+the floating pill width, switches to a menu-button dropdown when it
+wouldn't fit) is ported faithfully rather than hardcoded to a fixed
+breakpoint, so it stays correct if the nav links ever change. Old
+`.np-nav`/`.np-mobile`/`.np-hamburger` CSS removed; `.np-icon-btn` (the
+theme-toggle button) kept and reused inside `.grc-siteheader__actions`.
+
+NodeGraphBackground precision parity fix 2026-07-15: re-syncing the DS
+mirror surfaced one genuine functional gap versus the canvas — the canvas's
+LINE_FS applies the highp-conditional precision header (same as the sphere
+and pulse shaders), while this page's LINE_FS hardcoded `precision mediump
+float`. Factored a shared `PRECISION_HEADER` const (matching the canvas)
+and applied it to SPHERE_FS/PULSE_FS/LINE_FS uniformly — closes the one
+real drift found; the frustum-fill/AA tuning superiority documented above
+is unchanged and was NOT touched.
+
+SiteHeader morph reworked 2026-07-15 (owner feedback from live iPhone
+screenshots): the first port drove the docked→floating morph off a
+continuous `--p = scrollY/scrollDistance` variable, which caused three
+defects — (1) the glass fill/blur was tied to `opacity: var(--p)` so it was
+GONE when docked at the top; (2) the shape interpolated per-scroll-pixel, so
+the transition looked seamy and stepped in sync with the wheel instead of
+snapping; (3) no drop shadow under the pill; (4) the pill matched the page's
+1080px content width so it didn't read as wider. Rebuilt to the cocoindex.io
+model: a single `.grc-siteheader--floating` class toggles once a scroll
+THRESHOLD (data-scroll-distance, 88px) is crossed — with a hysteresis band
+(enter 88 / exit 64) to prevent boundary flicker — and every visual property
+(max-width, border-radius, box-shadow, gap padding, ring/rule opacity)
+carries a CSS `transition` (--dur-slow 320ms / --ease-out) so the whole chrome
+morphs FULLY in one shot. Docked = full-bleed frosted bar (glass ALWAYS
+present, square corners, bottom hairline rule). Floating = contained glass
+pill (full corners, gradient hairline ring, --shadow-xl drop shadow).
+data-contained-width raised 1080 → 1180 so the pill is noticeably wider than
+the page's --container-lg (1080px) glass boxes. Auto-collapse/measure and
+menu-panel logic unchanged. Verified: node --check clean; threshold state
+machine unit-checked (binary snap + hysteresis, not continuous); CSS
+invariants asserted. Rendered-pixel confirmation deferred to the live site —
+both browser-automation paths (Interceptor, claude-in-chrome) were
+unreachable in this background session.
+
+Stutter/twitch fix 2026-07-15 (owner iPhone screen recording, diagnosed by
+extracting 60fps frames via AVFoundation and tracking the lockup edge
+trajectory per frame): each individual morph was smooth and monotone — the
+"twitching" was (a) FREQUENCY: the 88px enter / 64px exit thresholds sat
+exactly in the band where a reader's thumb hovers over the hero, producing
+FIVE full lurching morphs in ~11s of gentle scrolling (t≈2.1/4.3/6.0/7.9/10.8
+in the recording) — the morph fired in sync with small scroll wiggles; and
+(b) a real transition defect: the docked bar used a 6000px max-width sentinel,
+so the 6000px→1180px interpolation was invisible (above the viewport clamp)
+for most of the transition, compressing the visible width change into the
+tail (a late "kick"), while on iPhone the width change came only from the
+wrapper's animated padding — a LAYOUT property re-laid-out every frame under
+the backdrop-filter. Fixes, matching cocoindex.io's actual implementation
+(their JS: classList.toggle("is-floating", scrollY > 24); their detach uses
+transform: translateY on the inner element): (1) scroll threshold 88 → 24
+(hysteresis exit ~8) — the morph now belongs to "leaving the top": one
+gesture, one morph; hovering at any y > 24 can never flip state; (2) the bar
+animates width 100% <-> min(contained, 100% - 2*side) — visible interpolation
+the whole way, no sentinel; (3) the detach gap is transform: translateY(gap)
+on the bar (compositor-only), wrapper padding is never animated. Verified:
+node --check clean, state machine unit-checked (hover zone 60-90px = zero
+flips), CSS invariants asserted. Rendered-pixel confirmation deferred to the
+live site (browser automation unreachable in this background session).
+
+Mobile snap fix 2026-07-15, round 2 (owner's second iPhone recording): 60fps
+frame tracking showed the morph now completed in ONE 16.7ms frame — zero
+intermediate values (the previous glide had nine) — i.e. the CSS transition
+was not running AT ALL on iPhone. Two causes, both fixed: (1) THE
+TRANSITION-KILLER — iOS Safari fires a resize event when the URL bar
+collapses, which happens in the first few px of any scroll: exactly the frame
+the new 24px threshold crosses. The resize handler ran measure(), which sets
+data-measuring (whose CSS rule applies transition:none !important to the bar)
+and forces a synchronous reflow — committing the freshly-toggled floating
+geometry with transitions disabled: an instant snap on every mobile
+scroll-from-top. (The old 88px threshold fired ~80px after the URL-bar
+resize, in a different frame — which is why the first recording glided and
+the second snapped.) Fix: all resize work is now gated on a real viewport
+WIDTH change (URL-bar wobble is height-only) — the same guard ds/node-graph.js
+uses for the same iOS behavior. (2) width interpolation: iOS Safari does not
+reliably interpolate `width: 100%` ⇄ `min(px, calc(% - px))` — even absent
+the killer, the width leg would snap. JS now sets explicit px widths for BOTH
+states (viewport px ⇄ pill px; re-applied on real resizes), so the width
+transition is always px→px, which interpolates in every engine. Threshold
+semantics, transform detach, radius/shadow/ring cross-fades all unchanged.
+
+DS-upstream loop opened 2026-07-15: a Claude Design upgrade prompt covering
+all three field-tested SiteHeader fixes (threshold toggle + both-states glass,
+JS-owned px→px width, width-guarded resize, compositor-transform detach) was
+delivered to the owner for pasting into the DS canvas (project 73c32b48…) —
+same pattern as the earlier node-graph engine-deviation prompt. The DS canvas
+SiteHeader.jsx still carries the continuous --p mechanism until that prompt is
+applied; this page's ds/site-header.js is the field-tested source of truth for
+the threshold morph in the meantime. Once the canvas adopts it (and the mirror
+re-syncs), this page can re-vendor SiteHeader plainly.

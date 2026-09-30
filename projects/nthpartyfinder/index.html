@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nth Party Finder — GRC Engineering</title>
+<meta name="description" content="Map your entire vendor party guest list — from third parties to the Nth degree — through DNS analysis.">
+
+<!-- No-flash theme resolver: set data-theme before first paint -->
+<script>
+(function () {
+  /* Owner override 2026-07-08: render DARK-ONLY. All light-mode CSS, the engine's
+     light render branch, and the light/dark/system toggle remain in place —
+     flip FORCE_DARK to false to restore light/system theming. */
+  var FORCE_DARK = true;
+  window.__NPF_FORCE_DARK = FORCE_DARK;
+  try {
+    var k = 'npf-theme';
+    var c = localStorage.getItem(k) || 'system';
+    var dark = FORCE_DARK || (c === 'dark') || (c === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    var el = document.documentElement;
+    el.setAttribute('data-theme', dark ? 'dark' : 'light');
+    el.setAttribute('data-theme-choice', c);
+  } catch (e) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.documentElement.setAttribute('data-theme-choice', 'system');
+  }
+})();
+</script>
+
+<!-- GRC Engineering Design System (vendored — tokens + self-hosted fonts) -->
+<link rel="stylesheet" href="ds/styles.css">
+
+<!-- Material Symbols (icon set kept from the original) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+
+<style>
+/* ════════════════════════════════════════════════════════════
+   NTH PARTY FINDER — re-founded on the GRC Engineering Design System
+   Tokens, type, spacing, effects + motion all come from ds/styles.css.
+   This sheet adds only: the NeonLux face, the three NPF signature
+   components (LavaTitle, ToolLockup, NodeGraph), and the page layout.
+   ════════════════════════════════════════════════════════════ */
+
+/* NeonLux — the retro-arcade display face for the neon hero title */
+@font-face {
+  font-family: 'NeonLux';
+  src: url('fonts/NeonLux.ttf') format('truetype');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+
+/* Unbounded — the OCEAN ToolLockup wordmark face (variable 200–900, Latin subset ~57KB) */
+@font-face {
+  font-family: 'Unbounded';
+  src: url('fonts/unbounded-vf.woff2') format('woff2');
+  font-weight: 200 900; font-style: normal; font-display: swap;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--surface-page);
+  color: var(--text-body);
+  /* clip, not hidden: overflow-x:hidden on body makes the viewport a scroll
+     container and silently breaks smooth scrolling / fragment navigation in
+     Chrome (same fix as OCEAN's site, commit 7d2744c there). */
+  overflow-x: clip;
+}
+
+.np-container { max-width: var(--container-lg); margin: 0 auto; padding: 0 var(--space-7); }
+
+.material-symbols-outlined { vertical-align: middle; line-height: 1; }
+
+/* ── LINKS ── */
+a { color: var(--text-link); text-decoration: none; transition: var(--transition-control); }
+a:hover { color: var(--brand-accent-strong); }
+
+/* ════════ SIGNATURE 1 — ToolLockup (Unbounded pill, travelling white arc) ════════
+   1:1 with the latest GRCE Design System ToolLockup (grc.engineering/OCEAN .nav-logo-mark):
+   Unbounded 700 · 135° orange→blue · 1.5px single-white arc on a conic ring sitting
+   flush against the pill edge (zero overlap), rotating at 110°/s.
+   DS drives the angle via JS; here the page's @property keyframe does it (110°/s = 3.273s/rev). */
+@property --grc-lockup-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+.grc-lockup {
+  /* size drivers — md defaults match the OCEAN nav mark exactly */
+  --lk-h: 36px; --lk-pad: 14px; --lk-fs: 0.9rem; --lk-r: 8px;
+  --grc-lockup-angle: 0deg;
+  position: relative;
+  box-sizing: border-box;
+  height: var(--lk-h);
+  padding: 0 var(--lk-pad);
+  background: linear-gradient(135deg, #FFA84F, #1B95C1);
+  border-radius: var(--lk-r);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: "Unbounded", sans-serif;
+  font-weight: 700;
+  font-size: var(--lk-fs);
+  letter-spacing: 0.06em;
+  color: #000;
+  box-shadow: 0 0 20px rgba(255, 168, 79, 0.18);
+  white-space: nowrap;
+  z-index: 1;
+  text-decoration: none;
+}
+/* 1.5px rotating white arc, entirely outside the pill edge (zero overlap) */
+.grc-lockup::before {
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  border-radius: calc(var(--lk-r) + 1.5px);
+  background: conic-gradient(
+    from var(--grc-lockup-angle, 0deg),
+    transparent 5%,
+    #FFFFFF 20%,
+    transparent 35%
+  );
+  z-index: -1;
+  animation: grc-lockup-spin 3.273s linear infinite;
+}
+/* full-face cover so the ring reads as a rim flush against the pill edge */
+.grc-lockup::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--lk-r);
+  background: linear-gradient(135deg, #FFA84F, #1B95C1);
+  z-index: -1;
+}
+.grc-lockup__text { position: relative; }
+@keyframes grc-lockup-spin { to { --grc-lockup-angle: 360deg; } }
+/* sizes — sm = nav (compact wide-face fit); md = DS nav spec (36px); lg = hero (56px) */
+.grc-lockup--sm { --lk-h: 28px; --lk-pad: 10px; --lk-fs: 0.7rem; }
+.grc-lockup--md { }
+.grc-lockup--lg { --lk-h: 56px; --lk-pad: 22px; --lk-fs: 1.4rem; --lk-r: 12px; }
+@media (prefers-reduced-motion: reduce) { .grc-lockup::before { animation: none; } }
+
+/* ════════ SIGNATURE 2 — LavaTitle (neon flowing wordmark) ════════ */
+.grc-lava-title {
+  font-family: 'NeonLux', sans-serif; font-size: clamp(4rem, 11vw, 8.5rem); font-weight: 400;
+  letter-spacing: 6px; text-transform: uppercase; line-height: 1.12; color: #fff;
+  margin: 0; position: relative; z-index: 1; filter: drop-shadow(1px 1px 0px #000);
+}
+@keyframes grc-lava-flow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+@keyframes grc-lava-flow-reverse { 0% { background-position: 100% 50%; } 50% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+@keyframes grc-lava-flicker { 0%,17%,21%,23%,27%,52%,56%,100% { opacity: 1; } 18%,22%,24%,53%,55% { opacity: 0.35; } }
+.grc-lava-text { display: inline; white-space: nowrap; }
+.grc-lava-letter {
+  display: inline-block; position: relative;
+  background: linear-gradient(90deg, #FF8C00, #FF9A1F, #00A8E8, #00C2FF, #FF8C00);
+  background-size: 300% 100%; -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: grc-lava-flow 8s ease-in-out infinite; animation-delay: calc(var(--i) * -0.6s);
+}
+.grc-lava-letter--sm { font-size: 0.7em; }
+.grc-lava-letter--flicker {
+  animation: grc-lava-flow 8s ease-in-out infinite, grc-lava-flicker 4s infinite;
+  animation-delay: calc(var(--i) * -0.6s), 0s;
+}
+.grc-lava-letter::before {
+  content: attr(data-letter); position: absolute; top: 0; left: 0; z-index: -1;
+  background: linear-gradient(90deg, #FF8C00, #FF9A1F, #00A8E8, #00C2FF, #FF8C00);
+  background-size: 300% 100%; -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; -webkit-text-stroke: 0.25px transparent; paint-order: stroke fill;
+  animation: grc-lava-flow-reverse 8s ease-in-out infinite; animation-delay: calc(var(--i) * -0.6s);
+  filter: blur(1.5px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .grc-lava-letter, .grc-lava-letter::before, .grc-lava-letter--flicker { animation: none; }
+}
+
+/* ════════ SIGNATURE 3 — NodeGraph backdrop ════════ */
+.grc-nodegraph { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; z-index: 0; background: transparent; }
+.grc-nodegraph__canvas { width: 100%; height: 100%; display: block; }
+
+/* ════════ NAV — GRC Engineering SiteHeader (scroll-morph: flush bar → floating glass pill) ════════
+   Component CSS (.grc-siteheader*) is injected by ds/site-header.js — a verbatim vanilla port of
+   the DS SiteHeader.jsx (see PROVENANCE.txt). This block only carries the page-local pieces that
+   live inside it: the theme-toggle icon button (reused from the old nav) and the mobile-panel
+   action button placement. */
+/* Lockup positioning = Cocoindex's logo, literally: docked left inset = their
+   --nav-gutter clamp(1.25rem, 4vw, 3rem); floating pill inset = their
+   `nav.top.is-floating .nav-in` padding 0 1.1rem; padding rides the morph
+   transition exactly as their .nav-in does. (Vendored component keeps its
+   0 var(--space-7) default — this is a page-level override.) */
+.grc-siteheader .grc-siteheader__inner {
+  /* Cocoindex's docked .nav-in is max-width:100% (logo hugs the viewport gutter,
+     not a centered container). The bar's JS-owned px width already implements the
+     floating clamp, so the inner just fills the bar in both states. */
+  max-width: none;
+  padding: 0 clamp(1.25rem, 4vw, 3rem);
+  transition: padding var(--grc-sh-dur, 320ms) var(--grc-sh-ease, cubic-bezier(0.2,0.8,0.2,1));
+}
+.grc-siteheader.grc-siteheader--floating .grc-siteheader__inner { padding: 0 1.1rem; }
+@media (prefers-reduced-motion: reduce) { .grc-siteheader .grc-siteheader__inner { transition: none; } }
+
+.np-icon-btn {
+  display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px;
+  border-radius: var(--radius-md); border: 1px solid var(--border-default); background: transparent;
+  color: var(--text-body); cursor: pointer; transition: var(--transition-control);
+}
+.np-icon-btn:hover { background: var(--surface-inset); color: var(--text-strong); border-color: var(--border-strong); }
+.np-icon-btn .material-symbols-outlined { font-size: 20px; }
+
+/* ════════ HERO — dark ink band + constellation (always dark, the signature) ════════ */
+.np-hero {
+  position: relative; overflow: hidden;
+  background: var(--surface-ink); color: var(--text-on-ink);
+  border-bottom: 1px solid var(--border-ink);
+  padding-top: 64px; /* reserves space under the now-fixed/floating SiteHeader (--grc-sh-h default) */
+}
+.np-hero__glow { position: absolute; inset: 0; background: var(--gradient-ink-glow); pointer-events: none; z-index: 1; }
+.np-hero__grid { position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px); background-size: 24px 24px; pointer-events: none; z-index: 1; }
+.np-hero__inner { position: relative; z-index: 2; max-width: 880px; margin: 0 auto; text-align: center; padding: var(--space-20) 0 var(--space-24); }
+.np-hero__eyebrow {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  font-family: var(--font-mono); font-size: var(--text-xs); font-weight: var(--fw-medium);
+  letter-spacing: var(--tracking-wider); text-transform: uppercase; color: var(--grc-orange-300);
+  margin-bottom: var(--space-6);
+}
+.np-hero__dot { width: 7px; height: 7px; background: var(--grc-orange-400); border-radius: 50%; box-shadow: 0 0 8px var(--grc-orange-400); animation: np-pulse 2s ease-in-out infinite; }
+@keyframes np-pulse { 0%,100% { opacity: 1; box-shadow: 0 0 8px var(--grc-orange-400); } 50% { opacity: .5; box-shadow: 0 0 18px var(--grc-orange-400); } }
+.np-hero__title { margin: 0 0 var(--space-4); }
+.np-hero__tagline { font-family: var(--font-mono); font-size: var(--text-md); color: var(--grc-orange-300); margin-bottom: var(--space-5); }
+.np-hero__desc { font-size: var(--text-md); line-height: var(--leading-relaxed); color: var(--text-on-ink); max-width: 56ch; margin: 0 auto var(--space-8); }
+.np-hero__ctas { display: flex; gap: var(--space-3); flex-wrap: wrap; justify-content: center; }
+.np-hero__badges { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-top: var(--space-8); justify-content: center; }
+.np-chip {
+  display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wide); padding: 5px 12px; border-radius: var(--radius-pill);
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border-ink); color: var(--text-on-ink-muted);
+}
+.np-chip .material-symbols-outlined { font-size: 15px; }
+
+/* ════════ HERO GLASS PANEL — the hero copy lives in a frosted-glass card
+   over the constellation (DS "node-graph + glass" idiom, Card variant=glass).
+   Always dark glass: the hero band is theme-fixed ink, so the panel is too. */
+.np-hero__glass {
+  position: relative; border-radius: var(--radius-xl);
+  padding: var(--space-12) var(--space-8) var(--space-10);
+  background: color-mix(in srgb, #0C1117 74%, transparent); /* 74% = .np-term parity; keeps AA when bright spheres pass behind */
+  -webkit-backdrop-filter: blur(var(--blur-md)) saturate(1.2);
+          backdrop-filter: blur(var(--blur-md)) saturate(1.2);
+  box-shadow: var(--glass-highlight), var(--glass-shadow);
+}
+.np-hero__glass::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  padding: 1px; background: var(--glass-border);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  pointer-events: none; z-index: 1;
+}
+.np-hero__glass > * { position: relative; z-index: 2; }
+
+/* ── Light-theme hero: pale band + light "strong" glass so the light-mode
+      web-of-spheres reads. The engine renders slate-700 links + dark-shadow
+      halos + saturated-red pulses on a pale field; the hero must be pale too or
+      the light spheres are invisible behind the always-dark ink band. ── */
+[data-theme="light"] .np-hero {
+  background:
+    radial-gradient(560px circle at 12% 14%, rgba(255,168,79,0.10), transparent 60%),
+    radial-gradient(620px circle at 88% 86%, rgba(27,149,193,0.12), transparent 60%),
+    var(--surface-page);
+  color: var(--text-body);
+  border-bottom: 1px solid var(--border-subtle);
+}
+[data-theme="light"] .np-hero__glow { display: none; }                       /* ink glow is dark-on-dark */
+[data-theme="light"] .np-hero__grid {                                         /* white dots vanish on pale → dark dots */
+  background-image: radial-gradient(rgba(10,14,22,0.05) 1px, transparent 1px);
+}
+[data-theme="light"] .np-hero__glass {
+  background: color-mix(in srgb, #FFFFFF 82%, transparent);                   /* "strong" glass — stable AA over a live cascade */
+  color: var(--text-body);
+}
+[data-theme="light"] .np-hero__desc { color: var(--text-body); }
+[data-theme="light"] .np-hero__eyebrow,
+[data-theme="light"] .np-hero__tagline { color: var(--grc-orange-800); }      /* orange-300 washes out on white → deep brand orange, safe AA (6.8:1) on light glass */
+[data-theme="light"] .np-chip {
+  background: color-mix(in srgb, var(--surface-card) 55%, transparent);
+  border-color: var(--border-default);
+  color: var(--text-muted);
+}
+
+/* ════════ BUTTONS ════════ */
+.np-btn {
+  display: inline-flex; align-items: center; gap: 8px; font-family: var(--ui-family); font-size: var(--text-sm);
+  font-weight: var(--fw-semibold); letter-spacing: 0.01em; padding: 12px 22px; border-radius: var(--radius-md);
+  border: 1px solid transparent; cursor: pointer; transition: var(--transition-control); white-space: nowrap;
+}
+.np-btn .material-symbols-outlined { font-size: 18px; }
+/* primary = solid orange (DS: tools lead with orange) */
+.np-btn--primary { background: linear-gradient(135deg, var(--grc-orange-400), var(--grc-orange-500)); color: #1a1208; box-shadow: var(--glow-grc); }
+.np-btn--primary:hover { transform: translateY(-1px); filter: brightness(1.05); color: #1a1208; box-shadow: 0 10px 34px -8px rgba(255,168,79,0.6); }
+/* ghost = engineering blue outline */
+.np-btn--ghost { background: transparent; color: var(--eng-blue-300); border-color: rgba(99,190,220,0.45); }
+.np-btn--ghost:hover { border-color: var(--eng-blue-300); background: rgba(27,149,193,0.12); color: var(--eng-blue-200); }
+
+/* ════════ HERO TERMINAL — glass card over the constellation (signature) ════════
+   Fixed-height window: header + tabs never scroll away; only .np-term__content
+   does. --term-window-h is capped by vh so the whole window always fits inside
+   a normal viewport, even when scrolled to a vertically-centered position. */
+.np-term {
+  --term-window-h: min(620px, 78vh);
+  position: relative; border-radius: var(--radius-xl); overflow: hidden;
+  max-width: 880px; margin: var(--space-12) auto 0; text-align: left;
+  height: var(--term-window-h);
+  display: flex; flex-direction: column;
+  /* always dark glass — the terminal lives in the always-dark hero, over the constellation */
+  background: color-mix(in srgb, #0C1117 74%, transparent); backdrop-filter: blur(var(--blur-md)); -webkit-backdrop-filter: blur(var(--blur-md));
+  box-shadow: var(--glass-shadow), var(--glass-highlight);
+}
+.np-term::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; background: var(--glass-border);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; z-index: 1;
+}
+.np-term__bar { flex-shrink: 0; display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border-ink); }
+.np-term__dot { width: 11px; height: 11px; border-radius: 50%; }
+.np-term__title { font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: var(--tracking-wide); color: var(--text-on-ink-muted); margin-left: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* The scrollable region — the window's ONLY scrolling surface. A visible,
+   always-present (non-overlay) scrollbar so it reads as scrollable at a glance,
+   not just on hover. */
+.np-term__content {
+  flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden;
+  scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent;
+}
+.np-term__content::-webkit-scrollbar { width: 10px; }
+.np-term__content::-webkit-scrollbar-track { background: transparent; }
+.np-term__content::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: var(--radius-pill); border: 2px solid transparent; background-clip: padding-box; }
+.np-term__content::-webkit-scrollbar-thumb:hover { background: var(--eng-blue-300); background-clip: padding-box; }
+.np-term__body { padding: var(--space-6); font-family: var(--font-mono); font-size: var(--text-sm); line-height: 1.9; color: var(--text-on-ink); overflow-x: auto; }
+.t-prompt { color: var(--grc-orange-400); } .t-cmd { color: var(--text-on-ink); } .t-flag { color: var(--eng-blue-300); }
+.t-val { color: #4FD396; } .t-out { color: var(--text-on-ink-muted); } .t-ok { color: #4FD396; }
+.t-num { color: var(--grc-orange-300); } .t-accent { color: var(--grc-orange-400); }
+.t-dim { color: var(--text-on-ink-muted); opacity: 0.55; } .t-warn { color: var(--grc-orange-300); font-weight: var(--fw-medium); }
+.t-cursor { display: inline-block; width: 0.55em; height: 1.1em; background: var(--text-on-ink); vertical-align: text-bottom; margin-left: 1px; animation: t-blink 1s steps(1) infinite; }
+@keyframes t-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .t-cursor { animation: none; opacity: 0; } }
+
+/* Terminal view tabs — terminal / results.json / report.html */
+.np-term__tabs { flex-shrink: 0; display: flex; gap: 4px; padding: 8px 12px 0; border-bottom: 1px solid var(--border-ink); overflow-x: auto; scrollbar-width: none; }
+.np-term__tabs::-webkit-scrollbar { display: none; }
+.np-term__tab {
+  appearance: none; background: transparent; border: 1px solid transparent; border-bottom: none;
+  border-radius: 8px 8px 0 0; padding: 7px 14px; cursor: pointer; white-space: nowrap;
+  font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: var(--tracking-wide);
+  color: var(--text-on-ink-muted); transition: color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
+}
+.np-term__tab:hover { color: var(--text-on-ink); }
+.np-term__tab--active {
+  color: var(--text-on-ink); background: rgba(255,255,255,0.06);
+  border-color: var(--border-ink); position: relative; top: 1px;
+}
+.np-term__tab:focus-visible { outline: 2px solid var(--eng-blue-300); outline-offset: -2px; }
+.np-term__pane[hidden] { display: none; }
+.np-term__json { margin: 0; font: inherit; line-height: 1.75; font-size: var(--text-xs); white-space: pre; }
+@media (max-width: 640px) { .np-term__json { white-space: pre-wrap; word-break: break-word; } }
+.j-key { color: var(--eng-blue-300); } .j-str { color: #4FD396; }
+
+/* JSON fold controls — a small, genuinely-interactive collapse/expand system
+   (click any triangle any time). The auto-play sequence on tab activation only
+   sets the SAME .is-collapsed class these clicks toggle, so scripted and manual
+   interaction are indistinguishable to the DOM. */
+.jfold__btn {
+  appearance: none; background: transparent; border: none; padding: 0 3px 0 0; margin: 0; cursor: pointer;
+  color: var(--text-on-ink-muted); font-size: 0.8em; line-height: 1; vertical-align: 1px;
+}
+.jfold__btn:hover { color: var(--text-on-ink); }
+.jfold__btn:focus-visible { outline: 2px solid var(--eng-blue-300); outline-offset: 1px; border-radius: 2px; }
+.jfold__glyph { display: inline-block; transition: transform var(--dur-fast) var(--ease-out); }
+.jfold.is-collapsed .jfold__glyph { transform: rotate(-90deg); }
+.jfold__ellipsis { display: none; color: var(--text-on-ink-muted); font-style: italic; }
+.jfold.is-collapsed .jfold__ellipsis { display: inline; }
+.jfold.is-collapsed .jfold__body { display: none; }
+.jfold__bracket { color: var(--text-on-ink); }
+
+/* ════════ report.html pane — condensed recreation of the real generated report ════════
+   Component class names (stat-card, insight-card, legend, tabs, search-box, filters,
+   data-table, layer-badge, evidence-btn, …) match the actual nthpartyfinder HTML report
+   template 1:1 — verified against a real export inspected 2026-08-02 — just resized to
+   fit an 880px card instead of a full page. Scoped under #term-pane-html so these names
+   can't leak or collide elsewhere on the page. */
+/* line-height reset: this pane sits inside .np-term__body, which sets 1.9 for
+   the terminal's multi-line ASCII output — inherited into small single-line
+   pills/badges here, it threw their text off-center vertically. */
+#term-pane-html .np-report { font-family: var(--font-body); text-align: left; line-height: var(--leading-normal); }
+
+#term-pane-html .npr-hero { text-align: center; padding: var(--space-6) var(--space-4) var(--space-7); }
+#term-pane-html .npr-eyebrow { display: inline-block; margin-bottom: var(--space-3); font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: var(--tracking-wider); text-transform: uppercase; color: var(--text-muted); }
+#term-pane-html .npr-title {
+  margin: 0 0 var(--space-3); font-family: var(--font-display); font-size: var(--text-2xl); font-weight: var(--fw-bold);
+  letter-spacing: var(--tracking-tighter); line-height: var(--leading-none);
+  background: var(--gradient-fusion-text); -webkit-background-clip: text; background-clip: text;
+  color: transparent; -webkit-text-fill-color: transparent;
+}
+#term-pane-html .npr-subtitle { margin: 0 0 var(--space-4); font-family: var(--font-sans); font-size: var(--text-sm); color: var(--text-muted); }
+#term-pane-html .npr-rule { width: min(220px, 55%); margin: 0 auto var(--space-4); height: 2px; border: 0; border-radius: var(--radius-pill); background: var(--gradient-fusion); }
+#term-pane-html .npr-domain { display: inline-block; background: var(--surface-sunken); border: 1px solid var(--border-default); border-radius: var(--radius-lg); padding: var(--space-3) var(--space-5); color: var(--text-body); font-size: var(--text-sm); }
+#term-pane-html .npr-domain strong { color: var(--text-strong); font-family: var(--font-sans); font-weight: var(--fw-semibold); }
+#term-pane-html .npr-domain__meta { margin-top: var(--space-1); font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--text-muted); letter-spacing: var(--tracking-wide); }
+
+#term-pane-html .npr-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-3); margin-bottom: var(--space-6); }
+#term-pane-html .stat-card { position: relative; background: var(--surface-sunken); border: 1px solid var(--border-default); border-radius: var(--radius-md); padding: var(--space-3) var(--space-2); text-align: center; overflow: hidden; }
+#term-pane-html .stat-card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 2px; background: var(--gradient-fusion); }
+#term-pane-html .stat-value { font-family: var(--font-display); font-size: var(--text-xl); font-weight: var(--fw-bold); color: var(--text-strong); line-height: var(--leading-none); }
+#term-pane-html .stat-label { margin-top: var(--space-1); font-family: var(--font-mono); font-size: 0.58rem; font-weight: var(--fw-medium); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--text-muted); }
+
+#term-pane-html .npr-section { margin-bottom: var(--space-6); }
+#term-pane-html .npr-section__head { margin-bottom: var(--space-4); }
+#term-pane-html .npr-section .section-title { font-family: var(--font-display); font-size: var(--text-md); font-weight: var(--fw-semibold); color: var(--text-strong); margin-bottom: 2px; }
+#term-pane-html .npr-section .section-description { font-family: var(--font-sans); font-size: var(--text-xs); color: var(--text-muted); }
+
+#term-pane-html .npr-insights { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: var(--space-3); }
+#term-pane-html .insight-card { background: var(--surface-sunken); border: 1px solid var(--border-subtle); border-left: 3px solid var(--brand-accent); border-radius: var(--radius-sm); padding: var(--space-3); }
+#term-pane-html .npr-icon { display: inline-block; width: 1em; height: 1em; vertical-align: -0.125em; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+#term-pane-html .insight-icon { display: block; width: 18px; height: 18px; margin-bottom: var(--space-1); color: var(--brand-accent); }
+#term-pane-html .insight-title { font-family: var(--font-mono); font-size: 0.56rem; text-transform: uppercase; letter-spacing: var(--tracking-wide); color: var(--text-muted); font-weight: var(--fw-medium); margin-bottom: 2px; }
+#term-pane-html .insight-value { font-family: var(--font-display); font-size: var(--text-md); font-weight: var(--fw-bold); color: var(--text-strong); }
+#term-pane-html .insight-subtitle { font-family: var(--font-sans); font-size: 0.6rem; color: var(--text-muted); }
+
+#term-pane-html .npr-graph { position: relative; height: 240px; border: 1px solid var(--border-default); border-radius: var(--radius-md); background: var(--surface-card); margin-bottom: var(--space-4); overflow: hidden; }
+#term-pane-html .npr-graph__lines { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* Line x1/y1/x2/y2 are authored as 0-100 percentages (matching the node
+   divs' left/top %) and the viewBox below is the same square 100x100 as a
+   no-JS fallback — but rendering that with preserveAspectRatio="none" over
+   this wide/short box scales X and Y by different factors, so a plain (or
+   even vector-effect:non-scaling-stroke) stroke-width still comes out
+   visibly thicker on horizontal/vertical lines than on diagonals: Chromium's
+   non-scaling-stroke does not compensate for ANISOTROPIC scale, only uniform
+   scale (confirmed live — red/5px test stayed uniform only because it was
+   thick enough to mask the effect; the intended subtle width did not).
+   `sizeGraphLines()` in the shared script resolves this at the root by
+   re-writing the viewBox to the box's actual rendered pixel size and
+   converting each line's coordinates from % to those same px units, so the
+   SVG's internal scale is exactly 1:1 in both axes and stroke-width alone
+   is honestly uniform — no vector-effect needed. Each <line> also carries
+   matching stroke/stroke-width presentation attributes (this rule still
+   wins per CSS cascade in a real browser) as a static, non-JS-dependent
+   baseline. */
+#term-pane-html .npr-graph__lines line { stroke: rgba(255,255,255,0.55); stroke-width: 2px; }
+#term-pane-html .npr-node { position: absolute; transform: translate(-50%, -50%); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--eng-blue-400); box-shadow: var(--shadow-sm); z-index: 1; line-height: 1; }
+#term-pane-html .npr-node .npr-icon { width: 14px; height: 14px; color: #fff; }
+#term-pane-html .npr-node--root { width: 42px; height: 42px; background: var(--gradient-ocean); z-index: 2; }
+#term-pane-html .npr-node--root .npr-icon { width: 19px; height: 19px; }
+#term-pane-html .npr-node__badge { position: absolute; top: -6px; right: -8px; display: flex; align-items: center; justify-content: center; line-height: 1; background: var(--grc-orange-500); color: #1a1208; font-family: var(--font-mono); font-size: 0.55rem; font-weight: var(--fw-bold); padding: 2px 5px; border-radius: var(--radius-pill); }
+#term-pane-html .npr-node__label { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 4px; line-height: 1.3; font-family: var(--font-mono); font-size: 0.55rem; color: var(--text-muted); white-space: nowrap; text-align: center; }
+#term-pane-html .npr-node--more { width: auto; height: auto; line-height: 1; border-radius: var(--radius-pill); background: var(--surface-inset); border: 1px dashed var(--border-strong); color: var(--text-muted); font-family: var(--font-mono); font-size: 0.6rem; padding: 4px 10px; z-index: 1; box-shadow: none; }
+
+#term-pane-html .legend { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); margin-top: var(--space-3); }
+#term-pane-html .legend-item { display: flex; align-items: center; gap: 6px; font-family: var(--font-sans); font-size: 0.65rem; color: var(--text-body); }
+#term-pane-html .legend-color { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+#term-pane-html .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border-default); margin-bottom: var(--space-3); }
+#term-pane-html .tab { padding: var(--space-2) var(--space-3); border: none; background: none; font-family: var(--font-sans); font-weight: var(--fw-medium); font-size: 0.7rem; color: var(--text-muted); border-bottom: 2px solid transparent; }
+#term-pane-html .tab.active { color: var(--brand-accent); border-bottom-color: var(--brand-accent); }
+
+#term-pane-html .npr-toolbar { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3); flex-wrap: wrap; }
+#term-pane-html .search-box { flex: 1; min-width: 140px; height: 30px; padding: 0 var(--space-3); border: 1px solid var(--border-default); border-radius: var(--radius-sm); font-family: var(--font-sans); font-size: 0.7rem; color: var(--text-body); background: var(--surface-card); }
+#term-pane-html .search-box::placeholder { color: var(--text-muted); }
+#term-pane-html .export-btn { display: inline-flex; align-items: center; gap: 4px; height: 30px; padding: 0 var(--space-3); background: var(--brand-accent); color: #fff; border: none; border-radius: var(--radius-sm); font-family: var(--font-sans); font-size: 0.68rem; font-weight: var(--fw-medium); white-space: nowrap; }
+
+#term-pane-html .filters { display: flex; gap: var(--space-3); margin-bottom: var(--space-3); flex-wrap: wrap; }
+#term-pane-html .filter-group { display: flex; flex-direction: column; gap: 2px; }
+#term-pane-html .filter-label { font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--text-muted); }
+#term-pane-html .filter-select { height: 26px; padding: 0 var(--space-2); border: 1px solid var(--border-default); border-radius: var(--radius-sm); font-family: var(--font-sans); font-size: 0.68rem; color: var(--text-body); background: var(--surface-card); }
+
+#term-pane-html .table-container { overflow-x: auto; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); }
+#term-pane-html .data-table { width: 100%; min-width: 620px; border-collapse: collapse; font-family: var(--font-sans); font-size: 0.68rem; }
+#term-pane-html .data-table th, #term-pane-html .data-table td { padding: 7px 10px; text-align: left; border-bottom: 1px solid var(--border-subtle); white-space: nowrap; }
+#term-pane-html .data-table th { background: var(--surface-sunken); font-family: var(--font-mono); font-size: 0.56rem; font-weight: var(--fw-semibold); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--text-muted); }
+#term-pane-html .data-table td strong { font-family: var(--font-sans); font-weight: var(--fw-semibold); color: var(--text-link); }
+#term-pane-html .data-table td code { font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-body); }
+#term-pane-html .layer-badge, #term-pane-html .record-type-badge { display: inline-block; padding: 1px 8px; border-radius: var(--radius-pill); font-family: var(--font-mono); font-size: 0.58rem; font-weight: var(--fw-medium); white-space: nowrap; border: 1px solid var(--border-default); }
+#term-pane-html .layer-1 { background: var(--eng-blue-50); color: var(--eng-blue-700); border-color: var(--eng-blue-200); }
+#term-pane-html .record-type-badge { background: var(--surface-inset); color: var(--text-body); }
+#term-pane-html .rt-verify { background: var(--status-info-bg); color: var(--status-info-fg); border-color: var(--eng-blue-300); }
+#term-pane-html .rt-spf { background: var(--eng-blue-50); color: var(--eng-blue-700); border-color: var(--eng-blue-200); }
+#term-pane-html .evidence-btn { padding: 3px 9px; border-radius: var(--radius-sm); font-family: var(--font-sans); font-size: 0.6rem; font-weight: var(--fw-medium); border: 1px solid; white-space: nowrap; }
+#term-pane-html .evidence-btn-reveal { background: var(--eng-blue-50); color: var(--eng-blue-700); border-color: var(--eng-blue-200); }
+#term-pane-html .npr-more { margin-top: var(--space-2); font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-muted); text-align: center; }
+
+@media (max-width: 640px) {
+  #term-pane-html .npr-stats { grid-template-columns: repeat(2, 1fr); }
+  #term-pane-html .npr-graph { height: 200px; }
+  #term-pane-html .npr-node__label { display: none; }
+}
+
+/* Install tab menu — OS-aware */
+.np-install-tabs { max-width: 880px; margin: 0 auto; }
+.np-tabbar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: var(--space-6); }
+.np-tabbar__tab {
+  appearance: none; cursor: pointer; padding: 9px 16px; border-radius: 999px;
+  font-family: var(--ui-family); font-size: var(--text-sm); font-weight: var(--fw-medium);
+  color: var(--text-body); background: var(--surface-card); border: 1px solid var(--border-subtle);
+  transition: var(--transition-control); white-space: nowrap;
+}
+.np-tabbar__tab:hover { border-color: var(--border-strong); color: var(--text-strong); }
+.np-tabbar__tab--active { color: #0B0F14; background: var(--gradient-fusion); border-color: transparent; font-weight: var(--fw-semibold); }
+.np-tabbar__tab:focus-visible { outline: 2px solid var(--eng-blue-400); outline-offset: 2px; }
+.np-install-pane[hidden] { display: none; }
+.np-install-pane .np-code { margin-top: var(--space-4); }
+.np-install-pane__note { font-size: var(--text-sm); color: var(--text-muted); margin-top: var(--space-3); }
+.np-detected { font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: var(--tracking-wide); color: var(--brand-eng); text-transform: uppercase; }
+#install { scroll-margin-top: 84px; }
+
+/* ════════ SECTIONS ════════ */
+.np-section { padding: var(--space-24) 0; }
+.np-section--sunken { background: var(--surface-sunken); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); }
+.np-eyebrow { font-family: var(--font-mono); font-size: var(--text-xs); font-weight: var(--fw-medium); letter-spacing: var(--tracking-wider); text-transform: uppercase; color: var(--brand-eng); margin-bottom: var(--space-3); }
+.np-title { font-size: var(--text-3xl); letter-spacing: var(--tracking-tight); color: var(--text-strong); }
+.np-lead { font-size: var(--text-md); color: var(--text-body); max-width: 60ch; margin-top: var(--space-4); line-height: var(--leading-relaxed); }
+.np-head { margin-bottom: var(--space-12); }
+
+/* ════════ FEATURE GRID ════════ */
+.np-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-4); }
+.np-card {
+  background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg);
+  padding: var(--space-7); box-shadow: var(--shadow-xs); transition: var(--transition-control); position: relative;
+}
+.np-card:hover { transform: translateY(-3px); border-color: var(--border-strong); box-shadow: var(--shadow-md); }
+.np-card__icon { display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: var(--radius-md); background: var(--gradient-fusion-soft); margin-bottom: var(--space-4); }
+.np-card__icon .material-symbols-outlined { font-size: 24px; }
+.np-card h3 { font-size: var(--text-md); font-weight: var(--fw-semibold); color: var(--text-strong); margin-bottom: var(--space-2); letter-spacing: -0.01em; }
+.np-card p { font-size: var(--text-sm); color: var(--text-body); line-height: var(--leading-snug); }
+
+/* ════════ STEPS ════════ */
+.np-steps { display: flex; flex-direction: column; max-width: 720px; margin: 0 auto; }
+.np-step { display: flex; gap: var(--space-6); padding: var(--space-6) 0; position: relative; }
+.np-step:not(:last-child)::after { content: ""; position: absolute; left: 23px; top: 70px; bottom: -6px; width: 1.5px; background: linear-gradient(to bottom, var(--brand-grc), transparent); }
+.np-step__num {
+  min-width: 48px; height: 48px; border-radius: var(--radius-pill); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: var(--text-sm);
+  font-weight: var(--fw-bold); color: var(--brand-grc); background: var(--surface-card); border: 1.5px solid var(--brand-grc);
+}
+.np-step__c h3 { font-size: var(--text-md); font-weight: var(--fw-semibold); color: var(--brand-eng); margin-bottom: 4px; }
+.np-step__c p { font-size: var(--text-sm); color: var(--text-body); line-height: var(--leading-snug); }
+
+/* ════════ PARTY CRASHERS ════════ */
+.np-tags { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.np-tag { font-family: var(--font-mono); font-size: var(--text-sm); padding: 8px 18px; border-radius: var(--radius-pill); background: var(--surface-card); border: 1px solid var(--border-default); color: var(--text-muted); transition: var(--transition-control); }
+.np-tag:hover { border-color: var(--brand-grc); color: var(--brand-grc); }
+
+/* ════════ INSTALL ════════ */
+.np-install { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-4); align-items: start; }
+.np-install__head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.np-install h3 { font-size: var(--text-md); font-weight: var(--fw-semibold); color: var(--text-strong); }
+.np-install .material-symbols-outlined { font-size: 22px; }
+.np-rec { font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--status-pass-fg); }
+.np-rec--info { color: var(--status-info-fg); }
+.np-install p { font-size: var(--text-sm); color: var(--text-body); margin: var(--space-2) 0; line-height: var(--leading-snug); }
+.np-code {
+  background: var(--surface-ink); color: var(--text-on-ink); border: 1px solid var(--border-ink);
+  border-radius: var(--radius-md); padding: var(--space-4); margin-top: var(--space-3); overflow-x: auto;
+}
+.np-code code { font-family: var(--font-mono); font-size: var(--text-sm); color: #8FE3B6; line-height: 1.7; white-space: pre; }
+.np-inline-code { font-family: var(--font-mono); font-size: 0.82em; background: var(--surface-inset); color: var(--text-link); padding: 2px 6px; border-radius: var(--radius-xs); }
+
+/* ════════ BOTTOM CTA — dark ink band ════════ */
+.np-cta { position: relative; overflow: hidden; background: var(--surface-ink); color: var(--text-on-ink); text-align: center; padding: var(--space-24) 0; }
+.np-cta__glow { position: absolute; inset: 0; background: var(--gradient-ink-glow); pointer-events: none; }
+.np-cta > .np-container { position: relative; z-index: 1; }
+.np-cta__icon { color: var(--grc-orange-400); margin-bottom: var(--space-4); }
+.np-cta__icon .material-symbols-outlined { font-size: 52px; }
+.np-cta h2 { font-size: var(--text-3xl); color: #fff; letter-spacing: var(--tracking-tight); }
+.np-cta__backronym { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--text-on-ink-muted); margin: var(--space-3) 0 var(--space-8); }
+.np-cta__ctas { display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap; }
+.np-cta__dev { font-size: var(--text-sm); color: var(--text-on-ink-muted); margin-top: var(--space-8); }
+.np-cta__dev a { color: var(--eng-blue-300); }
+
+/* ════════ FOOTER ════════ */
+.np-footer { border-top: 1px solid var(--border-subtle); padding: var(--space-10) 0; text-align: center; background: var(--surface-page); }
+.np-footer__logo { height: 24px; opacity: 0.85; margin: 0 auto var(--space-4); display: block; }
+.np-footer__logo--dark { display: none; }
+[data-theme="dark"] .np-footer__logo--light { display: none; }
+[data-theme="dark"] .np-footer__logo--dark { display: block; }
+.np-footer p { font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: var(--tracking-wide); color: var(--text-muted); }
+.np-footer a { color: var(--text-link); }
+.np-footer__credit { display: block; margin-top: 8px; color: var(--text-faint); }
+
+/* ════════ RESPONSIVE ════════ */
+@media (max-width: 900px) {
+  .np-hero__inner { padding: var(--space-16) 0 var(--space-20); }
+}
+@media (max-width: 768px) {
+  .np-title { font-size: var(--text-2xl); }
+  .grc-lava-title { letter-spacing: 4px; }
+}
+@media (max-width: 640px) {
+  .np-hero__glass { padding: var(--space-8) var(--space-4); border-radius: var(--radius-lg); }
+  .np-hero__ctas, .np-cta__ctas { flex-direction: column; align-items: stretch; }
+  .np-btn { justify-content: center; }
+  .grc-lava-title { font-size: clamp(2.2rem, 12vw, 3.8rem); letter-spacing: 3px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV — GRC Engineering SiteHeader (scroll-morph: flush bar → floating glass pill on scroll) -->
+<!-- Pill width = Cocoindex's literal spec: min(64rem, calc(100% - 1.5rem)) → 1024px cap, 12px sides -->
+<header class="grc-siteheader" data-grc-siteheader data-scroll-distance="24" data-contained-width="1024" data-side="12">
+  <div class="grc-siteheader__bar">
+    <div class="grc-siteheader__rule"></div>
+    <div class="grc-siteheader__inner">
+      <a href="#top" class="grc-siteheader__brand" aria-label="Nth Party Finder — home">
+        <span class="grc-lockup grc-lockup--sm" role="img" aria-label="Nth Party Finder"><span class="grc-lockup__text">NTH PARTY FINDER</span></span>
+      </a>
+      <nav class="grc-siteheader__nav" aria-label="Primary">
+        <a class="grc-siteheader__link" href="#features">Features</a>
+        <a class="grc-siteheader__link" href="#how-it-works">How It Works</a>
+        <a class="grc-siteheader__link" href="#install">Install</a>
+        <a class="grc-siteheader__link" href="https://github.com/grcengineering/nthpartyfinder" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+      <div class="grc-siteheader__actions">
+        <button id="theme-toggle" class="np-icon-btn" type="button" aria-label="Toggle theme">
+          <span id="theme-icon" class="material-symbols-outlined">brightness_auto</span>
+        </button>
+      </div>
+      <button type="button" class="grc-siteheader__menu-btn" aria-label="Open menu" aria-expanded="false"></button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<header class="np-hero" id="top">
+  <!-- data-speed="1" (the engine default): a slow continuous camera orbit around
+       the stationary constellation (~1.7deg/sec — a full revolution takes ~3.5min).
+       The cloud itself never regenerates on tab switches (confirmed via the
+       engine's own stats.builds counter staying constant); only the camera moves. -->
+  <div class="grc-nodegraph" data-grc-nodegraph data-palette="spectrum" data-density="0.6" data-max-nodes="48" data-min-nodes="36" data-zoom="0.5" data-link-distance="210" data-link-opacity="0.9" data-speed="1" data-fps="60" data-theme="dark" aria-hidden="true"></div>
+  <div class="np-hero__glow"></div>
+  <div class="np-hero__grid"></div>
+  <div class="np-container">
+    <div class="np-hero__inner">
+      <div class="np-hero__copy np-hero__glass">
+        <h1 class="np-hero__title">
+          <span class="grc-lava-title">
+            <span class="grc-lava-text"><span class="grc-lava-letter grc-lava-letter--flicker" style="--i:0" data-letter="N">N</span><span class="grc-lava-letter grc-lava-letter--flicker grc-lava-letter--sm" style="--i:1" data-letter="t">t</span><span class="grc-lava-letter grc-lava-letter--flicker grc-lava-letter--sm" style="--i:2" data-letter="h">h</span><span class="grc-lava-letter" style="--i:3" data-letter=" ">&nbsp;</span><span class="grc-lava-letter" style="--i:4" data-letter="P">P</span><span class="grc-lava-letter" style="--i:5" data-letter="a">a</span><span class="grc-lava-letter" style="--i:6" data-letter="r">r</span><span class="grc-lava-letter" style="--i:7" data-letter="t">t</span><span class="grc-lava-letter" style="--i:8" data-letter="y">y</span></span><br>
+            <span class="grc-lava-text"><span class="grc-lava-letter" style="--i:9" data-letter="F">F</span><span class="grc-lava-letter" style="--i:10" data-letter="i">i</span><span class="grc-lava-letter" style="--i:11" data-letter="n">n</span><span class="grc-lava-letter" style="--i:12" data-letter="d">d</span><span class="grc-lava-letter" style="--i:13" data-letter="e">e</span><span class="grc-lava-letter" style="--i:14" data-letter="r">r</span></span>
+          </span>
+        </h1>
+        <p class="np-hero__tagline">See who's crashing your supply chain party</p>
+        <p class="np-hero__desc">
+          A high-performance CLI that maps your entire vendor party guest list — from third parties to the Nth degree — through DNS analysis. Built in Rust for speed, safety, and serious party-finding power.
+        </p>
+        <div class="np-hero__ctas">
+          <a href="#install" class="np-btn np-btn--primary">Get the Party Started</a>
+          <a href="https://github.com/grcengineering/nthpartyfinder/releases" class="np-btn np-btn--ghost" target="_blank" rel="noopener"><span class="material-symbols-outlined">download</span> Download</a>
+        </div>
+        <div class="np-hero__badges">
+          <span class="np-chip"><span class="material-symbols-outlined" style="color:var(--grc-orange-300)">settings</span> Rust</span>
+          <span class="np-chip"><span class="material-symbols-outlined" style="color:var(--grc-orange-300)">bolt</span> Async</span>
+          <span class="np-chip"><span class="material-symbols-outlined" style="color:var(--eng-blue-300)">psychology</span> Embedded NER</span>
+          <span class="np-chip"><span class="material-symbols-outlined" style="color:var(--eng-blue-300)">description</span> MIT License</span>
+        </div>
+      </div>
+
+      <div class="np-term">
+        <div class="np-term__bar">
+          <span class="np-term__dot" style="background:var(--grc-orange-400)"></span>
+          <span class="np-term__dot" style="background:var(--grc-orange-300)"></span>
+          <span class="np-term__dot" style="background:#4FD396"></span>
+          <span class="np-term__title">Nth Party Finder Outputs</span>
+        </div>
+        <div class="np-term__tabs" role="tablist" aria-label="Scan output views">
+          <button class="np-term__tab np-term__tab--active" role="tab" aria-selected="true" aria-controls="term-pane-run" id="term-tab-run">terminal</button>
+          <button class="np-term__tab" role="tab" aria-selected="false" aria-controls="term-pane-json" id="term-tab-json">results.json</button>
+          <button class="np-term__tab" role="tab" aria-selected="false" aria-controls="term-pane-html" id="term-tab-html">report.html</button>
+        </div>
+        <!-- Scrollable content region — the fixed-height window's ONLY scrolling
+             surface. Header/tabs above stay put; only this wrapper scrolls. -->
+        <div class="np-term__content">
+        <div class="np-term__body np-term__pane np-term__pane--active" id="term-pane-run" role="tabpanel" aria-labelledby="term-tab-run">
+<span class="t-prompt">$</span> <span class="t-cmd">nthpartyfinder</span> <span class="t-flag">-d</span> <span class="t-val">acme.com</span> <span class="t-flag">-r</span> <span class="t-val">1</span> <span class="t-flag">-f</span> <span class="t-val">html</span><br>
+<span class="t-out">nthpartyfinder v1.6.1</span><br>
+<span class="t-dim">[09:14:06.988]</span> <span class="t-out">INFO: Parsing arguments...</span><br>
+<span class="t-dim">[09:14:06.992]</span> <span class="t-out">INFO: Checking dependencies...</span><br>
+<span class="t-dim">[09:14:07.002]</span> <span class="t-out">INFO: Vendor registry (218 vendors, 280 domains)</span><br>
+<span class="t-dim">[09:14:07.067]</span> <span class="t-out">INFO: Organization normalizer (threshold: 85%)</span><br>
+<span class="t-dim">[09:14:07.599]</span> <span class="t-out">INFO: NER model loaded (GLiNER ready)</span><br>
+<span class="t-dim">[09:14:07.632]</span> <span class="t-out">INFO: Initialization complete</span><br>
+<br>
+<span class="t-dim">📁</span> <span class="t-out">Output file will be saved to: ./reports/acme_com/Nth Party Analysis for acme.com.html</span><br>
+<br>
+<span class="t-dim">[09:14:08.910]</span> <span class="t-out">INFO: Starting Nth Party Analysis for domain: acme.com</span><br>
+<span class="t-dim">[09:14:09.733]</span> <span class="t-warn">WARN: Analysis timeout active: 600s. Use --timeout 0 to disable.</span><br>
+<span class="t-dim">[09:14:09.811]</span> <span class="t-out">INFO: DNS lookup successful: 39 TXT records found for acme.com (via DoH/DNS)</span><br>
+<span class="t-dim">[09:14:10.050]</span> <span class="t-out">INFO: Running subdomain discovery via subfinder for acme.com...</span><br>
+<span class="t-dim">[09:14:10.054]</span> <span class="t-out">INFO: Running SaaS tenant discovery for acme.com...</span><br>
+<span class="t-dim">[09:14:10.054]</span> <span class="t-out">INFO: Running webpage source &amp; network request discovery for acme.com...</span><br>
+<span class="t-dim">[09:14:18.633]</span> <span class="t-out">INFO: Found 12 likely/confirmed SaaS tenants for acme.com</span><br>
+<span class="t-dim">[09:14:23.681]</span> <span class="t-out">INFO: Found 48 vendors from webpage analysis for acme.com</span><br>
+<span class="t-dim">[09:14:26.173]</span> <span class="t-out">INFO: Subfinder found 155 subdomains for acme.com</span><br>
+<span class="t-dim">[09:14:28.330]</span> <span class="t-out">INFO: Found 4 vendors from subdomain TXT records, 68 from CNAME infrastructure for acme.com</span><br>
+<span class="t-dim">[09:14:38.664]</span> <span class="t-out">INFO: Subprocessor analysis: 38 additional vendors found for acme.com</span><br>
+<span class="t-dim">[09:14:38.665]</span> <span class="t-out">INFO: Processing 198 domains at depth 1 (parallel execution)</span><br>
+<span class="t-dim">[09:14:54.199]</span> <span class="t-out">INFO: Parallel processing completed: 5096 relationships established</span><br>
+<span class="t-dim">[09:14:54.206]</span> <span class="t-out">INFO: 196 raw relationships deduplicated to 135 unique</span><br>
+<span class="t-dim">[09:14:54.206]</span> <span class="t-out">INFO: Filtered 6 common infra provider entries (use --include-infra to include)</span><br>
+<span class="t-dim">[09:14:54.206]</span> <span class="t-out">INFO: Suppressed 4 social/ad-network marketing-tracking entries</span><br>
+<span class="t-dim">[09:14:54.208]</span> <span class="t-out">INFO: Export completed: ./reports/acme_com/Nth Party Analysis for acme.com.html</span><br>
+<br>
+<span class="t-accent">── unverified organization names ──</span><br>
+<span class="t-out">Inferred from domain name &mdash; WHOIS unavailable or privacy-protected.</span><br>
+<span class="t-out">&nbsp;[1] greenhouse-mail.io &rarr; "Greenhouse-mail"</span><br>
+<span class="t-out">&nbsp;[2] segmentio-cdn.com &rarr; "Segmentio-cdn"</span><br>
+<span class="t-out">&nbsp;[3] statuspage-embed.io &rarr; "Statuspage-embed"</span><br>
+<span class="t-out">&nbsp;[4] typeform-forms.co &rarr; "Typeform-forms"</span><br>
+<span class="t-out">&hellip; and 45 more</span><br>
+<span class="t-out">Your choice (A/R/S):</span> <span class="t-val">S</span><br>
+<span class="t-dim">Skipped &mdash; using inferred organization names (not saved)</span><br>
+<br>
+<span class="t-accent">── discovery coverage ──</span><br>
+<span class="t-out">subprocessor&nbsp;&nbsp;on by default &mdash; 38 found, 0 failed</span><br>
+<span class="t-out">subdomain&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;on by default &mdash; 72 found, 0 failed</span><br>
+<span class="t-out">saas-tenant&nbsp;&nbsp;&nbsp;&nbsp;on by default &mdash; 12 found, 0 failed</span><br>
+<span class="t-out">ct-logs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;disabled (enable with --enable-ct-discovery)</span><br>
+<span class="t-out">web-traffic&nbsp;&nbsp;&nbsp;&nbsp;on by default &mdash; 48 found, 0 failed</span><br>
+<br>
+<span class="t-accent">=== ANALYSIS SUMMARY ===</span><br>
+<span class="t-out">Analysis Duration:</span> <span class="t-num">47.20s</span><br>
+<span class="t-out">DNS Resolution Method:</span> <span class="t-val">DoH/DNS</span><br>
+<span class="t-out">TXT Records Found:</span> <span class="t-num">39</span><br>
+<span class="t-out">Vendor Relationships:</span> <span class="t-num">125</span><br>
+<span class="t-out">Unique Vendors:</span> <span class="t-num">105</span><br>
+<span class="t-out">Maximum Depth:</span> <span class="t-num">1</span><br>
+<span class="t-accent">========================</span><br>
+<br>
+<span class="t-ok"><span class="material-symbols-outlined" style="color:#4FD396;font-size:15px;">check_circle</span> SUCCESS: Analysis completed successfully! Found 125 vendor relationships.</span>
+        </div>
+        <div class="np-term__body np-term__pane" id="term-pane-json" role="tabpanel" aria-labelledby="term-tab-json" hidden>
+<pre class="np-term__json" id="json-pane-pre"><span class="jfold" data-fold="root"><button class="jfold__btn" type="button" aria-expanded="true" aria-label="Toggle root object"><span class="jfold__glyph">&#9662;</span></button><span class="jfold__bracket">{</span><span class="jfold__ellipsis"> &hellip; </span><span class="jfold__body">
+  <span class="jfold" data-fold="summary"><button class="jfold__btn" type="button" aria-expanded="true" aria-label="Toggle summary object"><span class="jfold__glyph">&#9662;</span></button><span class="j-key">"summary"</span>: <span class="jfold__bracket">{</span><span class="jfold__ellipsis"> &hellip; </span><span class="jfold__body">
+    <span class="j-key">"total_relationships"</span>: <span class="t-num">125</span>,
+    <span class="j-key">"max_depth"</span>: <span class="t-num">1</span>,
+    <span class="j-key">"unique_domains"</span>: <span class="t-num">118</span>,
+    <span class="j-key">"unique_organizations"</span>: <span class="t-num">105</span>
+  </span><span class="jfold__bracket">}</span></span>,
+  <span class="jfold" data-fold="relationships"><button class="jfold__btn" type="button" aria-expanded="true" aria-label="Toggle relationships array"><span class="jfold__glyph">&#9662;</span></button><span class="j-key">"relationships"</span>: <span class="jfold__bracket">[</span><span class="jfold__ellipsis"> &hellip; </span><span class="jfold__body">
+    <span class="jfold" data-fold="item0"><button class="jfold__btn" type="button" aria-expanded="true" aria-label="Toggle relationship object"><span class="jfold__glyph">&#9662;</span></button><span class="jfold__bracket">{</span><span class="jfold__ellipsis"> &hellip; </span><span class="jfold__body">
+      <span class="j-key">"nth_party_domain"</span>: <span class="j-str">"sendgrid.net"</span>,
+      <span class="j-key">"nth_party_organization"</span>: <span class="j-str">"Twilio SendGrid"</span>,
+      <span class="j-key">"nth_party_layer"</span>: <span class="t-num">1</span>,
+      <span class="j-key">"nth_party_customer_domain"</span>: <span class="j-str">"acme.com"</span>,
+      <span class="j-key">"nth_party_record_type"</span>: <span class="j-str">"DNS::TXT::SPF"</span>,
+      <span class="j-key">"root_customer_domain"</span>: <span class="j-str">"acme.com"</span>,
+      <span class="j-key">"evidence"</span>: <span class="j-str">"v=spf1 include:sendgrid.net ~all"</span>
+    </span><span class="jfold__bracket">}</span></span>,
+    <span class="jfold" data-fold="item1"><button class="jfold__btn" type="button" aria-expanded="true" aria-label="Toggle relationship object"><span class="jfold__glyph">&#9662;</span></button><span class="jfold__bracket">{</span><span class="jfold__ellipsis"> &hellip; </span><span class="jfold__body">
+      <span class="j-key">"nth_party_domain"</span>: <span class="j-str">"okta.com"</span>,
+      <span class="j-key">"nth_party_organization"</span>: <span class="j-str">"Okta"</span>,
+      <span class="j-key">"nth_party_layer"</span>: <span class="t-num">1</span>,
+      <span class="j-key">"nth_party_record_type"</span>: <span class="j-str">"DISCOVERY::SAAS_TENANT"</span>,
+      <span class="j-key">"evidence"</span>: <span class="j-str">"acme.okta.com resolves (tenant probe)"</span>
+    </span><span class="jfold__bracket">}</span></span>,
+    <span class="t-out">&hellip; 123 more &mdash; every edge carries its evidence</span>
+  </span><span class="jfold__bracket">]</span></span>
+</span><span class="jfold__bracket">}</span></span></pre>
+        </div>
+        <div class="np-term__body np-term__pane" id="term-pane-html" role="tabpanel" aria-labelledby="term-tab-html" hidden>
+          <div class="np-report">
+            <!-- Inline icon sprite, scoped to this mockup only — mirrors the real report's own
+                 technique (Lucide icons embedded offline, no CDN font) rather than relying on
+                 the page's Google-Fonts Material Symbols, which can fail to load. -->
+            <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+              <symbol id="npr-ic-trophy" viewBox="0 0 24 24"><path d="M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978" /><path d="M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978" /><path d="M18 9h1.5a1 1 0 0 0 0-5H18" /><path d="M4 22h16" /><path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z" /><path d="M6 9H4.5a1 1 0 0 1 0-5H6" /></symbol>
+              <symbol id="npr-ic-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></symbol>
+              <symbol id="npr-ic-mail" viewBox="0 0 24 24"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" /><rect x="2" y="4" width="20" height="16" rx="2" /></symbol>
+              <symbol id="npr-ic-circle-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" /></symbol>
+              <symbol id="npr-ic-building-2" viewBox="0 0 24 24"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z" /><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2" /><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2" /><path d="M10 6h4" /><path d="M10 10h4" /><path d="M10 14h4" /><path d="M10 18h4" /></symbol>
+              <symbol id="npr-ic-download" viewBox="0 0 24 24"><path d="M12 15V3" /><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="m7 10 5 5 5-5" /></symbol>
+            </svg>
+            <div class="npr-hero">
+              <span class="npr-eyebrow">Nth-Party Discovery &middot; Vendor Graph</span>
+              <h3 class="npr-title">Nth Party Analysis Report</h3>
+              <p class="npr-subtitle">Vendor relationship discovery &amp; risk assessment</p>
+              <hr class="npr-rule" aria-hidden="true">
+              <div class="npr-domain">
+                <strong>acme.com</strong> (Acme Inc)
+                <div class="npr-domain__meta">Generated 2026&#8209;01&#8209;14 09:15:22 UTC</div>
+              </div>
+            </div>
+
+            <div class="npr-stats">
+              <div class="stat-card"><div class="stat-value">125</div><div class="stat-label">Total Relationships</div></div>
+              <div class="stat-card"><div class="stat-value">1</div><div class="stat-label">Maximum Depth</div></div>
+              <div class="stat-card"><div class="stat-value">118</div><div class="stat-label">Unique Domains</div></div>
+              <div class="stat-card"><div class="stat-value">105</div><div class="stat-label">Unique Orgs</div></div>
+            </div>
+
+            <div class="npr-section">
+              <div class="npr-section__head">
+                <div class="section-title">Analysis Insights</div>
+                <div class="section-description">Key findings from vendor relationship analysis</div>
+              </div>
+              <div class="npr-insights">
+                <div class="insight-card">
+                  <svg class="insight-icon npr-icon" aria-hidden="true"><use href="#npr-ic-trophy"></use></svg>
+                  <div class="insight-title">Most Common Vendor</div>
+                  <div class="insight-value">HubSpot</div>
+                  <div class="insight-subtitle">7 relationships</div>
+                </div>
+                <div class="insight-card">
+                  <svg class="insight-icon npr-icon" aria-hidden="true"><use href="#npr-ic-link"></use></svg>
+                  <div class="insight-title">Deepest Chain</div>
+                  <div class="insight-value">1 layer</div>
+                  <div class="insight-subtitle">125 vendors at this depth</div>
+                </div>
+                <div class="insight-card">
+                  <svg class="insight-icon npr-icon" aria-hidden="true"><use href="#npr-ic-mail"></use></svg>
+                  <div class="insight-title">Email Providers</div>
+                  <div class="insight-value">4</div>
+                  <div class="insight-subtitle">Unique SPF domains</div>
+                </div>
+                <div class="insight-card">
+                  <svg class="insight-icon npr-icon" aria-hidden="true"><use href="#npr-ic-circle-check"></use></svg>
+                  <div class="insight-title">Verified Services</div>
+                  <div class="insight-value">11</div>
+                  <div class="insight-subtitle">Domain verifications</div>
+                </div>
+                <div class="insight-card">
+                  <svg class="insight-icon npr-icon" aria-hidden="true"><use href="#npr-ic-building-2"></use></svg>
+                  <div class="insight-title">Subprocessors</div>
+                  <div class="insight-value">38</div>
+                  <div class="insight-subtitle">From subprocessor pages</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="npr-section">
+              <div class="npr-section__head">
+                <div class="section-title">Interactive Vendor Relationship Graph</div>
+                <div class="section-description">Click nodes to expand and explore. Drag to pan, scroll to zoom.</div>
+              </div>
+              <div class="npr-graph" role="img" aria-label="Radial graph: acme.com at the center, connected to 8 direct vendors plus 117 more">
+                <svg class="npr-graph__lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                  <line x1="50" y1="50" x2="50" y2="12" stroke="rgba(255,255,255,0.55)" stroke-width="2"></line>
+                  <line x1="50" y1="50" x2="74" y2="22" stroke="rgba(255,255,255,0.55)" stroke-width="2"></line>
+                  <line x1="50" y1="50" x2="86" y2="50" stroke="rgba(255,255,255,0.55)" stroke-width="2"></line>
+                  <line x1="50" y1="50" x2="74" y2="78" stroke="rgba(255,255,255,0.55)" stroke-width="2"></line>
+                  <line x1="50" y1="50" x2="50" y2="88" stroke="rgba(255,255,255,0.55)" stroke-width="2"></line>
+                  <line x1="50" y1="50" x2="26" y2="78" stroke="rgba(255,255,255,0.55)" stroke-width="2"></line>
+                  <line x1="50" y1="50" x2="14" y2="50" stroke="rgba(255,255,255,0.55)" stroke-width="2"></line>
+                  <line x1="50" y1="50" x2="26" y2="22" stroke="rgba(255,255,255,0.55)" stroke-width="2"></line>
+                </svg>
+                <div class="npr-node npr-node--root" style="left:50%;top:50%" aria-hidden="true">
+                  <svg class="npr-icon" aria-hidden="true"><use href="#npr-ic-building-2"></use></svg>
+                  <span class="npr-node__badge">118</span>
+                  <span class="npr-node__label">acme.com</span>
+                </div>
+                <div class="npr-node" style="left:50%;top:12%" aria-hidden="true"><svg class="npr-icon" aria-hidden="true"><use href="#npr-ic-building-2"></use></svg><span class="npr-node__label">apple.com</span></div>
+                <div class="npr-node" style="left:74%;top:22%" aria-hidden="true"><svg class="npr-icon" aria-hidden="true"><use href="#npr-ic-building-2"></use></svg><span class="npr-node__label">openai.com</span></div>
+                <div class="npr-node" style="left:86%;top:50%" aria-hidden="true"><svg class="npr-icon" aria-hidden="true"><use href="#npr-ic-building-2"></use></svg><span class="npr-node__label">atlassian.com</span></div>
+                <div class="npr-node" style="left:74%;top:78%" aria-hidden="true"><svg class="npr-icon" aria-hidden="true"><use href="#npr-ic-building-2"></use></svg><span class="npr-node__label">canva.com</span></div>
+                <div class="npr-node" style="left:50%;top:88%" aria-hidden="true"><svg class="npr-icon" aria-hidden="true"><use href="#npr-ic-building-2"></use></svg><span class="npr-node__label">docusign.com</span></div>
+                <div class="npr-node" style="left:26%;top:78%" aria-hidden="true"><svg class="npr-icon" aria-hidden="true"><use href="#npr-ic-building-2"></use></svg><span class="npr-node__label">hubspot.com</span></div>
+                <div class="npr-node" style="left:14%;top:50%" aria-hidden="true"><svg class="npr-icon" aria-hidden="true"><use href="#npr-ic-building-2"></use></svg><span class="npr-node__label">cursor.com</span></div>
+                <div class="npr-node" style="left:26%;top:22%" aria-hidden="true"><svg class="npr-icon" aria-hidden="true"><use href="#npr-ic-building-2"></use></svg><span class="npr-node__label">jamf.com</span></div>
+                <div class="npr-node npr-node--more" style="left:50%;top:68%" aria-hidden="true">+ 117 more</div>
+              </div>
+              <div class="legend">
+                <div class="legend-item"><div class="legend-color" style="background:var(--gradient-ocean)"></div>Root Domain (you)</div>
+                <div class="legend-item"><div class="legend-color" style="background:var(--eng-blue-400)"></div>Layer 1 &mdash; Direct Vendors</div>
+                <div class="legend-item"><div class="legend-color" style="background:var(--eng-blue-800)"></div>Layer 2 &mdash; Sub-processors</div>
+                <div class="legend-item"><div class="legend-color" style="background:var(--amber-500)"></div>Layer 3 &mdash; Nth Parties</div>
+                <div class="legend-item"><div class="legend-color" style="background:var(--grc-orange-700)"></div>Layer 4+ &mdash; Deeper Nth Parties</div>
+              </div>
+            </div>
+
+            <div class="npr-section">
+              <div class="npr-section__head">
+                <div class="section-title">Vendor Relationships Data</div>
+                <div class="section-description">Sortable, searchable table of all discovered vendor relationships</div>
+              </div>
+              <div class="tabs" role="tablist" aria-label="Data view tabs (preview)">
+                <button class="tab active" type="button" tabindex="-1">All Relationships</button>
+                <button class="tab" type="button" tabindex="-1">Summary by Organization</button>
+              </div>
+              <div class="npr-toolbar">
+                <input class="search-box" type="text" placeholder="Search all relationships&hellip;" aria-label="Search (preview)" disabled>
+                <button class="export-btn" type="button" tabindex="-1"><svg class="npr-icon" style="width:14px;height:14px" aria-hidden="true"><use href="#npr-ic-download"></use></svg> Export CSV</button>
+              </div>
+              <div class="filters">
+                <div class="filter-group"><label class="filter-label">Layer</label><select class="filter-select" disabled><option>All Layers</option></select></div>
+                <div class="filter-group"><label class="filter-label">Discovery Source</label><select class="filter-select" disabled><option>All Sources</option></select></div>
+              </div>
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr><th>Vendor Domain</th><th>Organization</th><th>Layer</th><th>Discovery Source</th><th>Customer</th><th>Record Value</th><th>Evidence</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>apple.com</strong></td><td>Apple</td>
+                      <td><span class="layer-badge layer-1">Layer 1</span></td>
+                      <td><span class="record-type-badge rt-verify">Domain Verification</span></td>
+                      <td>acme.com</td>
+                      <td><code>apple-domain-verification=k3Jm8&hellip;</code></td>
+                      <td class="evidence-cell"><button class="evidence-btn evidence-btn-reveal" type="button" tabindex="-1">Show</button></td>
+                    </tr>
+                    <tr>
+                      <td><strong>hubspot.com</strong></td><td>HubSpot</td>
+                      <td><span class="layer-badge layer-1">Layer 1</span></td>
+                      <td><span class="record-type-badge rt-verify">Domain Verification</span></td>
+                      <td>acme.com</td>
+                      <td><code>hubspot-domain-verification=NGNj&hellip;</code></td>
+                      <td class="evidence-cell"><button class="evidence-btn evidence-btn-reveal" type="button" tabindex="-1">Show</button></td>
+                    </tr>
+                    <tr>
+                      <td><strong>slack.com</strong></td><td>Slack Technologies</td>
+                      <td><span class="layer-badge layer-1">Layer 1</span></td>
+                      <td><span class="record-type-badge rt-spf">Email Provider (SPF)</span></td>
+                      <td>acme.com</td>
+                      <td><code>v=spf1 include:_spf.slack.com&hellip;</code></td>
+                      <td class="evidence-cell"><button class="evidence-btn evidence-btn-reveal" type="button" tabindex="-1">Show</button></td>
+                    </tr>
+                    <tr>
+                      <td><strong>stripe.com</strong></td><td>Stripe</td>
+                      <td><span class="layer-badge layer-1">Layer 1</span></td>
+                      <td><span class="record-type-badge rt-verify">Domain Verification</span></td>
+                      <td>acme.com</td>
+                      <td><code>stripe-verification=7ac5d&hellip;</code></td>
+                      <td class="evidence-cell"><button class="evidence-btn evidence-btn-reveal" type="button" tabindex="-1">Show</button></td>
+                    </tr>
+                    <tr>
+                      <td><strong>docusign.com</strong></td><td>DocuSign</td>
+                      <td><span class="layer-badge layer-1">Layer 1</span></td>
+                      <td><span class="record-type-badge rt-verify">Domain Verification</span></td>
+                      <td>acme.com</td>
+                      <td><code>docusign=3eb6d&hellip;</code></td>
+                      <td class="evidence-cell"><button class="evidence-btn evidence-btn-reveal" type="button" tabindex="-1">Show</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="npr-more">Showing 5 of 125 relationships</p>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- FEATURES -->
+<section class="np-section" id="features">
+  <div class="np-container">
+    <div class="np-head">
+      <div class="np-eyebrow">// Who's Coming to the Party?</div>
+      <h2 class="np-title">Features</h2>
+      <p class="np-lead">Your vendors have vendors who have vendors. Time to find out who's really on the guest list.</p>
+    </div>
+    <div class="np-grid">
+      <div class="np-card">
+        <span class="np-card__icon" style="color:var(--brand-grc)"><span class="material-symbols-outlined">search</span></span>
+        <h3>Comprehensive DNS Analysis</h3>
+        <p>SPF, DMARC, DKIM, MX, NS, CNAME, and domain-verification TXT records — the vendor fingerprints hiding in plain sight. Always on.</p>
+      </div>
+      <div class="np-card">
+        <span class="np-card__icon" style="color:var(--brand-eng)"><span class="material-symbols-outlined">verified_user</span></span>
+        <h3>Trust-Center Subprocessors</h3>
+        <p>Finds and parses the vendor/subprocessor lists companies publish on their own trust centers — their guest list, in their words.</p>
+      </div>
+      <div class="np-card">
+        <span class="np-card__icon" style="color:var(--brand-eng)"><span class="material-symbols-outlined">travel_explore</span></span>
+        <h3>Runtime Web Traffic</h3>
+        <p>Loads the site in headless Chrome and watches who it actually calls — third-party SDKs in page source plus live network requests.</p>
+      </div>
+      <div class="np-card">
+        <span class="np-card__icon" style="color:var(--brand-grc)"><span class="material-symbols-outlined">workspace_premium</span></span>
+        <h3>Certificate Transparency</h3>
+        <p>CT-log discovery round-robined across crt.sh and Cert Spotter (plus MerkleMap and Censys with free keys), with automatic failover.</p>
+      </div>
+      <div class="np-card">
+        <span class="np-card__icon" style="color:var(--brand-eng)"><span class="material-symbols-outlined">apartment</span></span>
+        <h3>SaaS Tenants &amp; Subdomains</h3>
+        <p>Probes tenant subdomains (think <code class="np-inline-code">acme.slack.com</code>) and enumerates subdomains via CNAME discovery to catch what DNS records alone miss.</p>
+      </div>
+      <div class="np-card">
+        <span class="np-card__icon" style="color:var(--neon-purple,#b388ff)"><span class="material-symbols-outlined">psychology</span></span>
+        <h3>Offline Org Attribution</h3>
+        <p>WHOIS/RDAP, a curated known-vendor dataset, and an embedded GLiNER NER model resolve domains to real organizations — no API keys, fully offline.</p>
+      </div>
+      <div class="np-card">
+        <span class="np-card__icon" style="color:var(--brand-grc)"><span class="material-symbols-outlined">fact_check</span></span>
+        <h3>Evidence on Every Edge</h3>
+        <p>Each relationship carries the raw record, request, or URL it was inferred from — findings are auditable, not asserted.</p>
+      </div>
+      <div class="np-card">
+        <span class="np-card__icon" style="color:var(--brand-grc)"><span class="material-symbols-outlined">bolt</span></span>
+        <h3>Fast &amp; Polite</h3>
+        <p>Rust, async, cached, with batch scanning — and always-on DNS/HTTP/WHOIS rate limiters so a deep scan stays a good network citizen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="np-section np-section--sunken" id="how-it-works">
+  <div class="np-container">
+    <div class="np-head">
+      <div class="np-eyebrow">// The Main Event</div>
+      <h2 class="np-title">How the Party Gets Started</h2>
+      <p class="np-lead">From domain to full vendor map in seconds.</p>
+    </div>
+    <div class="np-steps">
+      <div class="np-step">
+        <div class="np-step__num">01</div>
+        <div class="np-step__c"><h3>Send the Invites</h3><p>Point it at a domain. DNS analysis runs first, every time — SPF includes, DMARC/DKIM, MX, NS, CNAME, and domain-verification tokens.</p></div>
+      </div>
+      <div class="np-step">
+        <div class="np-step__num">02</div>
+        <div class="np-step__c"><h3>Sweep the Venue</h3><p>Flip on the extended methods: trust-center subprocessor lists, Certificate Transparency logs, runtime web traffic in headless Chrome, SaaS tenant probes, and subdomain enumeration.</p></div>
+      </div>
+      <div class="np-step">
+        <div class="np-step__num">03</div>
+        <div class="np-step__c"><h3>Check the Guest List</h3><p>Every discovered domain resolves to a real organization: WHOIS/RDAP first, then a curated known-vendor dataset, then the offline NER model — with provenance tracked per attribution.</p></div>
+      </div>
+      <div class="np-step">
+        <div class="np-step__num">04</div>
+        <div class="np-step__c"><h3>Follow the Plus-Ones</h3><p>Each vendor gets the same treatment, recursively, to your chosen depth — and common infrastructure (AWS, Azure, Cloudflare) is bounced at the door so the graph stays meaningful instead of runaway.</p></div>
+      </div>
+      <div class="np-step">
+        <div class="np-step__num">05</div>
+        <div class="np-step__c"><h3>Hand Out Party Favors</h3><p>Export CSV, JSON, Markdown, or an interactive layered HTML vendor graph — with the raw evidence attached to every relationship.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INSTALL -->
+<section class="np-section" id="install">
+  <div class="np-container">
+    <div class="np-head">
+      <div class="np-eyebrow">// RSVP</div>
+      <h2 class="np-title">Get the Party Started</h2>
+      <p class="np-lead">Pick your platform — we've pre-selected yours. <span class="np-detected" id="install-detected"></span></p>
+    </div>
+    <div class="np-install-tabs">
+      <div class="np-tabbar" role="tablist" aria-label="Install options">
+        <button class="np-tabbar__tab" role="tab" id="install-tab-macos" aria-controls="install-pane-macos" aria-selected="false">macOS</button>
+        <button class="np-tabbar__tab" role="tab" id="install-tab-linux" aria-controls="install-pane-linux" aria-selected="false">Linux</button>
+        <button class="np-tabbar__tab" role="tab" id="install-tab-windows" aria-controls="install-pane-windows" aria-selected="false">Windows</button>
+        <button class="np-tabbar__tab" role="tab" id="install-tab-docker" aria-controls="install-pane-docker" aria-selected="false">Docker</button>
+        <button class="np-tabbar__tab" role="tab" id="install-tab-source" aria-controls="install-pane-source" aria-selected="false">From source</button>
+        <button class="np-tabbar__tab" role="tab" id="install-tab-github" aria-controls="install-pane-github" aria-selected="false">GitHub release</button>
+      </div>
+
+      <div class="np-card np-install-pane" id="install-pane-macos" role="tabpanel" aria-labelledby="install-tab-macos" hidden>
+        <div class="np-install__head"><span class="material-symbols-outlined" style="color:var(--brand-grc)">laptop_mac</span><h3>macOS</h3></div>
+        <p class="np-rec">Recommended</p>
+        <p>One command, via our tap — installs the signed release binary plus the <code class="np-inline-code">whois</code> and <code class="np-inline-code">subfinder</code> dependencies automatically.</p>
+        <pre class="np-code"><code>brew tap grcengineering/grcengineering
+brew install nthpartyfinder</code></pre>
+        <p style="margin-top:var(--space-6)"><strong>Or grab the binary directly</strong></p>
+        <p style="margin-top:var(--space-2)"><strong>Apple Silicon</strong></p>
+        <pre class="np-code"><code>curl -L -o nthpartyfinder.tgz \
+  https://github.com/grcengineering/nthpartyfinder/releases/latest/download/nthpartyfinder-aarch64-apple-darwin.tgz
+tar -xzf nthpartyfinder.tgz &amp;&amp; ./nthpartyfinder --help</code></pre>
+        <p style="margin-top:var(--space-4)"><strong>Intel</strong></p>
+        <pre class="np-code"><code>curl -L -o nthpartyfinder.tgz \
+  https://github.com/grcengineering/nthpartyfinder/releases/latest/download/nthpartyfinder-x86_64-apple-darwin.tgz
+tar -xzf nthpartyfinder.tgz &amp;&amp; ./nthpartyfinder --help</code></pre>
+        <p class="np-install-pane__note">Every release ships a <code class="np-inline-code">.sha256</code> checksum and signed SLSA build provenance. A binary downloaded directly gets Gatekeeper's quarantine flag on first run — <code class="np-inline-code">brew install</code> and Docker skip that entirely; for a downloaded binary, clear it once with <code class="np-inline-code">xattr -dr com.apple.quarantine ./nthpartyfinder</code>.</p>
+      </div>
+
+      <div class="np-card np-install-pane" id="install-pane-linux" role="tabpanel" aria-labelledby="install-tab-linux" hidden>
+        <div class="np-install__head"><span class="material-symbols-outlined" style="color:var(--brand-eng)">terminal</span><h3>Linux (x86-64)</h3></div>
+        <p class="np-rec">Recommended</p>
+        <p>Same tap as macOS — one command installs the signed release binary plus the <code class="np-inline-code">whois</code> and <code class="np-inline-code">subfinder</code> dependencies automatically.</p>
+        <pre class="np-code"><code>brew tap grcengineering/grcengineering
+brew install nthpartyfinder</code></pre>
+        <p style="margin-top:var(--space-6)"><strong>Or grab the binary directly</strong></p>
+        <pre class="np-code"><code>curl -L -o nthpartyfinder.tgz \
+  https://github.com/grcengineering/nthpartyfinder/releases/latest/download/nthpartyfinder-x86_64-unknown-linux-gnu.tgz
+tar -xzf nthpartyfinder.tgz &amp;&amp; ./nthpartyfinder --help</code></pre>
+        <p class="np-install-pane__note">Need <code class="np-inline-code">whois</code>? <code class="np-inline-code">apt install whois</code> (or your distro's equivalent) — the Homebrew install pulls it in automatically. Checksums + SLSA provenance ship with every release.</p>
+      </div>
+
+      <div class="np-card np-install-pane" id="install-pane-windows" role="tabpanel" aria-labelledby="install-tab-windows" hidden>
+        <div class="np-install__head"><span class="material-symbols-outlined" style="color:var(--brand-eng)">desktop_windows</span><h3>Windows (x86-64)</h3></div>
+        <p class="np-rec np-rec--info">Coming soon</p>
+        <p>A WinGet package is on the way — once it ships:</p>
+        <pre class="np-code"><code>winget install grcengineering.nthpartyfinder</code></pre>
+        <p style="margin-top:var(--space-6)"><strong>Available now — PowerShell</strong></p>
+        <p><code class="np-inline-code">curl.exe</code> and <code class="np-inline-code">tar</code> are built into Windows 10+.</p>
+        <pre class="np-code"><code>curl.exe -L -o nthpartyfinder.tgz `
+  https://github.com/grcengineering/nthpartyfinder/releases/latest/download/nthpartyfinder-x86_64-pc-windows-msvc.tgz
+tar -xzf nthpartyfinder.tgz
+.\nthpartyfinder.exe --help</code></pre>
+        <p class="np-install-pane__note">WHOIS lookups need a <code class="np-inline-code">whois</code> client — use WSL or SysInternals whois.</p>
+      </div>
+
+      <div class="np-card np-install-pane" id="install-pane-docker" role="tabpanel" aria-labelledby="install-tab-docker" hidden>
+        <div class="np-install__head"><span class="material-symbols-outlined" style="color:var(--brand-eng)">deployed_code</span><h3>Docker</h3></div>
+        <p>Pre-built image with embedded NER and whois included. Start scanning immediately, on any platform.</p>
+        <pre class="np-code"><code>docker pull ghcr.io/grcengineering/nthpartyfinder:latest
+
+docker run -v "$(pwd)/output:/output" ghcr.io/grcengineering/nthpartyfinder:latest \
+  -d example.com -r 2 -f json -o /output/results</code></pre>
+      </div>
+
+      <div class="np-card np-install-pane" id="install-pane-source" role="tabpanel" aria-labelledby="install-tab-source" hidden>
+        <div class="np-install__head"><span class="material-symbols-outlined" style="color:var(--brand-grc)">construction</span><h3>Build from source</h3></div>
+        <p>Already on crates.io — no clone needed:</p>
+        <pre class="np-code"><code>cargo install nthpartyfinder</code></pre>
+        <p style="margin-top:var(--space-6)"><strong>Or clone and build directly</strong></p>
+        <p>Requires the Rust toolchain.</p>
+        <pre class="np-code"><code>git clone https://github.com/grcengineering/nthpartyfinder.git
+cd nthpartyfinder/nthpartyfinder
+cargo build --release</code></pre>
+        <p class="np-install-pane__note">The default build embeds the NER model (~175&nbsp;MB binary); add <code class="np-inline-code">--no-default-features</code> for a ~15&nbsp;MB slim build without it.</p>
+      </div>
+
+      <div class="np-card np-install-pane" id="install-pane-github" role="tabpanel" aria-labelledby="install-tab-github" hidden>
+        <div class="np-install__head"><span class="material-symbols-outlined" style="color:var(--brand-grc)">inventory_2</span><h3>Download from GitHub</h3></div>
+        <p>Browse all release assets — macOS (Apple Silicon &amp; Intel), Linux, and Windows archives, each with a <code class="np-inline-code">.sha256</code> checksum and signed SLSA build provenance.</p>
+        <p style="margin-top:var(--space-5)"><a href="https://github.com/grcengineering/nthpartyfinder/releases/latest" class="np-btn np-btn--primary" target="_blank" rel="noopener"><span class="material-symbols-outlined">download</span> Latest release on GitHub</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOTTOM CTA -->
+<section class="np-cta">
+  <div class="np-cta__glow"></div>
+  <div class="np-container">
+    <div class="np-cta__icon"><span class="material-symbols-outlined">auto_awesome</span></div>
+    <h2>Ready to Find Your Nth Party?</h2>
+    <p class="np-cta__backronym">RSVP: Recursive Security Vendor Profiler</p>
+    <div class="np-cta__ctas">
+      <a href="https://github.com/grcengineering/nthpartyfinder" class="np-btn np-btn--primary" target="_blank" rel="noopener">View on GitHub</a>
+      <a href="https://github.com/grcengineering/nthpartyfinder/releases" class="np-btn np-btn--ghost" target="_blank" rel="noopener">Download Latest Release</a>
+    </div>
+    <p class="np-cta__dev"><strong>Developer:</strong> <a href="https://linkedin.com/in/justinpagano" target="_blank" rel="noopener">Justin Pagano</a> · <a href="https://grc.engineering" target="_blank" rel="noopener">GRC Engineering</a></p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="np-footer">
+  <div class="np-container">
+    <img class="np-footer__logo np-footer__logo--light" src="ds/assets/logo-wordmark.svg" alt="GRC Engineering" onerror="this.style.display='none'">
+    <img class="np-footer__logo np-footer__logo--dark" src="ds/assets/logo-wordmark-dark.svg" alt="GRC Engineering" onerror="this.style.display='none'">
+    <p>Nth Party Finder · <a href="https://github.com/grcengineering/nthpartyfinder" target="_blank" rel="noopener">GitHub</a> · MIT License · <a href="https://grc.engineering" target="_blank" rel="noopener">GRC Engineering</a></p>
+    <span class="np-footer__credit">Icons by <a href="https://fonts.google.com/icons">Google Icons</a></span>
+  </div>
+</footer>
+
+<!-- Theme toggle -->
+<script>
+(function () {
+  var html = document.documentElement, KEY = 'npf-theme';
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  /* Dark-only lock: hide the (inert) toggle so we don't show a control that does nothing.
+     It stays in the DOM + all theming code intact; flipping FORCE_DARK to false restores it. */
+  if (window.__NPF_FORCE_DARK && btn) btn.style.display = 'none';
+  var mq = window.matchMedia('(prefers-color-scheme: dark)');
+  function choice() { return html.getAttribute('data-theme-choice') || 'system'; }
+  function apply(c) {
+    try { localStorage.setItem(KEY, c); } catch (e) {}
+    html.setAttribute('data-theme-choice', c);
+    /* FORCE_DARK (set in the head no-flash script) pins the RESOLVED theme to dark while
+       leaving the choice-cycling, localStorage, light CSS + engine light branch intact. */
+    var dark = window.__NPF_FORCE_DARK || (c === 'dark') || (c === 'system' && mq.matches);
+    html.setAttribute('data-theme', dark ? 'dark' : 'light');
+    /* Feed the resolved theme to the web-of-spheres engine. At init the deferred
+       node-graph.js hasn't mounted yet (GRCNodeGraph undefined → guarded no-op),
+       but the mount's data-theme attribute is set so it mounts in the right theme;
+       every later click / OS change switches the spheres live (no cloud rebuild). */
+    var _theme = dark ? 'dark' : 'light';
+    var _graphs = document.querySelectorAll('[data-grc-nodegraph]');
+    for (var _i = 0; _i < _graphs.length; _i++) _graphs[_i].setAttribute('data-theme', _theme);
+    if (window.GRCNodeGraph && window.GRCNodeGraph.setTheme) window.GRCNodeGraph.setTheme(_theme);
+    if (icon) icon.textContent = window.__NPF_FORCE_DARK ? 'dark_mode' : (c === 'system' ? 'brightness_auto' : (c === 'dark' ? 'dark_mode' : 'light_mode'));
+    if (btn) btn.setAttribute('aria-label', 'Theme: ' + c + ' — click to change');
+  }
+  if (btn) {
+    apply(choice());
+    btn.addEventListener('click', function () {
+      var c = choice();
+      apply(c === 'system' ? 'light' : c === 'light' ? 'dark' : 'system');
+    });
+  }
+  mq.addEventListener('change', function () { if (choice() === 'system') apply('system'); });
+})();
+</script>
+
+<!-- Constellation backdrop (vanilla, auto-mounts; replaces three.js) -->
+<script src="ds/node-graph.js" defer></script>
+
+<!-- Scroll-morph site header (vanilla, auto-mounts; DS SiteHeader port) -->
+<script src="ds/site-header.js" defer></script>
+
+<!-- Terminal view tabs + OS-aware install tab menu -->
+<script>
+(function () {
+  // Generic tab wiring: buttons with role=tab inside a container, panes via aria-controls.
+  // onSelect (optional) fires on EVERY activation — click or arrow-key — so callers
+  // can react to "which pane just became visible" without duplicating tab logic.
+  function wireTabs(tablist, activeTabClass, activePaneClass, onSelect) {
+    var tabs = Array.prototype.slice.call(tablist.querySelectorAll('[role="tab"]'));
+    function select(tab) {
+      tabs.forEach(function (t) {
+        var pane = document.getElementById(t.getAttribute('aria-controls'));
+        var on = t === tab;
+        t.classList.toggle(activeTabClass, on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        if (pane) {
+          pane.hidden = !on;
+          if (activePaneClass) pane.classList.toggle(activePaneClass, on);
+        }
+      });
+      if (onSelect) onSelect(tab);
+    }
+    tabs.forEach(function (t) {
+      t.addEventListener('click', function () { select(t); });
+      t.addEventListener('keydown', function (e) {
+        var i = tabs.indexOf(t), n = tabs.length;
+        if (e.key === 'ArrowRight') { e.preventDefault(); tabs[(i + 1) % n].focus(); select(tabs[(i + 1) % n]); }
+        if (e.key === 'ArrowLeft')  { e.preventDefault(); tabs[(i - 1 + n) % n].focus(); select(tabs[(i - 1 + n) % n]); }
+      });
+    });
+    return select;
+  }
+
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ── Terminal tab: type the command, then stream log lines ──
+     Replays on every activation. Caches the pane's original static HTML once
+     (pane.__origHTML) — that cache is both the reduced-motion fallback and the
+     literal source of truth for the animation, so there is exactly one place
+     the log content is authored. */
+  function playTerminal(pane) {
+    if (pane.__origHTML === undefined) pane.__origHTML = pane.innerHTML;
+    var orig = pane.__origHTML;
+    if (reduceMotion) { pane.innerHTML = orig; return; }
+    if (pane.__playing) return; // a run is already in flight; let it finish rather than overlap
+    pane.__playing = true;
+    pane.innerHTML = '';
+    var lines = orig.split(/<br\s*\/?>/i);
+
+    function typeRichLine(html, cb) {
+      var tmp = document.createElement('span');
+      tmp.innerHTML = html;
+      var chars = [];
+      (function walk(node, cls) {
+        Array.prototype.forEach.call(node.childNodes, function (n) {
+          if (n.nodeType === 3) { for (var k = 0; k < n.data.length; k++) chars.push({ ch: n.data[k], cls: cls }); }
+          else if (n.nodeType === 1) { walk(n, n.className || cls); }
+        });
+      })(tmp, null);
+      var lineEl = document.createElement('span');
+      pane.appendChild(lineEl);
+      var cursor = document.createElement('span');
+      cursor.className = 't-cursor';
+      pane.appendChild(cursor);
+      var ci = 0, curCls, curSpan = null;
+      (function step() {
+        if (ci >= chars.length) { cursor.remove(); cb(); return; }
+        var c = chars[ci++];
+        if (c.cls !== curCls) { curSpan = document.createElement('span'); if (c.cls) curSpan.className = c.cls; lineEl.appendChild(curSpan); curCls = c.cls; }
+        curSpan.appendChild(document.createTextNode(c.ch));
+        setTimeout(step, 16 + Math.random() * 20);
+      })();
+    }
+    function timestampMs(html) {
+      var m = /\[(\d\d):(\d\d):(\d\d)\.(\d\d\d)\]/.exec(html);
+      return m ? ((+m[1] * 3600 + +m[2] * 60 + +m[3]) * 1000) + (+m[4]) : null;
+    }
+    var lastTs = null;
+    function appendLine(html, isLast) {
+      var scroller = pane.closest('.np-term__content');
+      var wasNearBottom = !scroller || (scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight) < 40;
+      var span = document.createElement('span');
+      span.innerHTML = html;
+      pane.appendChild(span);
+      if (!isLast) pane.appendChild(document.createElement('br'));
+      if (scroller && wasNearBottom) scroller.scrollTop = scroller.scrollHeight;
+    }
+    function playFrom(idx) {
+      if (idx >= lines.length) { pane.__playing = false; return; }
+      var html = lines[idx], isLast = idx === lines.length - 1;
+      if (idx === 0) {
+        // the command itself: typed out character by character
+        typeRichLine(html, function () {
+          if (!isLast) pane.appendChild(document.createElement('br'));
+          setTimeout(function () { playFrom(idx + 1); }, 260);
+        });
+        return;
+      }
+      // subsequent lines stream in whole, staggered — a longer pause where the
+      // real tool's own timestamps jumped (a scan phase actually took time)
+      var ts = timestampMs(html), gap = 55;
+      if (ts !== null && lastTs !== null) {
+        var delta = ts - lastTs;
+        gap = delta > 2000 ? 620 : delta > 200 ? 220 : 55;
+      }
+      if (ts !== null) lastTs = ts;
+      setTimeout(function () { appendLine(html, isLast); playFrom(idx + 1); }, gap);
+    }
+    playFrom(0);
+  }
+
+  /* ── JSON tab: start fully collapsed, auto-expand root → summary →
+     relationships → sample items ── Toggling stays live and generic (see the
+     delegated .jfold__btn click handler below) — the auto-play just sets the
+     same .is-collapsed class a manual click does, so a user's own click during
+     playback and the scripted reveal can never disagree about state. */
+  function playJsonReveal(pane) {
+    var order = ['root', 'summary', 'relationships', 'item0', 'item1'];
+    var stepDelay = [0, 350, 450, 400, 350];
+    var folds = order.map(function (k) { return pane.querySelector('.jfold[data-fold="' + k + '"]'); });
+    function setCollapsed(fold, collapsed) {
+      if (!fold) return;
+      fold.classList.toggle('is-collapsed', collapsed);
+      var btn = fold.querySelector('.jfold__btn');
+      if (btn) btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    }
+    if (reduceMotion) { folds.forEach(function (f) { setCollapsed(f, false); }); return; }
+    folds.forEach(function (f) { setCollapsed(f, true); });
+    var cancelled = false;
+    function onUserToggle(e) {
+      if (e.target.closest && e.target.closest('.jfold__btn')) { cancelled = true; pane.removeEventListener('click', onUserToggle, true); }
+    }
+    pane.addEventListener('click', onUserToggle, true);
+    var t = 0;
+    order.forEach(function (key, i) {
+      t += stepDelay[i];
+      setTimeout(function () { if (!cancelled) setCollapsed(folds[i], false); }, t);
+    });
+  }
+
+  // Generic fold toggle — always live, independent of the auto-play sequencer.
+  document.addEventListener('click', function (e) {
+    var btn = e.target && e.target.closest ? e.target.closest('.jfold__btn') : null;
+    if (!btn) return;
+    var fold = btn.closest('.jfold');
+    if (!fold) return;
+    var collapsed = fold.classList.toggle('is-collapsed');
+    btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+  });
+
+  // Same-page anchor scrolling: fragment navigation silently no-ops in some
+  // Chrome overflow/smooth-scroll configurations (observed on this page), so
+  // drive it explicitly. scroll-margin-top on targets keeps the header offset.
+  document.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    var id = a.getAttribute('href').slice(1);
+    var el = id && document.getElementById(id);
+    if (!el) return;
+    e.preventDefault();
+    el.scrollIntoView({ behavior: 'smooth' });
+    if (history.pushState) history.pushState(null, '', '#' + id);
+  });
+
+  // Hero terminal tabs — each activation (click, arrow-key, or initial load)
+  // replays that pane's own animation. report.html has none; it's static by design.
+  var termTabs = document.querySelector('.np-term__tabs');
+  if (termTabs) {
+    var selectTerm = wireTabs(termTabs, 'np-term__tab--active', 'np-term__pane--active', function (tab) {
+      var pane = document.getElementById(tab.getAttribute('aria-controls'));
+      if (!pane) return;
+      if (pane.id === 'term-pane-run') playTerminal(pane);
+      else if (pane.id === 'term-pane-json') playJsonReveal(pane);
+      else if (pane.id === 'term-pane-html') sizeGraphLines();
+    });
+    var initialTermTab = termTabs.querySelector('[aria-selected="true"]') || termTabs.querySelector('[role="tab"]');
+    if (initialTermTab) selectTerm(initialTermTab);
+  }
+
+  // Vendor graph connector lines: rewrite the SVG viewBox to the box's
+  // actual rendered pixel size (1:1 in both axes) so stroke-width is
+  // honestly uniform regardless of line angle — see CSS comment above
+  // .npr-graph__lines line for why vector-effect alone can't fix this.
+  function sizeGraphLines() {
+    var svgs = document.querySelectorAll('.npr-graph__lines');
+    for (var i = 0; i < svgs.length; i++) {
+      var svg = svgs[i];
+      var box = svg.parentElement;
+      var w = box.clientWidth, h = box.clientHeight;
+      if (!w || !h) continue;
+      svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+      svg.removeAttribute('preserveAspectRatio');
+      var lines = svg.querySelectorAll('line');
+      for (var j = 0; j < lines.length; j++) {
+        var l = lines[j];
+        if (!l.__pct) {
+          l.__pct = {
+            x1: parseFloat(l.getAttribute('x1')), y1: parseFloat(l.getAttribute('y1')),
+            x2: parseFloat(l.getAttribute('x2')), y2: parseFloat(l.getAttribute('y2'))
+          };
+        }
+        l.setAttribute('x1', (l.__pct.x1 / 100 * w).toFixed(2));
+        l.setAttribute('y1', (l.__pct.y1 / 100 * h).toFixed(2));
+        l.setAttribute('x2', (l.__pct.x2 / 100 * w).toFixed(2));
+        l.setAttribute('y2', (l.__pct.y2 / 100 * h).toFixed(2));
+      }
+    }
+  }
+  sizeGraphLines();
+  window.addEventListener('resize', sizeGraphLines);
+
+  // Install tabs + OS auto-detect
+  var installBar = document.querySelector('.np-install-tabs .np-tabbar');
+  if (installBar) {
+    var select = wireTabs(installBar, 'np-tabbar__tab--active', null);
+    var ua = (navigator.userAgent || '').toLowerCase();
+    var plat = ((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '').toLowerCase();
+    var key = 'docker', label = '';
+    if (/iphone|ipad|ipod|android/.test(ua)) { key = 'github'; }  /* phones can't run the CLI — send them to the release page */
+    else if (plat.indexOf('mac') !== -1 || ua.indexOf('mac os') !== -1) { key = 'macos'; label = 'macOS detected'; }
+    else if (plat.indexOf('win') !== -1 || ua.indexOf('windows') !== -1) { key = 'windows'; label = 'Windows detected'; }
+    else if (plat.indexOf('linux') !== -1 || ua.indexOf('linux') !== -1) { key = 'linux'; label = 'Linux detected'; }
+    var tab = document.getElementById('install-tab-' + key);
+    if (tab) select(tab);
+    var det = document.getElementById('install-detected');
+    if (det && label) det.textContent = '// ' + label;
+  }
+}());
+</script>
+
+</body>
+</html>

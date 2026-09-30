@@ -1,0 +1,87 @@
+/* ============================================================
+   BASE — light resets + brand utility classes
+   GRC Engineering. Safe to consume globally.
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: var(--body-family);
+  font-size: var(--body-size);
+  line-height: var(--body-leading);
+  color: var(--text-body);
+  background: var(--surface-page);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-optical-sizing: auto;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* UI chrome — buttons, inputs, nav, badges, tables — uses the grotesque, not the serif body */
+button, input, select, textarea, label,
+.grc-ui { font-family: var(--ui-family); }
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  color: var(--text-strong);
+  font-weight: var(--heading-weight);
+  letter-spacing: var(--heading-tracking);
+  line-height: var(--leading-tight);
+  margin: 0;
+  text-wrap: balance;
+}
+
+p { text-wrap: pretty; }
+
+a { color: var(--text-link); text-decoration: none; }
+code, kbd, samp { font-family: var(--font-mono); }
+
+::selection { background: rgba(27,149,193,0.22); }
+
+/* ---- Brand utilities ---- */
+
+/* Mono eyebrow / kicker */
+.grc-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--eyebrow-size);
+  font-weight: var(--eyebrow-weight);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* The signature fusion gradient as text */
+.grc-gradient-text {
+  background: var(--gradient-fusion-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Fusion gradient hairline / rule */
+.grc-fusion-rule {
+  height: 2px;
+  border: 0;
+  background: var(--gradient-fusion);
+  border-radius: var(--radius-pill);
+}
+
+/* Dark engineering panel */
+.grc-ink {
+  background: var(--surface-ink);
+  color: var(--text-on-ink);
+}
+
+/* Dot-grid blueprint texture (engineering motif) */
+.grc-grid-bg {
+  background-image: radial-gradient(rgba(27,149,193,0.10) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

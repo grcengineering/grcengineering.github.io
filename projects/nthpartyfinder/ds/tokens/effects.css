@@ -1,0 +1,55 @@
+/* ============================================================
+   EFFECTS — radii, borders, shadows — GRC Engineering
+   Restrained, crisp. Hairline borders + soft cool-tinted shadow.
+   ============================================================ */
+
+:root {
+  /* Radii — tight & modern */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 9px;
+  --radius-lg: 13px;
+  --radius-xl: 18px;
+  --radius-2xl: 24px;
+  --radius-pill: 999px;
+
+  /* Border widths */
+  --border-w: 1px;
+  --border-w-thick: 1.5px;
+
+  /* Shadows — cool slate tint, layered, subtle */
+  --shadow-xs: 0 1px 2px rgba(12,17,23,0.05);
+  --shadow-sm: 0 1px 2px rgba(12,17,23,0.06), 0 1px 1px rgba(12,17,23,0.04);
+  --shadow-md: 0 4px 12px -2px rgba(12,17,23,0.08), 0 2px 4px -2px rgba(12,17,23,0.06);
+  --shadow-lg: 0 12px 28px -6px rgba(12,17,23,0.12), 0 4px 10px -4px rgba(12,17,23,0.07);
+  --shadow-xl: 0 24px 56px -12px rgba(12,17,23,0.18), 0 8px 20px -8px rgba(12,17,23,0.10);
+
+  /* Accent glows (use sparingly — hero, focus, primary CTA) */
+  --glow-eng: 0 8px 30px -8px rgba(27,149,193,0.45);
+  --glow-grc: 0 8px 30px -8px rgba(255,168,79,0.45);
+
+  /* Inset / ring */
+  --ring-inset: inset 0 0 0 1px rgba(255,255,255,0.06);
+  --hairline-top: inset 0 1px 0 rgba(255,255,255,0.05); /* @kind shadow */
+
+  /* Backdrop blur */
+  --blur-sm: 6px;   /* @kind other */
+  --blur-md: 14px;  /* @kind other */
+  --blur-lg: 28px;  /* @kind other */
+
+  /* ---- Frosted glass (translucent cards over animated/imagery backdrops) ----
+     The Nth Party Finder card treatment: a translucent surface that lets the
+     node-graph show through a soft blur, with a warm→cool gradient hairline. */
+  --glass-fill:        color-mix(in srgb, var(--surface-card) 62%, transparent);
+  --glass-fill-strong: color-mix(in srgb, var(--surface-card) 80%, transparent);
+  --glass-blur:        3px;
+  --glass-border:      linear-gradient(135deg, rgba(255,168,79,0.55) 0%, rgba(255,255,255,0.10) 38%, rgba(27,149,193,0.45) 100%); /* @kind color */
+  --glass-highlight:   inset 0 1px 0 rgba(255,255,255,0.10); /* @kind shadow */
+  --glass-shadow:      0 20px 50px -18px rgba(0,0,0,0.55);
+}
+
+[data-theme="dark"] {
+  /* Darker, more transparent glass so the backdrop reads through on near-black */
+  --glass-fill:        color-mix(in srgb, var(--surface-card) 52%, transparent);
+  --glass-fill-strong: color-mix(in srgb, var(--surface-card) 72%, transparent);
+}
