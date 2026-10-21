@@ -1,5 +1,11 @@
 # Projects
 
+## GRC Engineering Cheat Sheet
+
+A community reference for applying engineering principles to governance, risk, and compliance. Explore the definition and comparison with traditional GRC, a practical starting guide with a runnable synthetic example, a glossary, tools, and curated teachings.
+
+**Explore:** [Open the GRC Engineering Cheat Sheet](https://cheatsheet.grc.engineering/)
+
 ## Open Source Cybersecurity Training
 
 <div style="background: linear-gradient(135deg, #7B2CBF 0%, #06A77D 100%); color: white; padding: 30px; border-radius: 12px; margin: 20px 0;">
