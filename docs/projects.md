@@ -2,7 +2,7 @@
 
 ## GRC Engineering Cheat Sheet
 
-A community reference for applying engineering principles to governance, risk, and compliance. Explore the definition and comparison with traditional GRC, a practical starting guide with a runnable synthetic example, a glossary, tools, and curated teachings.
+A community reference for applying engineering principles to governance, risk, and compliance. Explore the definition and comparison with traditional GRC, a glossary, tools, and curated teachings.
 
 **Explore:** [Open the GRC Engineering Cheat Sheet](https://cheatsheet.grc.engineering/)
 
